@@ -11,10 +11,7 @@ import org.paginalib3.model.Usuario;
 import org.paginalib3.util.Seguridad;
 import org.paginalib3.util.Sesion;
 
-/**
- * US-1.4: Como usuario, quiero cambiar mi contrasena proporcionando mi
- * contrasena actual, para mantener segura mi cuenta.
- */
+
 public class CambiarContrasenaController {
 
     private final UsuarioDAO usuarioDAO = new UsuarioDAOImpl();
