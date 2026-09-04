@@ -12,12 +12,6 @@ import org.paginalib3.dao.impl.UsuarioDAOImpl;
 import org.paginalib3.model.Usuario;
 import org.paginalib3.util.Seguridad;
 
-/**
- * Formulario FXML unico para US-1.2: registrar un usuario nuevo o editar
- * los datos (nombre, apellido, correo) de uno existente. El rol solo se
- * puede definir al registrar; para cambiarlo despues se usa
- * cambiar_rol.fxml (CambiarRolController).
- */
 public class UsuarioFormController {
 
     private enum Modo { CREAR, EDITAR }
