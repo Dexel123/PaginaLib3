@@ -1,20 +1,62 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
- */
 package org.paginalib3.system;
 
-/**
- *
- * @author joaqu
- */
-public class Main {
+import java.io.IOException;
+import java.net.URL;
+import java.util.function.Consumer;
+import javafx.application.Application;
+import static javafx.application.Application.launch;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        // TODO code application logic here
+public class Main extends Application {
+
+    private static Stage stagePrincipal;
+    private static Object controladorVistaActual;
+
+    @Override
+    public void start(Stage stage) {
+        stagePrincipal = stage;
+        stage.setResizable(true);
+        cambiarVista("/org/paginalib3/view/login.fxml",
+                "Pagina-Libreria | Iniciar sesión", 760, 560);
     }
-    
+
+    public static void cambiarVista(String rutaFxml, String titulo, double ancho, double alto) {
+        try {
+            URL url = Main.class.getResource(rutaFxml);
+            if (url == null) {
+                throw new IOException("No se encontró el recurso FXML: " + rutaFxml);
+            }
+            FXMLLoader loader = new FXMLLoader(url);
+            Parent root = loader.load();
+            controladorVistaActual = loader.getController();
+
+            Scene scene = new Scene(root, ancho, alto);
+            URL css = Main.class.getResource("/org/paginalib3/view/styles.css");
+            if (css != null) scene.getStylesheets().add(css.toExternalForm());
+
+            stagePrincipal.setTitle(titulo);
+            stagePrincipal.setScene(scene);
+            stagePrincipal.centerOnScreen();
+            stagePrincipal.show();
+        } catch (IOException e) {
+            throw new IllegalStateException("No se pudo cargar la vista " + rutaFxml, e);
+        }
+    }
+
+    public static void configurarVistaActual(Consumer<Object> configurador) {
+        if (controladorVistaActual != null && configurador != null) {
+            configurador.accept(controladorVistaActual);
+        }
+    }
+
+    public static Stage getStagePrincipal() {
+        return stagePrincipal;
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
 }
