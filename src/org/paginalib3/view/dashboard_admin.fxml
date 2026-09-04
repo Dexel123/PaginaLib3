@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.paginalib3.controller.DashboardAdminController"
+            styleClass="root">
+
+    <left>
+        <VBox spacing="18" prefWidth="220" styleClass="sidebar">
+            <padding>
+                <Insets top="28" right="20" bottom="28" left="20"/>
+            </padding>
+            <Label text="PAGINA-LIBRERIA" styleClass="brand-label"/>
+            <Label fx:id="lblNombreUsuario" styleClass="sidebar-user"/>
+            <Label fx:id="lblRolUsuario" styleClass="sidebar-user"/>
+        </VBox>
+    </left>
+
+    <center>
+        <VBox spacing="20">
+            <padding>
+                <Insets top="34" right="34" bottom="34" left="34"/>
+            </padding>
+
+            <Label text="Dashboard Administrador" styleClass="title-label"/>
+            <Label fx:id="lblSaludo" styleClass="subtitle-label"/>
+
+            <HBox spacing="14">
+                <VBox styleClass="metric-card" spacing="6">
+                    <Label text="Sesion" styleClass="subtitle-label"/>
+                    <Label text="Activa" styleClass="metric-value"/>
+                </VBox>
+                <VBox styleClass="metric-card" spacing="6">
+                    <Label text="Usuario" styleClass="subtitle-label"/>
+                    <Label fx:id="lblUsuarioMetric" styleClass="metric-value"/>
+                </VBox>
+                <VBox styleClass="metric-card" spacing="6">
+                    <Label text="Area" styleClass="subtitle-label"/>
+                    <Label text="Administracion" styleClass="metric-value"/>
+                </VBox>
+            </HBox>
+
+            <VBox spacing="10">
+                <Label text="Accesos rapidos" styleClass="section-label"/>
+                <Button text="Gestion de usuarios" styleClass="btn-primary" maxWidth="300"
+                        onAction="#irAUsuarios"/>
+                <Button text="Cambiar contrasena" styleClass="btn-secondary" maxWidth="300"
+                        onAction="#irACambiarContrasena"/>
+                <Button text="Cerrar sesion" styleClass="btn-secondary" maxWidth="300"
+                        onAction="#cerrarSesion"/>
+            </VBox>
+        </VBox>
+    </center>
+</BorderPane>
