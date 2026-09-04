@@ -5,10 +5,6 @@ import org.paginalib3.model.Usuario;
 import java.sql.SQLException;
 import java.util.List;
 
-/**
- * Contrato de acceso a datos para la entidad Usuario.
- * US-1.1, US-1.2, US-1.4 del Product Backlog (Epica 1).
- */
 public interface UsuarioDAO {
 
     Usuario iniciarSesion(String username, String passwordHash) throws SQLException;

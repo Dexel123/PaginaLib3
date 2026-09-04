@@ -12,10 +12,6 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Implementacion JDBC de UsuarioDAO. Todas las operaciones llaman a los
- * procedimientos almacenados definidos en libreriadb_in4cm_faltantes.sql.
- */
 public class UsuarioDAOImpl implements UsuarioDAO {
 
     @Override

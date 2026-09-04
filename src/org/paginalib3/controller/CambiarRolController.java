@@ -9,11 +9,6 @@ import org.paginalib3.dao.UsuarioDAO;
 import org.paginalib3.dao.impl.UsuarioDAOImpl;
 import org.paginalib3.model.Usuario;
 
-/**
- * Dialogo FXML para cambiar el rol de un usuario existente.
- * Se mantiene separado del formulario de registro/edicion porque cambiar
- * de rol es una accion administrativa distinta (US-1.2).
- */
 public class CambiarRolController {
 
     private final UsuarioDAO usuarioDAO = new UsuarioDAOImpl();
