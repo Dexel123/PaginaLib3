@@ -3,7 +3,6 @@ package org.paginalib3.dao.impl;
 import org.paginalib3.dao.UsuarioDAO;
 import org.paginalib3.model.Usuario;
 import org.paginalib3.util.Conexion;
-
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -12,10 +11,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Implementacion JDBC de UsuarioDAO. Todas las operaciones llaman a los
- * procedimientos almacenados definidos en libreriadb_in4cm_faltantes.sql.
- */
+
 public class UsuarioDAOImpl implements UsuarioDAO {
 
     @Override
