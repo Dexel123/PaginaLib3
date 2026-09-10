@@ -158,4 +158,12 @@ public class VentaController {
 
    
 
-   
+    @FXML
+    private void volver() {
+        Main.cambiarVista("/org/paginalib3/view/dashboard_cajero.fxml", "Pagina-Libreria | Dashboard Caja", 1100, 680);
+    }
+
+    private void alert(Alert.AlertType t, String m) {
+        new Alert(t, m, ButtonType.OK).showAndWait();
+    }
+}
