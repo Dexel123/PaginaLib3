@@ -25,14 +25,18 @@ public class VentaDAOImpl implements VentaDAO {
 
     @Override
     public boolean registrarVenta(Venta venta, List<DetalleVenta> detalles, Integer usuarioAutoriza) throws SQLException {
-        if (venta == null || detalles == null || detalles.isEmpty()) return false;
+        if (venta == null || detalles == null || detalles.isEmpty()) {
+            return false;
+        }
         StringBuilder json = new StringBuilder("[");
         for (int i = 0; i < detalles.size(); i++) {
             DetalleVenta d = detalles.get(i);
             if (d.getCantidad() <= 0 || d.getIsbn() == null || d.getIsbn().isBlank()) {
                 throw new IllegalArgumentException("Detalle de venta inválido.");
             }
-            if (i > 0) json.append(',');
+            if (i > 0) {
+                json.append(',');
+            }
             json.append("{\"isbn\":\"").append(esc(d.getIsbn())).append("\",\"cantidad\":").append(d.getCantidad()).append('}');
         }
         json.append(']');
@@ -46,7 +50,11 @@ public class VentaDAOImpl implements VentaDAO {
                 s.setLong(2, Long.parseLong(venta.getCuiCliente()));
             }
             s.setBigDecimal(3, java.math.BigDecimal.valueOf(venta.getDescuento()));
-            if (usuarioAutoriza == null) s.setNull(4, Types.INTEGER); else s.setInt(4, usuarioAutoriza);
+            if (usuarioAutoriza == null) {
+                s.setNull(4, Types.INTEGER);
+            } else {
+                s.setInt(4, usuarioAutoriza);
+            }
             s.setString(5, json.toString());
             s.registerOutParameter(6, Types.INTEGER);
             s.execute();
@@ -74,11 +82,12 @@ public class VentaDAOImpl implements VentaDAO {
     @Override
     public List<Venta> listarVentasDelDiaPorUsuario(int idUsuario) throws SQLException {
         List<Venta> l = new ArrayList<>();
-        try (Connection c = Conexion.getInstancia().conectar();
-             CallableStatement s = c.prepareCall("{CALL sp_ventasdeldiaporusuario(?)}")) {
+        try (Connection c = Conexion.getInstancia().conectar(); CallableStatement s = c.prepareCall("{CALL sp_ventasdeldiaporusuario(?)}")) {
             s.setInt(1, idUsuario);
             try (ResultSet r = s.executeQuery()) {
-                while (r.next()) l.add(map(r));
+                while (r.next()) {
+                    l.add(map(r));
+                }
             }
         }
         return l;
@@ -95,10 +104,13 @@ public class VentaDAOImpl implements VentaDAO {
     }
 
     private boolean ejecutarCambioEstado(String procedimiento, int idVenta, int idUsuario, String motivo) throws SQLException {
-        if (idVenta <= 0 || idUsuario <= 0) throw new IllegalArgumentException("Identificador inválido.");
-        if (motivo == null || motivo.isBlank()) throw new IllegalArgumentException("El motivo es obligatorio.");
-        try (Connection c = Conexion.getInstancia().conectar();
-             CallableStatement s = c.prepareCall("{CALL " + procedimiento + "(?,?,?)}")) {
+        if (idVenta <= 0 || idUsuario <= 0) {
+            throw new IllegalArgumentException("Identificador inválido.");
+        }
+        if (motivo == null || motivo.isBlank()) {
+            throw new IllegalArgumentException("El motivo es obligatorio.");
+        }
+        try (Connection c = Conexion.getInstancia().conectar(); CallableStatement s = c.prepareCall("{CALL " + procedimiento + "(?,?,?)}")) {
             s.setInt(1, idVenta);
             s.setInt(2, idUsuario);
             s.setString(3, motivo.trim());

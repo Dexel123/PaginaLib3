@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.paginalib3.controller.VentaController" styleClass="root">
+    <top>
+        <VBox spacing="10" styleClass="card">
+            <padding><Insets top="18" right="20" bottom="14" left="20"/></padding>
+            <Label text="Registrar venta" styleClass="title-label"/>
+            <HBox spacing="8">
+                <TextField fx:id="txtFiltroLibro" promptText="Buscar ISBN, título o autor" HBox.hgrow="ALWAYS" onAction="#buscarLibro"/>
+                <Button text="Buscar" styleClass="btn-primary" onAction="#buscarLibro"/>
+                <TextField fx:id="txtCantidad" prefWidth="90" promptText="Cantidad"/>
+            </HBox>
+            <HBox spacing="8">
+                <ComboBox fx:id="cmbCliente" promptText="Cliente" HBox.hgrow="ALWAYS" onAction="#seleccionarCliente"/>
+                <TextField fx:id="txtCuiCliente" promptText="CUI"/>
+                <Button text="Agregar seleccionado" styleClass="btn-secondary" onAction="#agregar"/>
+            </HBox>
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="Descuento:"/>
+                <ComboBox fx:id="cmbTipoDescuento" prefWidth="125" onAction="#actualizarDescuento"/>
+                <TextField fx:id="txtDescuento" prefWidth="100" promptText="0.00" onKeyReleased="#actualizarDescuento"/>
+                <Label text="Admin:"/>
+                <TextField fx:id="txtUsuarioAutoriza" prefWidth="130" promptText="usuario"/>
+                <PasswordField fx:id="txtClaveAutoriza" prefWidth="130" promptText="contraseña"/>
+            </HBox>
+            <Label text="Si el descuento es mayor que 0, se requiere autorización de un administrador." styleClass="subtitle-label"/>
+            <Label fx:id="lblEstado" styleClass="subtitle-label"/>
+        </VBox>
+    </top>
+    <center>
+        <SplitPane orientation="VERTICAL">
+            <TableView fx:id="tblLibros" prefHeight="280">
+                <columns>
+                    <TableColumn fx:id="colLibroIsbn" text="ISBN" prefWidth="150"/>
+                    <TableColumn fx:id="colLibroTitulo" text="Título" prefWidth="300"/>
+                    <TableColumn fx:id="colLibroPrecio" text="Precio" prefWidth="110"/>
+                    <TableColumn fx:id="colLibroStock" text="Stock" prefWidth="90"/>
+                </columns>
+            </TableView>
+            <TableView fx:id="tblCarrito" prefHeight="240">
+                <columns>
+                    <TableColumn fx:id="colCarritoIsbn" text="ISBN" prefWidth="150"/>
+                    <TableColumn fx:id="colCarritoCantidad" text="Cantidad" prefWidth="100"/>
+                    <TableColumn fx:id="colCarritoPrecio" text="Precio" prefWidth="120"/>
+                    <TableColumn fx:id="colCarritoSubtotal" text="Subtotal" prefWidth="120"/>
+                </columns>
+            </TableView>
+        </SplitPane>
+    </center>
+    <bottom>
+        <VBox spacing="10">
+            <padding><Insets top="12" right="20" bottom="20" left="20"/></padding>
+            <HBox spacing="20" alignment="CENTER_RIGHT">
+                <Label text="Subtotal:"/><Label fx:id="lblSubtotal" styleClass="metric-value"/>
+                <Label text="Descuento:"/><Label fx:id="lblDescuento" styleClass="metric-value"/>
+                <Label text="Total:"/><Label fx:id="lblTotal" styleClass="metric-value"/>
+            </HBox>
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+                <Button text="Eliminar del carrito" styleClass="btn-secondary" onAction="#eliminar"/>
+                <Button text="Limpiar" styleClass="btn-secondary" onAction="#limpiar"/>
+                <Button text="Registrar venta" styleClass="btn-primary" onAction="#registrar"/>
+                <Button text="Volver" styleClass="btn-secondary" onAction="#volver"/>
+            </HBox>
+        </VBox>
+    </bottom>
+</BorderPane>
