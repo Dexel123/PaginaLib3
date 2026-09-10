@@ -31,6 +31,8 @@ public class Main extends Application {
             }
             FXMLLoader loader = new FXMLLoader(url);
             Parent root = loader.load();
+            System.out.println(">>> FXML CARGADO: " + rutaFxml);
+System.out.println(">>> CONTROLADOR: " + loader.getController());
             controladorVistaActual = loader.getController();
 
             Scene scene = new Scene(root, ancho, alto);

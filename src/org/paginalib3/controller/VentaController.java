@@ -1,7 +1,9 @@
 package org.paginalib3.controller;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -69,11 +71,32 @@ public class VentaController {
         cargarLibros();
         refrescarTotales();
     }
+    
+    @FXML
+    public void initialize(URL url, ResourceBundle rb) {
 
-    private void cargarClientes() {
-        try { cmbCliente.setItems(FXCollections.observableArrayList(clienteDAO.listar())); }
-        catch (Exception e) { lblEstado.setText("No se pudieron cargar clientes: " + e.getMessage()); }
+    System.out.println(">>> ENTRO A VentaController.initialize() <<<");
+
+    cargarClientes();
+}
+
+  private void cargarClientes() {
+  System.out.println(">>> ENTRO A cargarClientes() <<<");
+
+    try {
+        List<Cliente> clientes = clienteDAO.listar();
+
+        System.out.println("CLIENTES ENCONTRADOS: " + clientes.size());
+
+        cmbCliente.setItems(
+            FXCollections.observableArrayList(clientes)
+        );
+
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+}
+  
 
     private void cargarLibros() {
         try { libros = libroDAO.listar(); tblLibros.setItems(FXCollections.observableArrayList(libros)); }

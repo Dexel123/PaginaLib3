@@ -3,10 +3,16 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/JoaquinSanchez/bim_cuatro/sprint2/PaginaLib3/src/org/paginalib3/controller/UsuariosController.java</file>
-            <file>file:/C:/JoaquinSanchez/bim_cuatro/sprint2/PaginaLib3/src/db.properties</file>
-            <file>file:/C:/JoaquinSanchez/bim_cuatro/sprint2/PaginaLib3/src/org/paginalib3/controller/UsuarioFormController.java</file>
-            <file>file:/C:/JoaquinSanchez/bim_cuatro/sprint2/PaginaLib3/src/org/paginalib3/controller/RegistroController.java</file>
+            <file>file:/C:/angel_molina/pruevba/PaginaLib3/src/org/paginalib3/view/dashboard_cajero.fxml</file>
+            <file>file:/C:/angel_molina/pruevba/PaginaLib3/src/db.properties</file>
+            <file>file:/C:/angel_molina/pruevba/PaginaLib3/src/org/paginalib3/system/Main.java</file>
+            <file>file:/C:/angel_molina/pruevba/PaginaLib3/src/org/paginalib3/model/Cliente.java</file>
+            <file>file:/C:/angel_molina/pruevba/PaginaLib3/src/org/paginalib3/dao/ClienteDAO.java</file>
+            <file>file:/C:/angel_molina/pruevba/PaginaLib3/src/org/paginalib3/view/venta.fxml</file>
+            <file>file:/C:/angel_molina/pruevba/PaginaLib3/src/org/paginalib3/controller/DashboardCajeroController.java</file>
+            <file>file:/C:/angel_molina/pruevba/PaginaLib3/src/org/paginalib3/controller/VentaController.java</file>
+            <file>file:/C:/angel_molina/pruevba/PaginaLib3/src/org/paginalib3/dao/impl/ClienteDAOImpl.java</file>
+            <file>file:/C:/angel_molina/pruevba/PaginaLib3/src/org/paginalib3/util/Conexion.java</file>
         </group>
     </open-files>
 </project-private>
