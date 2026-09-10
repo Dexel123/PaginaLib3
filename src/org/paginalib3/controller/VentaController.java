@@ -152,7 +152,77 @@ public class VentaController {
 
    
 
-    
+    @FXML
+    private void actualizarDescuento() {
+        try {
+            refrescarTotales();
+        } catch (Exception e) {
+            lblEstado.setText(e.getMessage());
+        }
+    }
+
+    private void refrescarCarrito() {
+        tblCarrito.setItems(FXCollections.observableArrayList(carrito));
+        refrescarTotales();
+    }
+
+    private void refrescarTotales() {
+        double subtotal = calcularSubtotal();
+        double descuento = 0;
+        try {
+            descuento = calcularDescuento(subtotal);
+        } catch (Exception ignored) {
+        }
+        lblSubtotal.setText(String.format("Q%.2f", subtotal));
+        lblDescuento.setText(String.format("Q%.2f", descuento));
+        lblTotal.setText(String.format("Q%.2f", subtotal - descuento));
+    }
+
+    @FXML
+    private void registrar() {
+        if (carrito.isEmpty()) {
+            alert(Alert.AlertType.WARNING, "El carrito está vacío.");
+            return;
+        }
+        Usuario u = Sesion.getUsuarioActual();
+        if (u == null || !"cajero".equalsIgnoreCase(u.getRol())) {
+            alert(Alert.AlertType.ERROR, "Se requiere una sesión activa de cajero.");
+            return;
+        }
+        String cui = txtCuiCliente.getText().trim();
+        if (!cui.isEmpty()) try {
+            Long.parseLong(cui);
+        } catch (NumberFormatException e) {
+            alert(Alert.AlertType.WARNING, "El CUI debe ser numérico.");
+            return;
+        }
+
+        try {
+            double subtotal = calcularSubtotal();
+            double descuento = calcularDescuento(subtotal);
+            Integer autorizador = null;
+            if (descuento > 0) {
+                autorizador = validarAutorizacionAdmin();
+            }
+            Venta v = new Venta(subtotal, descuento, subtotal - descuento, "COMPLETADA", cui, u.getId());
+            if (!ventaDAO.registrarVenta(v, new ArrayList<>(carrito), autorizador)) {
+                return;
+            }
+            int id = v.getIdVenta();
+            alert(Alert.AlertType.INFORMATION, "Venta #" + id + " registrada correctamente.");
+            carrito.clear();
+            refrescarCarrito();
+            cargarLibros();
+            Main.cambiarVista("/org/paginalib3/view/comprobante.fxml", "Pagina-Libreria | Comprobante", 900, 760);
+            Main.configurarVistaActual(x -> {
+                if (x instanceof ComprobanteController c) {
+                    c.cargarVenta(id);
+                }
+            });
+        } catch (Exception e) {
+            alert(Alert.AlertType.ERROR, "No se pudo registrar la venta: " + e.getMessage());
+        }
+    }
 
     private int validarAutorizacionAdmin() throws Exception {
         String username = txtUsuarioAutoriza.getText() == null ? "" : txtUsuarioAutoriza.getText().trim();
