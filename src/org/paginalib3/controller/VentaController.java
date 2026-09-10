@@ -154,9 +154,31 @@ public class VentaController {
 
     
 
-   
+    private int validarAutorizacionAdmin() throws Exception {
+        String username = txtUsuarioAutoriza.getText() == null ? "" : txtUsuarioAutoriza.getText().trim();
+        String password = txtClaveAutoriza.getText() == null ? "" : txtClaveAutoriza.getText();
+        if (username.isBlank() || password.isBlank()) {
+            throw new IllegalArgumentException("Un descuento requiere usuario y contraseña de administrador.");
+        }
+        Usuario admin = usuarioDAO.iniciarSesion(username, Seguridad.sha256(password));
+        if (admin == null || !"admin".equalsIgnoreCase(admin.getRol())) {
+            throw new IllegalArgumentException("La autorización no corresponde a un administrador activo.");
+        }
+        return admin.getId();
+    }
 
-   
+    @FXML
+    private void limpiar() {
+        carrito.clear();
+        txtCuiCliente.clear();
+        cmbCliente.getSelectionModel().clearSelection();
+        txtCantidad.setText("1");
+        txtDescuento.clear();
+        txtUsuarioAutoriza.clear();
+        txtClaveAutoriza.clear();
+        cmbTipoDescuento.setValue("MONTO");
+        refrescarCarrito();
+    }
 
     @FXML
     private void volver() {
