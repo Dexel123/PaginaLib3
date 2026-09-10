@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.loggIng.Level;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.paginalib3.dao.VentaDAO;
 import org.paginalib3.model.DetalleVenta;
