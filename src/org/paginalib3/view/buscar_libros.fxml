@@ -37,4 +37,4 @@
          <Button text="Volver" styleClass="btn-secondary" onAction="#volver"/>
       </HBox>
    </bottom>
-</BorderPane>
+ </BorderPane>
