@@ -8,24 +8,22 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox xmlns="http://javafx.com/javafx/21"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="org.paginalib3.controller.RestablecerContrasenaController"
-      alignment="CENTER" spacing="12" styleClass="root">
+<VBox xmlns="http://javafx.com/javafx/21" 
+      xmlns:fx="http://javafx.com/fxml/1" 
+      fx:controller="org.paginalib3.controller.RestablecerContrasenaController" 
+      alignment="CENTER" 
+      spacing="12" 
+      styleClass="root">
     <padding>
         <Insets top="30" right="30" bottom="30" left="30"/>
     </padding>
-
     <VBox maxWidth="420" spacing="12" styleClass="card">
         <Label text="Cambiar contraseña" styleClass="title-label"/>
         <Label text="Se habilitó este cambio después de 3 intentos fallidos." styleClass="subtitle-label"/>
-
         <TextField fx:id="txtUsuario" promptText="Usuario"/>
         <PasswordField fx:id="txtNueva" promptText="Nueva contraseña"/>
         <PasswordField fx:id="txtConfirmar" promptText="Confirmar nueva contraseña"/>
-
         <Label fx:id="lblEstado" styleClass="error-label" wrapText="true"/>
-
         <HBox spacing="10">
             <Button text="Guardar contraseña" styleClass="btn-primary" onAction="#guardar"/>
             <Button text="Cancelar" styleClass="btn-secondary" onAction="#cancelar"/>

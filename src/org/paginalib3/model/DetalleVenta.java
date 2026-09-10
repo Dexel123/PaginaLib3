@@ -2,9 +2,12 @@ package org.paginalib3.model;
 
 public class DetalleVenta {
 
-    private int idDetalle, idVenta, cantidad;
+    private int idDetalle;
+    private int idVenta;
+    private int cantidad;
     private String isbn;
-    private double precioUnitario, subtotal;
+    private double precioUnitario;
+    private double subtotal;
 
     public DetalleVenta() {
     }

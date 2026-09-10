@@ -8,17 +8,16 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox xmlns="http://javafx.com/javafx/21"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="org.paginalib3.controller.UsuariosController"
-      spacing="18" styleClass="root">
+<VBox xmlns="http://javafx.com/javafx/21" 
+      xmlns:fx="http://javafx.com/fxml/1" 
+      fx:controller="org.paginalib3.controller.UsuariosController" 
+      spacing="18" 
+      styleClass="root">
     <padding>
         <Insets top="30" right="30" bottom="30" left="30"/>
     </padding>
-
     <Label text="Gestion de usuarios" styleClass="title-label"/>
     <Label text="Registra y administra las cuentas del sistema." styleClass="subtitle-label"/>
-
     <TableView fx:id="tablaUsuarios" VBox.vgrow="ALWAYS">
         <columns>
             <TableColumn fx:id="colUsername" text="Usuario" prefWidth="140"/>
@@ -27,7 +26,6 @@
             <TableColumn fx:id="colEstado" text="Estado" prefWidth="120"/>
         </columns>
     </TableView>
-
     <HBox spacing="10">
         <Button text="+ Registrar usuario" styleClass="btn-primary" onAction="#registrar"/>
         <Button text="Editar datos" styleClass="btn-secondary" onAction="#editar"/>
@@ -36,4 +34,3 @@
         <Button text="Volver" styleClass="btn-secondary" onAction="#volver"/>
     </HBox>
 </VBox>
-

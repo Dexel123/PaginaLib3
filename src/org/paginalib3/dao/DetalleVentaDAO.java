@@ -7,4 +7,5 @@ import java.util.List;
 public interface DetalleVentaDAO {
 
     List<DetalleVenta> listarPorVenta(int idVenta) throws SQLException;
+    
 }

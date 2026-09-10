@@ -9,30 +9,21 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane xmlns="http://javafx.com/javafx/21"
-           xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="org.paginalib3.controller.LoginController"
+<StackPane xmlns="http://javafx.com/javafx/21" 
+           xmlns:fx="http://javafx.com/fxml/1" 
+           fx:controller="org.paginalib3.controller.LoginController" 
            styleClass="root">
     <padding>
         <Insets top="30" right="30" bottom="30" left="30"/>
     </padding>
-
     <VBox alignment="CENTER" maxWidth="420" spacing="12" styleClass="card">
         <Label text="PAGINA-LIBRERIA" style="-fx-text-fill:#6C5CE7; -fx-font-size:28px; -fx-font-weight:bold;"/>
         <Label text="Bienvenido" styleClass="title-label"/>
         <Label text="Ingresa a tu cuenta para continuar" styleClass="subtitle-label"/>
-
         <TextField fx:id="txtUsuario" promptText="Usuario"/>
         <PasswordField fx:id="txtPassword" promptText="Contraseña" onAction="#autenticar"/>
-
         <Button text="Iniciar sesión" maxWidth="Infinity" styleClass="btn-primary" onAction="#autenticar"/>
-        <Button fx:id="btnCambiarContrasena" text="Cambiar contraseña (3 intentos fallidos)"
-                maxWidth="Infinity" styleClass="btn-secondary" onAction="#irACambiarContrasena"/>
-
-        <HBox spacing="10" alignment="CENTER">
-            <Button text="Registrarme" styleClass="btn-secondary" onAction="#irARegistro"/>
-        </HBox>
-
+        <Button fx:id="btnCambiarContrasena" text="Cambiar contraseña (3 intentos fallidos)" maxWidth="Infinity" styleClass="btn-secondary" onAction="#irACambiarContrasena"/>
         <Label fx:id="lblEstado" styleClass="error-label" wrapText="true"/>
     </VBox>
 </StackPane>
