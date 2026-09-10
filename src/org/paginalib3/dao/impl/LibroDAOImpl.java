@@ -53,7 +53,7 @@ public class LibroDAOImpl implements LibroDAO {
     private Libro map(ResultSet r) throws SQLException {
         return new Libro(
             r.getString("isbn"),
-            r.getString("titulo"),
+            r.getString("título"),
             r.getDouble("precio"),
             r.getInt("stock_actual"),
             r.getInt("stock_minimo"),
