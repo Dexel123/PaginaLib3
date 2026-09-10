@@ -131,3 +131,16 @@ public class VentaController {
         try { refrescarTotales(); }
         catch (Exception e) { lblEstado.setText(e.getMessage()); }
     }
+
+    private void refrescarCarrito() { tblCarrito.setItems(FXCollections.observableArrayList(carrito)); refrescarTotales(); }
+
+    private void refrescarTotales() {
+        double subtotal = calcularSubtotal();
+        double descuento = 0;
+        try { descuento = calcularDescuento(subtotal); } catch (Exception ignored) { }
+        lblSubtotal.setText(String.format("Q%.2f", subtotal));
+        lblDescuento.setText(String.format("Q%.2f", descuento));
+        lblTotal.setText(String.format("Q%.2f", subtotal - descuento));
+    }
+
+    
