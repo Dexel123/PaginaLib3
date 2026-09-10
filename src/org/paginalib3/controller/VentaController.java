@@ -174,4 +174,14 @@ public class VentaController {
         Usuario admin = usuarioDAO.iniciarSesion(username, Seguridad.sha256(password));
         if (admin == null || !"admin".equalsIgnoreCase(admin.getRol())) throw new IllegalArgumentException("La autorización no corresponde a un administrador activo.");
         return admin.getId();
-  
+    }
+
+    @FXML private void limpiar() {
+        carrito.clear(); txtCuiCliente.clear(); cmbCliente.getSelectionModel().clearSelection(); txtCantidad.setText("1");
+        txtDescuento.clear(); txtUsuarioAutoriza.clear(); txtClaveAutoriza.clear(); cmbTipoDescuento.setValue("MONTO"); refrescarCarrito();
+    }
+
+    @FXML private void volver() { Main.cambiarVista("/org/paginalib3/view/dashboard_cajero.fxml", "Pagina-Libreria | Dashboard Caja", 1100, 680); }
+
+    private void alert(Alert.AlertType t, String m) { new Alert(t, m, ButtonType.OK).showAndWait(); }
+}
