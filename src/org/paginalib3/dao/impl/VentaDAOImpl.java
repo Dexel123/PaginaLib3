@@ -16,7 +16,6 @@ import org.paginalib3.model.Venta;
 import org.paginalib3.util.Conexion;
 
 public class VentaDAOImpl implements VentaDAO {
-
     private static final Logger LOG = Logger.getLogger(VentaDAOImpl.class.getName());
 
     @Override
@@ -42,7 +41,8 @@ public class VentaDAOImpl implements VentaDAO {
         }
         json.append(']');
 
-        try (Connection c = Conexion.getInstancia().conectar(); CallableStatement s = c.prepareCall("{CALL sp_registrar_venta(?,?,?,?,?,?)}")) {
+        try (Connection c = Conexion.getInstancia().conectar();
+             CallableStatement s = c.prepareCall("{CALL sp_registrar_venta(?,?,?,?,?,?)}")) {
             s.setInt(1, venta.getIdUsuario());
             if (venta.getCuiCliente() == null || venta.getCuiCliente().isBlank()) {
                 s.setNull(2, Types.BIGINT);
@@ -69,12 +69,11 @@ public class VentaDAOImpl implements VentaDAO {
 
     @Override
     public Venta buscarPorId(int id) throws SQLException {
-        try (Connection c = Conexion.getInstancia().conectar(); CallableStatement s = c.prepareCall("{CALL sp_buscarventa(?)}")) {
+        try (Connection c = Conexion.getInstancia().conectar();
+             CallableStatement s = c.prepareCall("{CALL sp_buscarventa(?)}")) {
             s.setInt(1, id);
             try (ResultSet r = s.executeQuery()) {
-                if (r.next()) {
-                    return map(r);
-                }
+                if (r.next()) return map(r);
             }
         }
         return null;
