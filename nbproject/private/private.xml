@@ -3,16 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/joaquinsanchez/lib3/PaginaLib3/src/org/paginalib3/dao/.gitkeep</file>
-            <file>file:/C:/joaquinsanchez/lib3/PaginaLib3/src/org/paginalib3/controller/.gitkeep</file>
-            <file>file:/C:/joaquinsanchez/lib3/PaginaLib3/src/org/paginalib3/dao/impl/.gitkeep</file>
-            <file>file:/C:/joaquinsanchez/lib3/PaginaLib3/src/org/paginalib3/model/.gitkeep</file>
-            <file>file:/C:/joaquinsanchez/lib3/PaginaLib3/src/org/paginalib3/util/.gitkeep</file>
-            <file>file:/C:/joaquinsanchez/lib3/PaginaLib3/src/org/paginalib3/view/.gitkeep</file>
-            <file>file:/C:/joaquinsanchez/lib3/PaginaLib3/src/org/paginalib3/util/Conexion.java</file>
-            <file>file:/C:/joaquinsanchez/lib3/PaginaLib3/.gitignore</file>
-            <file>file:/C:/joaquinsanchez/lib3/PaginaLib3/db.properties.example</file>
-            <file>file:/C:/joaquinsanchez/lib3/PaginaLib3/nbproject/db.properties</file>
+            <file>file:/C:/JoaquinSanchez/bim_cuatro/sprint2/PaginaLib3/src/org/paginalib3/controller/UsuariosController.java</file>
+            <file>file:/C:/JoaquinSanchez/bim_cuatro/sprint2/PaginaLib3/src/db.properties</file>
+            <file>file:/C:/JoaquinSanchez/bim_cuatro/sprint2/PaginaLib3/src/org/paginalib3/controller/UsuarioFormController.java</file>
+            <file>file:/C:/JoaquinSanchez/bim_cuatro/sprint2/PaginaLib3/src/org/paginalib3/controller/RegistroController.java</file>
         </group>
     </open-files>
 </project-private>
