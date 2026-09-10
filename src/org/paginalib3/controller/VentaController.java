@@ -165,4 +165,13 @@ public class VentaController {
             Main.cambiarVista("/org/paginalib3/view/comprobante.fxml", "Pagina-Libreria | Comprobante", 900, 760);
             Main.configurarVistaActual(x -> { if (x instanceof ComprobanteController c) c.cargarVenta(id); });
         } catch (Exception e) { alert(Alert.AlertType.ERROR, "No se pudo registrar la venta: " + e.getMessage()); }
+    }
+
+    private int validarAutorizacionAdmin() throws Exception {
+        String username = txtUsuarioAutoriza.getText() == null ? "" : txtUsuarioAutoriza.getText().trim();
+        String password = txtClaveAutoriza.getText() == null ? "" : txtClaveAutoriza.getText();
+        if (username.isBlank() || password.isBlank()) throw new IllegalArgumentException("Un descuento requiere usuario y contraseña de administrador.");
+        Usuario admin = usuarioDAO.iniciarSesion(username, Seguridad.sha256(password));
+        if (admin == null || !"admin".equalsIgnoreCase(admin.getRol())) throw new IllegalArgumentException("La autorización no corresponde a un administrador activo.");
+        return admin.getId();
   
