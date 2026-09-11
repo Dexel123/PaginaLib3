@@ -28,7 +28,7 @@
             </VBox>
             <Label text="INVENTARIO" style="-fx-text-fill:#CDB7A5; -fx-font-size:10px; -fx-font-weight:bold;"/>
             <Button text="  INICIO" maxWidth="Infinity" alignment="CENTER_LEFT" style="-fx-background-color:#D9A441; -fx-text-fill:#3B1720; -fx-font-size:13px; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:12 14; -fx-cursor:hand;"/>
-            <Button text="  INVENTARIO" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#accionProximamente" style="-fx-background-color:#7A2938; -fx-text-fill:#FFF8EF; -fx-font-size:13px; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:12 14; -fx-cursor:hand;"/>
+            <Button text="  INVENTARIO" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#irASalidaInventario" style="-fx-background-color:#7A2938; -fx-text-fill:#FFF8EF; -fx-font-size:13px; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:12 14; -fx-cursor:hand;"/>
             <Region VBox.vgrow="ALWAYS"/>
             <Button text="Cambiar contraseña" maxWidth="Infinity" onAction="#irACambiarContrasena" style="-fx-background-color:#EFE4D6; -fx-text-fill:#5A3039; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:11 14; -fx-cursor:hand;"/>
             <Button text="Cerrar sesión" maxWidth="Infinity" onAction="#cerrarSesion" style="-fx-background-color:#8F3D45; -fx-text-fill:#FFF8EF; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:11 14; -fx-cursor:hand;"/>
@@ -65,7 +65,7 @@
                 <Label text="Accesos principales" style="-fx-text-fill:#3B1720; -fx-font-size:17px; -fx-font-weight:bold;"/>
                 <Label text="Consulta y controla las opciones disponibles para el área de inventario." wrapText="true" style="-fx-text-fill:#765F55; -fx-font-size:12px;"/>
                 <HBox spacing="10">
-                    <Button text="Inventario" HBox.hgrow="ALWAYS" onAction="#accionProximamente" style="-fx-background-color:#7A2938; -fx-text-fill:#FFF8EF; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:11 14; -fx-cursor:hand;"/>
+                    <Button text="Inventario" HBox.hgrow="ALWAYS" onAction="#irASalidaInventario" style="-fx-background-color:#7A2938; -fx-text-fill:#FFF8EF; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:11 14; -fx-cursor:hand;"/>
                     <Button text="Cambiar contraseña" HBox.hgrow="ALWAYS" onAction="#irACambiarContrasena" style="-fx-background-color:#D9A441; -fx-text-fill:#3B1720; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:11 14; -fx-cursor:hand;"/>
                 </HBox>
             </VBox>
