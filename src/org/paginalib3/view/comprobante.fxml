@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane styleClass="root" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.paginalib3.controller.ComprobanteController">
+    <center>
+        <VBox alignment="TOP_CENTER" spacing="14">
+            <padding><Insets bottom="16" left="32" right="32" top="24" /></padding>
+            <VBox fx:id="comprobante" maxWidth="760" spacing="12" styleClass="card">
+                <Label styleClass="title-label" text="PAGINA-LIBRERIA" />
+                <Label styleClass="section-label" text="COMPROBANTE DE VENTA" />
+                <HBox spacing="28">
+                    <VBox spacing="3" HBox.hgrow="ALWAYS"><Label styleClass="subtitle-label" text="Número" /><Label fx:id="lblVenta" styleClass="metric-value" /></VBox>
+                    <VBox spacing="3" HBox.hgrow="ALWAYS"><Label styleClass="subtitle-label" text="Fecha" /><Label fx:id="lblFecha" /></VBox>
+                    <VBox spacing="3" HBox.hgrow="ALWAYS"><Label styleClass="subtitle-label" text="Estado" /><Label fx:id="lblEstado" /></VBox>
+                </HBox>
+                <Separator />
+                <HBox spacing="28">
+                    <VBox spacing="3" HBox.hgrow="ALWAYS"><Label styleClass="subtitle-label" text="Cliente" /><Label fx:id="lblCliente" /></VBox>
+                    <VBox spacing="3" HBox.hgrow="ALWAYS"><Label styleClass="subtitle-label" text="Cajero" /><Label fx:id="lblCajero" /></VBox>
+                </HBox>
+                <Label styleClass="section-label" text="DETALLE DE LA VENTA" />
+                <TableView fx:id="tablaDetalles" minHeight="220" prefHeight="300">
+                    <columns>
+                        <TableColumn fx:id="colIsbn" prefWidth="300" text="ISBN" />
+                        <TableColumn fx:id="colCantidad" prefWidth="80" text="Cant." />
+                        <TableColumn fx:id="colPrecio" prefWidth="130" text="Precio unit." />
+                        <TableColumn fx:id="colImporte" prefWidth="130" text="Importe" />
+                    </columns>
+                </TableView>
+                <VBox alignment="CENTER_RIGHT" spacing="7">
+                    <HBox alignment="CENTER_RIGHT" spacing="18"><Label styleClass="subtitle-label" text="Subtotal" /><Label fx:id="lblSubtotal" alignment="CENTER_RIGHT" minWidth="110" /></HBox>
+                    <HBox alignment="CENTER_RIGHT" spacing="18"><Label styleClass="subtitle-label" text="Descuento" /><Label fx:id="lblDescuento" alignment="CENTER_RIGHT" minWidth="110" /></HBox>
+                    <Separator maxWidth="230" />
+                    <HBox alignment="CENTER_RIGHT" spacing="18"><Label styleClass="section-label" text="TOTAL" /><Label fx:id="lblTotal" alignment="CENTER_RIGHT" minWidth="110" styleClass="metric-value" /></HBox>
+                </VBox>
+                <Label styleClass="subtitle-label" text="Gracias por su compra." />
+            </VBox>
+        </VBox>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER_RIGHT" spacing="10">
+            <padding><Insets bottom="20" left="24" right="24" top="8" /></padding>
+            <Label fx:id="lblMensaje" HBox.hgrow="ALWAYS" />
+            <Button onAction="#nuevaVenta" styleClass="btn-secondary" text="Nueva venta" />
+            <Button onAction="#volver" styleClass="btn-secondary" text="Volver" />
+        </HBox>
+    </bottom>
+</BorderPane>

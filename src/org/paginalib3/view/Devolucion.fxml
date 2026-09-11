@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.paginalib3.controller.DevolucionController" styleClass="root">
+    <center>
+        <VBox spacing="14">
+            <padding><Insets top="28" right="30" bottom="20" left="30"/></padding>
+            <Label text="Anulación y devolución de ventas" styleClass="title-label"/>
+            <Label text="Selecciona una venta reciente. La operación conserva la trazabilidad y restaura el stock." styleClass="subtitle-label"/>
+            <TableView fx:id="tblVentas" VBox.vgrow="ALWAYS" onMouseClicked="#seleccionarVenta">
+                <columns>
+                    <TableColumn fx:id="colId" text="# Venta" prefWidth="120"/>
+                    <TableColumn fx:id="colEstado" text="Estado" prefWidth="180"/>
+                    <TableColumn fx:id="colTotal" text="Total" prefWidth="160"/>
+                </columns>
+            </TableView>
+            <HBox spacing="10">
+                <Label text="Venta:"/><TextField fx:id="txtIdVenta" prefWidth="110"/>
+                <Label text="Operación:"/><ComboBox fx:id="cmbOperacion" prefWidth="130"/>
+                <Button text="Actualizar" styleClass="btn-secondary" onAction="#cargarRecientes"/>
+            </HBox>
+            <TextArea fx:id="txtMotivo" promptText="Motivo obligatorio" prefRowCount="3" wrapText="true"/>
+            <Label fx:id="lblEstado" styleClass="subtitle-label"/>
+            <HBox alignment="CENTER_RIGHT" spacing="10">
+                <Button text="Ejecutar" styleClass="btn-primary" onAction="#ejecutar"/>
+                <Button text="Volver" styleClass="btn-secondary" onAction="#volver"/>
+            </HBox>
+        </VBox>
+    </center>
+</BorderPane>
+
