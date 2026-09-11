@@ -14,6 +14,7 @@ import org.paginalib3.system.Main;
 import org.paginalib3.dao.UsuarioDAO;
 import org.paginalib3.dao.impl.UsuarioDAOImpl;
 import org.paginalib3.model.Usuario;
+import org.paginalib3.util.Sesion;
 
 import java.io.IOException;
 import java.net.URL;
@@ -23,7 +24,7 @@ import java.util.function.Function;
 public class UsuariosController {
 
     private final UsuarioDAO usuarioDAO = new UsuarioDAOImpl();
-
+    
     @FXML
     private TableView<Usuario> tablaUsuarios;
     @FXML
@@ -34,31 +35,57 @@ public class UsuariosController {
     private TableColumn<Usuario, String> colRol;
     @FXML
     private TableColumn<Usuario, String> colEstado;
-
     @FXML
     private void initialize() {
-        colUsername.setCellValueFactory(data -> texto(data.getValue(), Usuario::getUsername));
-        colNombre.setCellValueFactory(data -> texto(data.getValue(), Usuario::getNombreCompleto));
-        colRol.setCellValueFactory(data -> texto(data.getValue(), Usuario::getRol));
-        colEstado.setCellValueFactory(data -> texto(data.getValue(), Usuario::getEstadoTexto));
+        colUsername.setCellValueFactory(
+                data -> texto(data.getValue(), Usuario::getUsername)
+        );
+
+        colNombre.setCellValueFactory(
+                data -> texto(data.getValue(), Usuario::getNombreCompleto)
+        );
+
+        colRol.setCellValueFactory(
+                data -> texto(data.getValue(), Usuario::getRol)
+        );
+
+        colEstado.setCellValueFactory(
+                data -> texto(data.getValue(), Usuario::getEstadoTexto)
+        );
+
         cargar();
     }
 
-    private javafx.beans.property.SimpleStringProperty texto(Usuario u, Function<Usuario, String> fn) {
-        return new javafx.beans.property.SimpleStringProperty(fn.apply(u));
+    private javafx.beans.property.SimpleStringProperty texto(
+            Usuario u,
+            Function<Usuario, String> fn) {
+
+        return new javafx.beans.property.SimpleStringProperty(
+                fn.apply(u)
+        );
     }
 
     private void cargar() {
         try {
-            tablaUsuarios.setItems(FXCollections.observableArrayList(usuarioDAO.listar()));
+            tablaUsuarios.setItems(
+                    FXCollections.observableArrayList(
+                            usuarioDAO.listar()
+                    )
+            );
         } catch (Exception ex) {
-            alerta(Alert.AlertType.ERROR, "Error de conexion", ex.getMessage());
+            alerta(
+                    Alert.AlertType.ERROR,
+                    "Error de conexion",
+                    ex.getMessage()
+            );
         }
     }
 
     @FXML
     private void registrar() {
-        UsuarioFormController controller = abrirFormularioUsuario("Registrar usuario");
+        UsuarioFormController controller =
+                abrirFormularioUsuario("Registrar usuario");
+
         if (controller != null) {
             controller.initModoRegistro();
             controller.setOnGuardadoExitoso(this::cargar);
@@ -68,10 +95,14 @@ public class UsuariosController {
     @FXML
     private void editar() {
         Usuario seleccionado = seleccionado();
+
         if (seleccionado == null) {
             return;
         }
-        UsuarioFormController controller = abrirFormularioUsuario("Editar usuario");
+
+        UsuarioFormController controller =
+                abrirFormularioUsuario("Editar usuario");
+
         if (controller != null) {
             controller.initModoEdicion(seleccionado);
             controller.setOnGuardadoExitoso(this::cargar);
@@ -81,83 +112,221 @@ public class UsuariosController {
     @FXML
     private void cambiarRol() {
         Usuario seleccionado = seleccionado();
+
         if (seleccionado == null) {
             return;
         }
+
         try {
-            URL url = getClass().getResource("/org/paginalib3/view/cambiar_rol.fxml");
+            URL url = getClass().getResource(
+                    "/org/paginalib3/view/cambiar_rol.fxml"
+            );
+
             FXMLLoader loader = new FXMLLoader(url);
             Parent root = loader.load();
 
-            CambiarRolController controller = loader.getController();
+            CambiarRolController controller =
+                    loader.getController();
+
             controller.init(seleccionado);
             controller.setOnGuardadoExitoso(this::cargar);
 
-            mostrarVentanaModal(root, "Cambiar rol");
+            mostrarVentanaModal(
+                    root,
+                    "Cambiar rol"
+            );
+
         } catch (IOException ex) {
-            alerta(Alert.AlertType.ERROR, "Error", "No se pudo abrir la ventana: " + ex.getMessage());
+            alerta(
+                    Alert.AlertType.ERROR,
+                    "Error",
+                    "No se pudo abrir la ventana: "
+                    + ex.getMessage()
+            );
         }
     }
 
     @FXML
     private void cambiarEstado() {
+
         Usuario u = seleccionado();
+
         if (u == null) {
             return;
         }
+
+        if (u.isActivo()) {
+
+        
+            if ("admin".equalsIgnoreCase(u.getRol())) {
+
+                alerta(
+                        Alert.AlertType.WARNING,
+                        "Acción no permitida",
+                        "No puedes desactivar administrador."
+                );
+
+                return;
+            }
+
+            
+            Usuario usuarioActual =
+                    Sesion.getUsuarioActual();
+
+            if (usuarioActual != null
+                    && usuarioActual.getId() == u.getId()) {
+
+                alerta(
+                        Alert.AlertType.WARNING,
+                        "Acción no permitida",
+                        "No puedes desactivarte a ti mismo."
+                );
+
+                return;
+            }
+        }
+
+     
         try {
-            usuarioDAO.cambiarEstado(u.getId(), !u.isActivo());
+
+            boolean nuevoEstado = !u.isActivo();
+
+            usuarioDAO.cambiarEstado(
+                    u.getId(),
+                    nuevoEstado
+            );
+
             cargar();
+
+            String estado =
+                    nuevoEstado
+                            ? "activado"
+                            : "desactivado";
+
+            alerta(
+                    Alert.AlertType.INFORMATION,
+                    "Estado actualizado",
+                    "El usuario '"
+                    + u.getUsername()
+                    + "' fue "
+                    + estado
+                    + " correctamente."
+            );
+
         } catch (Exception ex) {
-            alerta(Alert.AlertType.ERROR, "Error", ex.getMessage());
+
+            alerta(
+                    Alert.AlertType.ERROR,
+                    "Error",
+                    ex.getMessage() == null
+                            ? "No se pudo cambiar el estado del usuario."
+                            : ex.getMessage()
+            );
         }
     }
 
     @FXML
     private void volver() {
-        Main.cambiarVista("/org/paginalib3/view/dashboard_admin.fxml",
-                "Pagina-Libreria | Dashboard Administrador", 1100, 680);
+        Main.cambiarVista(
+                "/org/paginalib3/view/dashboard_admin.fxml",
+                "Pagina-Libreria | Dashboard Administrador",
+                1100,
+                680
+        );
     }
 
-    private UsuarioFormController abrirFormularioUsuario(String titulo) {
+    private UsuarioFormController abrirFormularioUsuario(
+            String titulo) {
+
         try {
-            URL url = getClass().getResource("/org/paginalib3/view/usuario_form.fxml");
+
+            URL url = getClass().getResource(
+                    "/org/paginalib3/view/usuario_form.fxml"
+            );
+
             FXMLLoader loader = new FXMLLoader(url);
             Parent root = loader.load();
-            mostrarVentanaModal(root, titulo);
+
+            mostrarVentanaModal(
+                    root,
+                    titulo
+            );
+
             return loader.getController();
+
         } catch (IOException ex) {
-            alerta(Alert.AlertType.ERROR, "Error", "No se pudo abrir la ventana: " + ex.getMessage());
+
+            alerta(
+                    Alert.AlertType.ERROR,
+                    "Error",
+                    "No se pudo abrir la ventana: "
+                    + ex.getMessage()
+            );
+
             return null;
         }
     }
 
-    private void mostrarVentanaModal(Parent root, String titulo) {
+    private void mostrarVentanaModal(
+            Parent root,
+            String titulo) {
+
         Stage ventana = new Stage();
-        ventana.initModality(Modality.APPLICATION_MODAL);
+
+        ventana.initModality(
+                Modality.APPLICATION_MODAL
+        );
+
         ventana.setTitle(titulo);
-        Scene escena = new Scene(root, 380, 460);
-        URL css = getClass().getResource("/org/paginalib3/view/styles.css");
+
+        Scene escena =
+                new Scene(root, 380, 460);
+
+        URL css = getClass().getResource(
+                "/org/paginalib3/view/styles.css"
+        );
+
         if (css != null) {
-            escena.getStylesheets().add(css.toExternalForm());
+            escena.getStylesheets().add(
+                    css.toExternalForm()
+            );
         }
+
         ventana.setScene(escena);
         ventana.showAndWait();
     }
 
     private Usuario seleccionado() {
-        Usuario u = tablaUsuarios.getSelectionModel().getSelectedItem();
+
+        Usuario u =
+                tablaUsuarios
+                        .getSelectionModel()
+                        .getSelectedItem();
+
         if (u == null) {
-            alerta(Alert.AlertType.WARNING, "Selecciona un usuario", "Debes seleccionar una fila.");
+
+            alerta(
+                    Alert.AlertType.WARNING,
+                    "Selecciona un usuario",
+                    "Debes seleccionar una fila."
+            );
         }
+
         return u;
     }
 
-    private void alerta(Alert.AlertType tipo, String titulo, String mensaje) {
+    private void alerta(
+            Alert.AlertType tipo,
+            String titulo,
+            String mensaje) {
+
         Alert a = new Alert(tipo);
+
         a.setTitle(titulo);
         a.setHeaderText(null);
         a.setContentText(mensaje);
+
         a.showAndWait();
     }
+
 }
