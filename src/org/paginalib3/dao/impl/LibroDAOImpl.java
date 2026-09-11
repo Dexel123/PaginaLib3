@@ -23,6 +23,19 @@ public class LibroDAOImpl implements LibroDAO {
     }
 
     @Override
+    public List<Libro> listarStockDisponible() throws SQLException {
+        List<Libro> l = new ArrayList<>();
+        try (Connection c = Conexion.getInstancia().conectar();
+             CallableStatement s = c.prepareCall("{CALL sp_consultar_stock_disponible()}");
+             ResultSet r = s.executeQuery()) {
+            while (r.next()) {
+                l.add(map(r));
+            }
+        }
+        return l;
+    }
+
+    @Override
     public List<Libro> buscar(String texto) throws SQLException {
         List<Libro> l = new ArrayList<>();
         String t = texto == null ? "" : texto.trim();
