@@ -7,20 +7,34 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.paginalib3.controller.UsuarioFormController" spacing="12" styleClass="root">
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.paginalib3.controller.UsuarioFormController" spacing="12"
+      style="-fx-background-color:#F7F1E8; -fx-font-family:'Segoe UI';">
    <padding>
       <Insets top="26" right="26" bottom="26" left="26"/>
    </padding>
-   <Label fx:id="lblTitulo" text="Registrar usuario" styleClass="title-label"/>
-   <TextField fx:id="txtUsername" promptText="Usuario"/>
-   <PasswordField fx:id="txtPassword" promptText="Contrasena"/>
-   <TextField fx:id="txtNombre" promptText="Nombre"/>
-   <TextField fx:id="txtApellido" promptText="Apellido"/>
-   <TextField fx:id="txtCorreo" promptText="Correo"/>
-   <ComboBox fx:id="cmbRol" maxWidth="Infinity" promptText="Rol"/>
-   <Label fx:id="lblEstado" styleClass="error-label" wrapText="true"/>
-   <HBox spacing="10">
-      <Button text="Guardar" styleClass="btn-primary" onAction="#guardar"/>
-      <Button text="Cancelar" styleClass="btn-secondary" onAction="#cancelar"/>
-   </HBox>
+   <VBox spacing="12"
+         style="-fx-background-color:#FFFDF9; -fx-background-radius:14; -fx-border-color:#E5D8C8; -fx-border-radius:14; -fx-padding:20;">
+      <Label fx:id="lblTitulo" text="Registrar usuario" style="-fx-text-fill:#3B1720; -fx-font-size:22px; -fx-font-weight:bold;"/>
+      <Label text="Datos de la cuenta" style="-fx-text-fill:#765F55; -fx-font-size:13px;"/>
+      <TextField fx:id="txtUsername" promptText="Usuario"
+                 style="-fx-background-color:#F6EFE5; -fx-background-radius:9; -fx-border-color:#E5D8C8; -fx-border-radius:9; -fx-pref-height:38;"/>
+      <PasswordField fx:id="txtPassword" promptText="Contrasena"
+                 style="-fx-background-color:#F6EFE5; -fx-background-radius:9; -fx-border-color:#E5D8C8; -fx-border-radius:9; -fx-pref-height:38;"/>
+      <TextField fx:id="txtNombre" promptText="Nombre"
+                 style="-fx-background-color:#F6EFE5; -fx-background-radius:9; -fx-border-color:#E5D8C8; -fx-border-radius:9; -fx-pref-height:38;"/>
+      <TextField fx:id="txtApellido" promptText="Apellido"
+                 style="-fx-background-color:#F6EFE5; -fx-background-radius:9; -fx-border-color:#E5D8C8; -fx-border-radius:9; -fx-pref-height:38;"/>
+      <TextField fx:id="txtCorreo" promptText="Correo"
+                 style="-fx-background-color:#F6EFE5; -fx-background-radius:9; -fx-border-color:#E5D8C8; -fx-border-radius:9; -fx-pref-height:38;"/>
+      <ComboBox fx:id="cmbRol" maxWidth="Infinity" promptText="Rol"
+                 style="-fx-background-color:#F6EFE5; -fx-background-radius:9; -fx-border-color:#E5D8C8; -fx-border-radius:9; -fx-pref-height:38;"/>
+      <Label fx:id="lblEstado" style="-fx-text-fill:#D9534F; -fx-font-weight:bold;" wrapText="true"/>
+      <HBox spacing="10">
+         <Button text="Guardar" onAction="#guardar"
+                 style="-fx-background-color:#7A2938; -fx-text-fill:#FFF8EF; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:11 14; -fx-cursor:hand;"/>
+         <Button text="Cancelar" onAction="#cancelar"
+                 style="-fx-background-color:#EFE4D6; -fx-text-fill:#5A3039; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:10 12; -fx-cursor:hand;"/>
+      </HBox>
+   </VBox>
 </VBox>

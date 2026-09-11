@@ -6,27 +6,35 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox xmlns="http://javafx.com/javafx/21" 
-      xmlns:fx="http://javafx.com/fxml/1" 
-      fx:controller="org.paginalib3.controller.RestablecerContrasenaController" 
-      alignment="CENTER" 
-      spacing="12" 
-      styleClass="root">
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.paginalib3.controller.RestablecerContrasenaController"
+      alignment="CENTER"
+      spacing="12"
+      style="-fx-background-color:#F7F1E8; -fx-font-family:'Segoe UI';">
     <padding>
         <Insets top="30" right="30" bottom="30" left="30"/>
     </padding>
-    <VBox maxWidth="420" spacing="12" styleClass="card">
-        <Label text="Cambiar contraseña" styleClass="title-label"/>
-        <Label text="Se habilitó este cambio después de 3 intentos fallidos." styleClass="subtitle-label"/>
-        <TextField fx:id="txtUsuario" promptText="Usuario"/>
-        <PasswordField fx:id="txtNueva" promptText="Nueva contraseña"/>
-        <PasswordField fx:id="txtConfirmar" promptText="Confirmar nueva contraseña"/>
-        <Label fx:id="lblEstado" styleClass="error-label" wrapText="true"/>
+    <VBox maxWidth="420" spacing="12"
+          style="-fx-background-color:#FFFDF9; -fx-background-radius:18; -fx-border-color:#E5D8C8; -fx-border-radius:18; -fx-padding:26;">
+        <Label text="Cambiar contraseña" style="-fx-text-fill:#3B1720; -fx-font-size:24px; -fx-font-weight:bold;"/>
+        <Label text="Se habilitó este cambio después de 3 intentos fallidos." style="-fx-text-fill:#765F55; -fx-font-size:13px;"/>
+        <Region prefHeight="4"/>
+        <TextField fx:id="txtUsuario" promptText="Usuario"
+                   style="-fx-background-color:#F6EFE5; -fx-background-radius:9; -fx-border-color:#E5D8C8; -fx-border-radius:9; -fx-pref-height:40;"/>
+        <PasswordField fx:id="txtNueva" promptText="Nueva contraseña"
+                   style="-fx-background-color:#F6EFE5; -fx-background-radius:9; -fx-border-color:#E5D8C8; -fx-border-radius:9; -fx-pref-height:40;"/>
+        <PasswordField fx:id="txtConfirmar" promptText="Confirmar nueva contraseña"
+                   style="-fx-background-color:#F6EFE5; -fx-background-radius:9; -fx-border-color:#E5D8C8; -fx-border-radius:9; -fx-pref-height:40;"/>
+        <Label fx:id="lblEstado" style="-fx-text-fill:#D9534F; -fx-font-weight:bold;" wrapText="true"/>
         <HBox spacing="10">
-            <Button text="Guardar contraseña" styleClass="btn-primary" onAction="#guardar"/>
-            <Button text="Cancelar" styleClass="btn-secondary" onAction="#cancelar"/>
+            <Button text="Guardar contraseña" onAction="#guardar"
+                    style="-fx-background-color:#7A2938; -fx-text-fill:#FFF8EF; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:11 14; -fx-cursor:hand;"/>
+            <Button text="Cancelar" onAction="#cancelar"
+                    style="-fx-background-color:#EFE4D6; -fx-text-fill:#5A3039; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:10 12; -fx-cursor:hand;"/>
         </HBox>
     </VBox>
 </VBox>

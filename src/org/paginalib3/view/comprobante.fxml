@@ -10,25 +10,44 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane styleClass="root" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.paginalib3.controller.ComprobanteController">
+<BorderPane xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.paginalib3.controller.ComprobanteController"
+            style="-fx-background-color:#F7F1E8; -fx-font-family:'Segoe UI';">
     <center>
         <VBox alignment="TOP_CENTER" spacing="14">
             <padding><Insets bottom="16" left="32" right="32" top="24" /></padding>
-            <VBox fx:id="comprobante" maxWidth="760" spacing="12" styleClass="card">
-                <Label styleClass="title-label" text="PAGINA-LIBRERIA" />
-                <Label styleClass="section-label" text="COMPROBANTE DE VENTA" />
+            <VBox fx:id="comprobante" maxWidth="760" spacing="12"
+                  style="-fx-background-color:#FFFDF9; -fx-background-radius:18; -fx-border-color:#E5D8C8; -fx-border-radius:18; -fx-padding:26;">
+                <Label text="PAGINA-LIBRERIA" style="-fx-text-fill:#3B1720; -fx-font-size:26px; -fx-font-weight:bold;" />
+                <Label text="COMPROBANTE DE VENTA" style="-fx-text-fill:#D9A441; -fx-font-size:16px; -fx-font-weight:bold;" />
                 <HBox spacing="28">
-                    <VBox spacing="3" HBox.hgrow="ALWAYS"><Label styleClass="subtitle-label" text="Número" /><Label fx:id="lblVenta" styleClass="metric-value" /></VBox>
-                    <VBox spacing="3" HBox.hgrow="ALWAYS"><Label styleClass="subtitle-label" text="Fecha" /><Label fx:id="lblFecha" /></VBox>
-                    <VBox spacing="3" HBox.hgrow="ALWAYS"><Label styleClass="subtitle-label" text="Estado" /><Label fx:id="lblEstado" /></VBox>
+                    <VBox spacing="3" HBox.hgrow="ALWAYS">
+                        <Label style="-fx-text-fill:#765F55; -fx-font-size:11px;" text="Número" />
+                        <Label fx:id="lblVenta" style="-fx-text-fill:#7A2938; -fx-font-size:17px; -fx-font-weight:bold;" />
+                    </VBox>
+                    <VBox spacing="3" HBox.hgrow="ALWAYS">
+                        <Label style="-fx-text-fill:#765F55; -fx-font-size:11px;" text="Fecha" />
+                        <Label fx:id="lblFecha" style="-fx-text-fill:#3B1720; -fx-font-size:14px;" />
+                    </VBox>
+                    <VBox spacing="3" HBox.hgrow="ALWAYS">
+                        <Label style="-fx-text-fill:#765F55; -fx-font-size:11px;" text="Estado" />
+                        <Label fx:id="lblEstado" style="-fx-text-fill:#3B1720; -fx-font-size:14px;" />
+                    </VBox>
                 </HBox>
                 <Separator />
                 <HBox spacing="28">
-                    <VBox spacing="3" HBox.hgrow="ALWAYS"><Label styleClass="subtitle-label" text="Cliente" /><Label fx:id="lblCliente" /></VBox>
-                    <VBox spacing="3" HBox.hgrow="ALWAYS"><Label styleClass="subtitle-label" text="Cajero" /><Label fx:id="lblCajero" /></VBox>
+                    <VBox spacing="3" HBox.hgrow="ALWAYS">
+                        <Label style="-fx-text-fill:#765F55; -fx-font-size:11px;" text="Cliente" />
+                        <Label fx:id="lblCliente" style="-fx-text-fill:#3B1720; -fx-font-size:14px;" />
+                    </VBox>
+                    <VBox spacing="3" HBox.hgrow="ALWAYS">
+                        <Label style="-fx-text-fill:#765F55; -fx-font-size:11px;" text="Cajero" />
+                        <Label fx:id="lblCajero" style="-fx-text-fill:#3B1720; -fx-font-size:14px;" />
+                    </VBox>
                 </HBox>
-                <Label styleClass="section-label" text="DETALLE DE LA VENTA" />
-                <TableView fx:id="tablaDetalles" minHeight="220" prefHeight="300">
+                <Label text="DETALLE DE LA VENTA" style="-fx-text-fill:#3B1720; -fx-font-size:15px; -fx-font-weight:bold;" />
+                <TableView fx:id="tablaDetalles" minHeight="220" prefHeight="300"
+                           style="-fx-background-color:#FFFDF9; -fx-border-color:#E5D8C8; -fx-border-radius:8;">
                     <columns>
                         <TableColumn fx:id="colIsbn" prefWidth="300" text="ISBN" />
                         <TableColumn fx:id="colCantidad" prefWidth="80" text="Cant." />
@@ -37,21 +56,32 @@
                     </columns>
                 </TableView>
                 <VBox alignment="CENTER_RIGHT" spacing="7">
-                    <HBox alignment="CENTER_RIGHT" spacing="18"><Label styleClass="subtitle-label" text="Subtotal" /><Label fx:id="lblSubtotal" alignment="CENTER_RIGHT" minWidth="110" /></HBox>
-                    <HBox alignment="CENTER_RIGHT" spacing="18"><Label styleClass="subtitle-label" text="Descuento" /><Label fx:id="lblDescuento" alignment="CENTER_RIGHT" minWidth="110" /></HBox>
+                    <HBox alignment="CENTER_RIGHT" spacing="18">
+                        <Label style="-fx-text-fill:#765F55; -fx-font-size:12px;" text="Subtotal" />
+                        <Label fx:id="lblSubtotal" alignment="CENTER_RIGHT" minWidth="110" style="-fx-text-fill:#3B1720; -fx-font-size:14px; -fx-font-weight:bold;" />
+                    </HBox>
+                    <HBox alignment="CENTER_RIGHT" spacing="18">
+                        <Label style="-fx-text-fill:#765F55; -fx-font-size:12px;" text="Descuento" />
+                        <Label fx:id="lblDescuento" alignment="CENTER_RIGHT" minWidth="110" style="-fx-text-fill:#3B1720; -fx-font-size:14px; -fx-font-weight:bold;" />
+                    </HBox>
                     <Separator maxWidth="230" />
-                    <HBox alignment="CENTER_RIGHT" spacing="18"><Label styleClass="section-label" text="TOTAL" /><Label fx:id="lblTotal" alignment="CENTER_RIGHT" minWidth="110" styleClass="metric-value" /></HBox>
+                    <HBox alignment="CENTER_RIGHT" spacing="18">
+                        <Label text="TOTAL" style="-fx-text-fill:#3B1720; -fx-font-size:15px; -fx-font-weight:bold;" />
+                        <Label fx:id="lblTotal" alignment="CENTER_RIGHT" minWidth="110" style="-fx-text-fill:#7A2938; -fx-font-size:19px; -fx-font-weight:bold;" />
+                    </HBox>
                 </VBox>
-                <Label styleClass="subtitle-label" text="Gracias por su compra." />
+                <Label text="Gracias por su compra." style="-fx-text-fill:#765F55; -fx-font-size:12px;" />
             </VBox>
         </VBox>
     </center>
     <bottom>
         <HBox alignment="CENTER_RIGHT" spacing="10">
             <padding><Insets bottom="20" left="24" right="24" top="8" /></padding>
-            <Label fx:id="lblMensaje" HBox.hgrow="ALWAYS" />
-            <Button onAction="#nuevaVenta" styleClass="btn-secondary" text="Nueva venta" />
-            <Button onAction="#volver" styleClass="btn-secondary" text="Volver" />
+            <Label fx:id="lblMensaje" HBox.hgrow="ALWAYS" style="-fx-text-fill:#765F55; -fx-font-size:12px;" />
+            <Button text="Nueva venta" onAction="#nuevaVenta"
+                    style="-fx-background-color:#D9A441; -fx-text-fill:#3B1720; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:10 12; -fx-cursor:hand;" />
+            <Button text="Volver" onAction="#volver"
+                    style="-fx-background-color:#EFE4D6; -fx-text-fill:#5A3039; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:10 12; -fx-cursor:hand;" />
         </HBox>
     </bottom>
 </BorderPane>

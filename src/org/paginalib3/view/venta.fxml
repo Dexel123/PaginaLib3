@@ -2,36 +2,50 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.paginalib3.controller.VentaController" styleClass="root">
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.paginalib3.controller.VentaController"
+            style="-fx-background-color:#F7F1E8; -fx-font-family:'Segoe UI';">
     <top>
-        <VBox spacing="10" styleClass="card">
-            <padding><Insets top="18" right="20" bottom="14" left="20"/></padding>
-            <Label text="Registrar venta" styleClass="title-label"/>
+        <VBox spacing="10"
+              style="-fx-background-color:#FFFDF9; -fx-background-radius:14; -fx-border-color:#E5D8C8; -fx-border-radius:14; -fx-padding:18;">
+            <padding><Insets top="16" right="20" bottom="14" left="20"/></padding>
+            <Label text="Registrar venta" style="-fx-text-fill:#3B1720; -fx-font-size:26px; -fx-font-weight:bold;"/>
             <HBox spacing="8">
-                <TextField fx:id="txtFiltroLibro" promptText="Buscar ISBN, título o autor" HBox.hgrow="ALWAYS" onAction="#buscarLibro"/>
-                <Button text="Buscar" styleClass="btn-primary" onAction="#buscarLibro"/>
-                <TextField fx:id="txtCantidad" prefWidth="90" promptText="Cantidad"/>
+                <TextField fx:id="txtFiltroLibro" promptText="Buscar ISBN, título o autor" HBox.hgrow="ALWAYS" onAction="#buscarLibro"
+                           style="-fx-background-color:#F6EFE5; -fx-background-radius:9; -fx-border-color:#E5D8C8; -fx-border-radius:9; -fx-pref-height:38;"/>
+                <Button text="Buscar" onAction="#buscarLibro"
+                        style="-fx-background-color:#7A2938; -fx-text-fill:#FFF8EF; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:11 14; -fx-cursor:hand;"/>
+                <TextField fx:id="txtCantidad" prefWidth="90" promptText="Cantidad"
+                           style="-fx-background-color:#F6EFE5; -fx-background-radius:9; -fx-border-color:#E5D8C8; -fx-border-radius:9; -fx-pref-height:38;"/>
             </HBox>
             <HBox spacing="8">
-                <ComboBox fx:id="cmbCliente" promptText="Cliente" HBox.hgrow="ALWAYS" onAction="#seleccionarCliente"/>
-                <TextField fx:id="txtCuiCliente" promptText="CUI"/>
-                <Button text="Agregar seleccionado" styleClass="btn-secondary" onAction="#agregar"/>
+                <ComboBox fx:id="cmbCliente" promptText="Cliente" HBox.hgrow="ALWAYS" onAction="#seleccionarCliente"
+                          style="-fx-background-color:#F6EFE5; -fx-background-radius:9; -fx-border-color:#E5D8C8; -fx-border-radius:9; -fx-pref-height:38;"/>
+                <TextField fx:id="txtCuiCliente" promptText="CUI"
+                           style="-fx-background-color:#F6EFE5; -fx-background-radius:9; -fx-border-color:#E5D8C8; -fx-border-radius:9; -fx-pref-height:38;"/>
+                <Button text="Agregar seleccionado" onAction="#agregar"
+                        style="-fx-background-color:#EFE4D6; -fx-text-fill:#5A3039; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:10 12; -fx-cursor:hand;"/>
             </HBox>
             <HBox spacing="8" alignment="CENTER_LEFT">
-                <Label text="Descuento:"/>
-                <ComboBox fx:id="cmbTipoDescuento" prefWidth="125" onAction="#actualizarDescuento"/>
-                <TextField fx:id="txtDescuento" prefWidth="100" promptText="0.00" onKeyReleased="#actualizarDescuento"/>
-                <Label text="Admin:"/>
-                <TextField fx:id="txtUsuarioAutoriza" prefWidth="130" promptText="usuario"/>
-                <PasswordField fx:id="txtClaveAutoriza" prefWidth="130" promptText="contraseña"/>
+                <Label text="Descuento:" style="-fx-text-fill:#765F55; -fx-font-weight:bold;"/>
+                <ComboBox fx:id="cmbTipoDescuento" prefWidth="125" onAction="#actualizarDescuento"
+                          style="-fx-background-color:#F6EFE5; -fx-background-radius:9; -fx-border-color:#E5D8C8; -fx-border-radius:9; -fx-pref-height:38;"/>
+                <TextField fx:id="txtDescuento" prefWidth="100" promptText="0.00" onKeyReleased="#actualizarDescuento"
+                           style="-fx-background-color:#F6EFE5; -fx-background-radius:9; -fx-border-color:#E5D8C8; -fx-border-radius:9; -fx-pref-height:38;"/>
+                <Label text="Admin:" style="-fx-text-fill:#765F55; -fx-font-weight:bold;"/>
+                <TextField fx:id="txtUsuarioAutoriza" prefWidth="130" promptText="usuario"
+                           style="-fx-background-color:#F6EFE5; -fx-background-radius:9; -fx-border-color:#E5D8C8; -fx-border-radius:9; -fx-pref-height:38;"/>
+                <PasswordField fx:id="txtClaveAutoriza" prefWidth="130" promptText="contraseña"
+                           style="-fx-background-color:#F6EFE5; -fx-background-radius:9; -fx-border-color:#E5D8C8; -fx-border-radius:9; -fx-pref-height:38;"/>
             </HBox>
-            <Label text="Si el descuento es mayor que 0, se requiere autorización de un administrador." styleClass="subtitle-label"/>
-            <Label fx:id="lblEstado" styleClass="subtitle-label"/>
+            <Label text="Si el descuento es mayor que 0, se requiere autorización de un administrador." style="-fx-text-fill:#D9A441; -fx-font-size:11px; -fx-font-weight:bold;"/>
+            <Label fx:id="lblEstado" style="-fx-text-fill:#765F55; -fx-font-size:12px;"/>
         </VBox>
     </top>
     <center>
-        <SplitPane orientation="VERTICAL">
-            <TableView fx:id="tblLibros" prefHeight="280">
+        <SplitPane orientation="VERTICAL" style="-fx-background-color:transparent;">
+            <TableView fx:id="tblLibros" prefHeight="280"
+                       style="-fx-background-color:#FFFDF9; -fx-border-color:#E5D8C8; -fx-border-radius:8;">
                 <columns>
                     <TableColumn fx:id="colLibroIsbn" text="ISBN" prefWidth="150"/>
                     <TableColumn fx:id="colLibroTitulo" text="Título" prefWidth="300"/>
@@ -39,7 +53,8 @@
                     <TableColumn fx:id="colLibroStock" text="Stock" prefWidth="90"/>
                 </columns>
             </TableView>
-            <TableView fx:id="tblCarrito" prefHeight="240">
+            <TableView fx:id="tblCarrito" prefHeight="240"
+                       style="-fx-background-color:#FFFDF9; -fx-border-color:#E5D8C8; -fx-border-radius:8;">
                 <columns>
                     <TableColumn fx:id="colCarritoIsbn" text="ISBN" prefWidth="150"/>
                     <TableColumn fx:id="colCarritoCantidad" text="Cantidad" prefWidth="100"/>
@@ -50,18 +65,26 @@
         </SplitPane>
     </center>
     <bottom>
-        <VBox spacing="10">
-            <padding><Insets top="12" right="20" bottom="20" left="20"/></padding>
+        <VBox spacing="10"
+              style="-fx-background-color:#3B1720; -fx-background-radius:14; -fx-border-radius:14;">
+            <padding><Insets top="12" right="20" bottom="18" left="20"/></padding>
             <HBox spacing="20" alignment="CENTER_RIGHT">
-                <Label text="Subtotal:"/><Label fx:id="lblSubtotal" styleClass="metric-value"/>
-                <Label text="Descuento:"/><Label fx:id="lblDescuento" styleClass="metric-value"/>
-                <Label text="Total:"/><Label fx:id="lblTotal" styleClass="metric-value"/>
+                <Label text="Subtotal:" style="-fx-text-fill:#E9D9C4; -fx-font-weight:bold;"/>
+                <Label fx:id="lblSubtotal" style="-fx-text-fill:#D9A441; -fx-font-size:19px; -fx-font-weight:bold;"/>
+                <Label text="Descuento:" style="-fx-text-fill:#E9D9C4; -fx-font-weight:bold;"/>
+                <Label fx:id="lblDescuento" style="-fx-text-fill:#D9A441; -fx-font-size:19px; -fx-font-weight:bold;"/>
+                <Label text="Total:" style="-fx-text-fill:#FFF8EF; -fx-font-weight:bold;"/>
+                <Label fx:id="lblTotal" style="-fx-text-fill:#D9A441; -fx-font-size:22px; -fx-font-weight:bold;"/>
             </HBox>
             <HBox spacing="10" alignment="CENTER_RIGHT">
-                <Button text="Eliminar del carrito" styleClass="btn-secondary" onAction="#eliminar"/>
-                <Button text="Limpiar" styleClass="btn-secondary" onAction="#limpiar"/>
-                <Button text="Registrar venta" styleClass="btn-primary" onAction="#registrar"/>
-                <Button text="Volver" styleClass="btn-secondary" onAction="#volver"/>
+                <Button text="Eliminar del carrito" onAction="#eliminar"
+                        style="-fx-background-color:#EFE4D6; -fx-text-fill:#5A3039; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:10 12; -fx-cursor:hand;"/>
+                <Button text="Limpiar" onAction="#limpiar"
+                        style="-fx-background-color:#EFE4D6; -fx-text-fill:#5A3039; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:10 12; -fx-cursor:hand;"/>
+                <Button text="Registrar venta" onAction="#registrar"
+                        style="-fx-background-color:#D9A441; -fx-text-fill:#3B1720; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:11 14; -fx-cursor:hand;"/>
+                <Button text="Volver" onAction="#volver"
+                        style="-fx-background-color:#EFE4D6; -fx-text-fill:#5A3039; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:10 12; -fx-cursor:hand;"/>
             </HBox>
         </VBox>
     </bottom>

@@ -1,29 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane xmlns="http://javafx.com/javafx/21" 
-           xmlns:fx="http://javafx.com/fxml/1" 
-           fx:controller="org.paginalib3.controller.LoginController" 
-           styleClass="root">
+<StackPane xmlns="http://javafx.com/javafx/21"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="org.paginalib3.controller.LoginController"
+           style="-fx-background-color:#F7F1E8; -fx-font-family:'Segoe UI';">
     <padding>
         <Insets top="30" right="30" bottom="30" left="30"/>
     </padding>
-    <VBox alignment="CENTER" maxWidth="420" spacing="12" styleClass="card">
-        <Label text="PAGINA-LIBRERIA" style="-fx-text-fill:#6C5CE7; -fx-font-size:28px; -fx-font-weight:bold;"/>
-        <Label text="Bienvenido" styleClass="title-label"/>
-        <Label text="Ingresa a tu cuenta para continuar" styleClass="subtitle-label"/>
-        <TextField fx:id="txtUsuario" promptText="Usuario"/>
-        <PasswordField fx:id="txtPassword" promptText="Contraseña" onAction="#autenticar"/>
-        <Button text="Iniciar sesión" maxWidth="Infinity" styleClass="btn-primary" onAction="#autenticar"/>
-        <Button fx:id="btnCambiarContrasena" text="Cambiar contraseña (3 intentos fallidos)" maxWidth="Infinity" styleClass="btn-secondary" onAction="#irACambiarContrasena"/>
-        <Label fx:id="lblEstado" styleClass="error-label" wrapText="true"/>
+    <VBox alignment="CENTER" maxWidth="420" spacing="12"
+          style="-fx-background-color:#FFFDF9; -fx-background-radius:18; -fx-border-color:#E5D8C8; -fx-border-radius:18; -fx-padding:28;">
+        <Label text="PÁGINA" style="-fx-text-fill:#7A2938; -fx-font-size:27px; -fx-font-weight:bold;"/>
+        <Label text="LIBRERÍA" style="-fx-text-fill:#D9A441; -fx-font-size:13px; -fx-font-weight:bold;"/>
+        <Region prefHeight="6"/>
+        <Label text="Bienvenido" style="-fx-text-fill:#3B1720; -fx-font-size:24px; -fx-font-weight:bold;"/>
+        <Label text="Ingresa a tu cuenta para continuar" style="-fx-text-fill:#765F55; -fx-font-size:13px;"/>
+        <TextField fx:id="txtUsuario" promptText="Usuario"
+                   style="-fx-background-color:#F6EFE5; -fx-background-radius:9; -fx-border-color:#E5D8C8; -fx-border-radius:9; -fx-pref-height:40;"/>
+        <PasswordField fx:id="txtPassword" promptText="Contraseña" onAction="#autenticar"
+                   style="-fx-background-color:#F6EFE5; -fx-background-radius:9; -fx-border-color:#E5D8C8; -fx-border-radius:9; -fx-pref-height:40;"/>
+        <Button text="Iniciar sesión" maxWidth="Infinity" onAction="#autenticar"
+                style="-fx-background-color:#7A2938; -fx-text-fill:#FFF8EF; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:12 14; -fx-cursor:hand;"/>
+        <Button fx:id="btnCambiarContrasena" text="Cambiar contraseña (3 intentos fallidos)" maxWidth="Infinity" onAction="#irACambiarContrasena"
+                style="-fx-background-color:#EFE4D6; -fx-text-fill:#5A3039; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:11 14; -fx-cursor:hand;"/>
+        <Label fx:id="lblEstado" style="-fx-text-fill:#D9534F; -fx-font-weight:bold;" wrapText="true"/>
     </VBox>
 </StackPane>
