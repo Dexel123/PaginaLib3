@@ -102,3 +102,25 @@ public class SalidaInventarioController {
             error("No se pudieron cargar los datos: " + mensaje(e));
         }
     }
+
+    private void seleccionarPorIsbn(String isbn) {
+        for (Libro libro : cmbLibro.getItems()) {
+            if (libro.getIsbn().equals(isbn)) {
+                cmbLibro.setValue(libro);
+                actualizarStockSeleccionado();
+                return;
+            }
+        }
+    }
+
+    private boolean esBodega() {
+        if (Sesion.getUsuarioActual() != null && "bodega".equalsIgnoreCase(Sesion.getUsuarioActual().getRol())) return true;
+        Main.cambiarVista("/org/paginalib3/view/login.fxml", "Pagina-Libreria | Iniciar sesión", 760, 560);
+        return false;
+    }
+
+    private String mensaje(SQLException e) { return e.getMessage() == null ? "Error de base de datos" : e.getMessage(); }
+    private void informacion(String m) { new Alert(Alert.AlertType.INFORMATION, m, ButtonType.OK).showAndWait(); }
+    private void advertencia(String m) { new Alert(Alert.AlertType.WARNING, m, ButtonType.OK).showAndWait(); }
+    private void error(String m) { lblEstado.setText(m); new Alert(Alert.AlertType.ERROR, m, ButtonType.OK).showAndWait(); }
+}
