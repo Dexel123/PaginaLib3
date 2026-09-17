@@ -1,9 +1,28 @@
 package org.paginalib3.controller;
 
+import java.sql.SQLException;
+import java.util.List;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import org.paginalib3.dao.LibroDAO;
+import org.paginalib3.dao.impl.LibroDAOImpl;
+import org.paginalib3.model.Libro;
 import org.paginalib3.system.Main;
+import org.paginalib3.util.Sesion;
 
 public class DashboardBodegaController extends DashboardBaseController {
+
+    @FXML
+    private Label lblCriticos, lblEstadoInventario;
+    @FXML
+    private TableView<Libro> tblCriticos;
+    @FXML
+    private TableColumn<Libro, String> colIsbn, colTitulo;
+    @FXML
+    private TableColumn<Libro, Integer> colStockActual, colStockMinimo;
+    private final LibroDAO dao = new LibroDAOImpl();
 
     @Override
     protected String rolPermitido() {
@@ -12,11 +31,37 @@ public class DashboardBodegaController extends DashboardBaseController {
 
     @Override
     protected String mensajeRol() {
-        return "Control de alertas de stock de la librería.";
+        return "Control de inventario y existencias de la librería.";
+    }
+
+    @Override
+    @FXML
+    protected void initialize() {
+        super.initialize();
+        if (Sesion.getUsuarioActual() == null) {
+            return;
+        }
+        colIsbn.setCellValueFactory(new PropertyValueFactory<>("isbn"));
+        colTitulo.setCellValueFactory(new PropertyValueFactory<>("titulo"));
+        colStockActual.setCellValueFactory(new PropertyValueFactory<>("stockActual"));
+        colStockMinimo.setCellValueFactory(new PropertyValueFactory<>("stockMinimo"));
+        actualizarStockCritico();
     }
 
     @FXML
-    private void irAStockCritico() {
-        Main.cambiarVista("/org/paginalib3/view/stock_critico.fxml", "Pagina-Libreria | Stock crítico", 1050, 680);
+    private void actualizarStockCritico() {
+        try {
+            List<Libro> l = dao.listarStockCritico();
+            tblCriticos.setItems(FXCollections.observableArrayList(l));
+            lblCriticos.setText(String.valueOf(l.size()));
+            lblEstadoInventario.setText(l.isEmpty() ? "Inventario sin alertas críticas." : l.size() + " libro(s) en nivel crítico.");
+        } catch (SQLException e) {
+            lblEstadoInventario.setText(e.getMessage());
+        }
+    }
+
+    @FXML
+    private void abrirFichaLibro() {
+        Main.cambiarVista("/org/paginalib3/view/buscar_libros.fxml", "Pagina-Libreria | Ficha de libros", 1050, 650);
     }
 }

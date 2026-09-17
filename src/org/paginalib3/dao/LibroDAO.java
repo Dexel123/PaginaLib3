@@ -7,6 +7,7 @@ import org.paginalib3.model.Libro;
 public interface LibroDAO {
     List<Libro> listar() throws SQLException;
     List<Libro> buscar(String texto) throws SQLException;
+
     List<Libro> listarTodos() throws SQLException;
     Libro buscarPorIsbn(String isbn) throws SQLException;
     boolean insertar(Libro libro) throws SQLException;
