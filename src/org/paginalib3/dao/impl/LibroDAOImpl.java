@@ -56,7 +56,7 @@ public class LibroDAOImpl implements LibroDAO {
              CallableStatement s = c.prepareCall("{CALL sp_buscarlibro(?)}")) {
             s.setString(1, isbn);
             try (ResultSet r = s.executeQuery()) {
-                return r.next() ? map(r) : null;
+                return r.next() ? map(r) : null; 
             }
         }
     }
