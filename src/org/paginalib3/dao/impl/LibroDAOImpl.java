@@ -22,3 +22,20 @@ public class LibroDAOImpl implements LibroDAO {
         return l;
     }
 
+    @Override
+    public List<Libro> buscar(String texto) throws SQLException {
+        List<Libro> l = new ArrayList<>();
+        String t = texto == null ? "" : texto.trim();
+        if (t.isEmpty()) {
+            return listar();
+        }
+        try (Connection c = Conexion.getInstancia().conectar();
+             CallableStatement s = c.prepareCall("{CALL sp_buscar_libros(?)}")) {
+            s.setString(1, t);
+            try (ResultSet r = s.executeQuery()) {
+                while (r.next()) {
+                    l.add(map(r));
+                }
+            }
+        }
+        return l;
