@@ -59,3 +59,9 @@ public class DashboardBodegaController extends DashboardBaseController {
             lblEstadoInventario.setText(e.getMessage());
         }
     }
+
+    @FXML
+    private void abrirFichaLibro() {
+        Main.cambiarVista("/org/paginalib3/view/buscar_libros.fxml", "Pagina-Libreria | Ficha de libros", 1050, 650);
+    }
+}
