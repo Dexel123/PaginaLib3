@@ -47,7 +47,7 @@ public class LibroController {
         chkActivo.setSelected(true);
         cargarLibros();
     }
-    
+     
     @FXML
     private void buscar() {
         try {
