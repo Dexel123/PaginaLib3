@@ -22,6 +22,5 @@ public class StockCriticoController {
         colStockActual.setCellValueFactory(new PropertyValueFactory<>("stockActual")); colStockMinimo.setCellValueFactory(new PropertyValueFactory<>("stockMinimo")); actualizar();
     }
     @FXML private void actualizar(){try{List<Libro> l=dao.listarStockCritico();tblCriticos.setItems(FXCollections.observableArrayList(l));lblCantidad.setText(String.valueOf(l.size()));lblEstado.setText(l.isEmpty()?"Sin alertas de stock.":l.size()+" libro(s) requieren atención.");}catch(SQLException e){lblEstado.setText(e.getMessage());}}
-  
     @FXML private void volver(){Main.cambiarVista("/org/paginalib3/view/dashboard_bodega.fxml","Pagina-Libreria | Dashboard Bodega",1100,680);}
 }
