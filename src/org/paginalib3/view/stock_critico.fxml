@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.paginalib3.controller.StockCriticoController" style="-fx-background-color:#F7F1E8;">
+<top><HBox spacing="12" alignment="CENTER_LEFT" style="-fx-background-color:#3B1720; -fx-padding:18;"><Button text="← Volver" onAction="#volver" style="-fx-background-color:#FFF0D8; -fx-text-fill:#8C5616; -fx-font-weight:bold; -fx-background-radius:10; -fx-cursor:hand;"/><Label text="Alertas de stock crítico" style="-fx-text-fill:white; -fx-font-size:23px; -fx-font-weight:bold;"/><Region HBox.hgrow="ALWAYS"/><Label text="Críticos:" style="-fx-text-fill:#D9A441;"/><Label fx:id="lblCantidad" text="0" style="-fx-text-fill:white; -fx-font-size:24px; -fx-font-weight:bold;"/></HBox></top>
+<center><VBox spacing="12"><padding><Insets top="20" right="24" bottom="20" left="24"/></padding><Button text="Actualizar" onAction="#actualizar" style="-fx-background-color:#C47B21; -fx-text-fill:white; -fx-font-weight:bold; -fx-background-radius:10; -fx-padding:9 14; -fx-cursor:hand;"/><Label fx:id="lblEstado"/><TableView fx:id="tblCriticos" VBox.vgrow="ALWAYS"><columns><TableColumn fx:id="colIsbn" text="ISBN" prefWidth="170"/><TableColumn fx:id="colTitulo" text="Título" prefWidth="400"/><TableColumn fx:id="colStockActual" text="Stock actual" prefWidth="130"/><TableColumn fx:id="colStockMinimo" text="Stock mínimo" prefWidth="130"/></columns></TableView></VBox></center>
+</BorderPane>
