@@ -53,4 +53,25 @@ public class LibroDAOImpl implements LibroDAO {
         }
         return lista;
     }
-    git
+
+    private Libro map(ResultSet r) throws SQLException {
+        return new Libro(
+                r.getString("isbn"),
+                r.getString("titulo"),
+                r.getDouble("precio"),
+                r.getInt("stock_actual"),
+                r.getInt("stock_minimo"),
+                r.getBoolean("activo"),
+                has(r, "autores") ? r.getString("autores") : ""
+        );
+    }
+
+    private boolean has(ResultSet r, String n) {
+        try {
+            r.findColumn(n);
+            return true;
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+}
