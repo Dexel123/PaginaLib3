@@ -41,6 +41,19 @@ public class LibroDAOImpl implements LibroDAO {
         return l;
     }
 
+    @Override
+    public List<Libro> listarStockCritico() throws SQLException {
+        List<Libro> lista = new ArrayList<>();
+        String sql = "SELECT isbn,titulo,stock_actual,stock_minimo FROM vw_stock_critico ORDER BY stock_actual,titulo";
+        try (Connection c = Conexion.getInstancia().conectar(); PreparedStatement s = c.prepareStatement(sql); ResultSet r = s.executeQuery()) {
+            while (r.next()) {
+                Libro libro = new Libro(r.getString("isbn"), r.getString("titulo"), 0, r.getInt("stock_actual"), r.getInt("stock_minimo"), true, "");
+                lista.add(libro);
+            }
+        }
+        return lista;
+    }
+
     private Libro map(ResultSet r) throws SQLException {
         return new Libro(
                 r.getString("isbn"),
