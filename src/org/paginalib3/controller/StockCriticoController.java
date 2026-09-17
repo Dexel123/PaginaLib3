@@ -10,12 +10,11 @@ import org.paginalib3.dao.LibroDAO;
 import org.paginalib3.dao.impl.LibroDAOImpl;
 import org.paginalib3.model.Libro;
 import org.paginalib3.system.Main;
-import org.paginalib3.util.Sesion;
 
-public class DashboardBodegaController extends DashboardBaseController {
+public class StockCriticoController {
 
     @FXML
-    private Label lblCriticos, lblEstadoInventario;
+    private Label lblCantidad, lblEstado;
     @FXML
     private TableView<Libro> tblCriticos;
     @FXML
@@ -24,44 +23,29 @@ public class DashboardBodegaController extends DashboardBaseController {
     private TableColumn<Libro, Integer> colStockActual, colStockMinimo;
     private final LibroDAO dao = new LibroDAOImpl();
 
-    @Override
-    protected String rolPermitido() {
-        return "bodega";
-    }
-
-    @Override
-    protected String mensajeRol() {
-        return "Control de inventario y existencias de la librería.";
-    }
-
-    @Override
     @FXML
-    protected void initialize() {
-        super.initialize();
-        if (Sesion.getUsuarioActual() == null) {
-            return;
-        }
+    private void initialize() {
         colIsbn.setCellValueFactory(new PropertyValueFactory<>("isbn"));
         colTitulo.setCellValueFactory(new PropertyValueFactory<>("titulo"));
         colStockActual.setCellValueFactory(new PropertyValueFactory<>("stockActual"));
         colStockMinimo.setCellValueFactory(new PropertyValueFactory<>("stockMinimo"));
-        actualizarStockCritico();
+        actualizar();
     }
 
     @FXML
-    private void actualizarStockCritico() {
+    private void actualizar() {
         try {
             List<Libro> l = dao.listarStockCritico();
             tblCriticos.setItems(FXCollections.observableArrayList(l));
-            lblCriticos.setText(String.valueOf(l.size()));
-            lblEstadoInventario.setText(l.isEmpty() ? "Inventario sin alertas críticas." : l.size() + " libro(s) en nivel crítico.");
+            lblCantidad.setText(String.valueOf(l.size()));
+            lblEstado.setText(l.isEmpty() ? "Sin alertas de stock." : l.size() + " libro(s) requieren atención.");
         } catch (SQLException e) {
-            lblEstadoInventario.setText(e.getMessage());
+            lblEstado.setText(e.getMessage());
         }
     }
 
     @FXML
-    private void abrirFichaLibro() {
-        Main.cambiarVista("/org/paginalib3/view/buscar_libros.fxml", "Pagina-Libreria | Ficha de libros", 1050, 650);
+    private void volver() {
+        Main.cambiarVista("/org/paginalib3/view/dashboard_bodega.fxml", "Pagina-Libreria | Dashboard Bodega", 1100, 680);
     }
 }

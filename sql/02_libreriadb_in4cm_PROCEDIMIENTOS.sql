@@ -58,6 +58,16 @@ DROP PROCEDURE IF EXISTS sp_buscardetalleventa$$
 DROP PROCEDURE IF EXISTS sp_insertardetalleventa$$
 DROP PROCEDURE IF EXISTS sp_ventasdeldiaporusuario$$
 DROP PROCEDURE IF EXISTS sp_anularventa$$
+DROP PROCEDURE IF EXISTS sp_devolverventa$$
+DROP PROCEDURE IF EXISTS sp_listarstockcritico$$
+DROP PROCEDURE IF EXISTS sp_dashboardadmin$$
+DROP PROCEDURE IF EXISTS sp_reporte_ventas_periodo$$
+DROP PROCEDURE IF EXISTS sp_reporte_libros_mas_vendidos$$
+DROP PROCEDURE IF EXISTS sp_reporte_stock_valorizado$$
+DROP PROCEDURE IF EXISTS sp_actualizarpreciolibro$$
+DROP PROCEDURE IF EXISTS sp_registrar_compra$$
+DROP PROCEDURE IF EXISTS sp_listarcomprasproveedor$$
+DROP PROCEDURE IF EXISTS sp_anularcompra$$
 DROP PROCEDURE IF EXISTS sp_insertarproveedor$$
 DROP PROCEDURE IF EXISTS sp_listarproveedores$$
 DROP PROCEDURE IF EXISTS sp_buscarproveedor$$
@@ -135,13 +145,19 @@ END$$
 
 CREATE PROCEDURE sp_listarlibros()
 BEGIN
-    SELECT l.isbn,l.titulo,l.fecha_publicacion,l.precio,l.id_categoria,l.nit_editorial,l.stock_actual,l.stock_minimo,l.activo
-    FROM libros l ORDER BY l.titulo;
+    SELECT l.isbn,l.titulo,l.fecha_publicacion,l.precio,l.costo_promedio,l.id_categoria,l.nit_editorial,
+           l.stock_actual,l.stock_minimo,l.activo,
+           GROUP_CONCAT(DISTINCT CONCAT(a.nombre_autor,' ',a.apellido_autor) ORDER BY a.apellido_autor SEPARATOR ', ') AS autores
+    FROM libros l
+    LEFT JOIN autores_libro al ON al.isbn=l.isbn
+    LEFT JOIN autores a ON a.id_autor=al.id_autor
+    GROUP BY l.isbn,l.titulo,l.fecha_publicacion,l.precio,l.costo_promedio,l.id_categoria,l.nit_editorial,l.stock_actual,l.stock_minimo,l.activo
+    ORDER BY l.titulo;
 END$$
 
 CREATE PROCEDURE sp_buscarlibro(IN _isbn VARCHAR(20))
 BEGIN
-    SELECT isbn,titulo,fecha_publicacion,precio,id_categoria,nit_editorial,stock_actual,stock_minimo,activo FROM libros WHERE isbn=_isbn;
+    SELECT isbn,titulo,fecha_publicacion,precio,costo_promedio,id_categoria,nit_editorial,stock_actual,stock_minimo,activo FROM libros WHERE isbn=_isbn;
 END$$
 
 CREATE PROCEDURE sp_buscar_libros(IN _texto VARCHAR(150))
@@ -250,6 +266,9 @@ BEGIN
     DECLARE _isbn_bloqueado VARCHAR(20);
     DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN ROLLBACK; RESIGNAL; END;
     IF _cantidad <= 0 THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='La cantidad debe ser mayor a 0'; END IF;
+    IF NOT EXISTS(SELECT 1 FROM usuarios WHERE id=_id_usuario AND activo=TRUE AND rol IN ('admin','bodega')) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='El usuario no puede modificar inventario';
+    END IF;
     START TRANSACTION;
     SELECT isbn INTO _isbn_bloqueado FROM libros WHERE isbn=_isbn AND activo=TRUE FOR UPDATE;
     IF _isbn_bloqueado IS NULL THEN ROLLBACK; SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Libro inexistente o inactivo'; END IF;
@@ -263,7 +282,10 @@ BEGIN
     DECLARE _stock INT DEFAULT 0;
     DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN ROLLBACK; RESIGNAL; END;
     IF _cantidad <= 0 THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='La cantidad debe ser mayor a 0'; END IF;
-    IF _tipo NOT IN ('MERMA','TRASLADO','AJUSTE') THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Tipo de salida invalido'; END IF;
+    IF _tipo NOT IN ('MERMA','TRASLADO','AJUSTE','DEVOLUCION_PROVEEDOR') THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Tipo de salida invalido'; END IF;
+    IF NOT EXISTS(SELECT 1 FROM usuarios WHERE id=_id_usuario AND activo=TRUE AND rol IN ('admin','bodega')) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='El usuario no puede modificar inventario';
+    END IF;
     START TRANSACTION;
     SELECT stock_actual INTO _stock FROM libros WHERE isbn=_isbn AND activo=TRUE FOR UPDATE;
     IF _stock IS NULL THEN ROLLBACK; SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Libro inexistente o inactivo'; END IF;
@@ -275,14 +297,15 @@ END$$
 
 CREATE PROCEDURE sp_listarmovimientosinventario()
 BEGIN
-    SELECT m.id_movimiento,m.isbn,l.titulo,m.tipo_movimiento,m.cantidad,m.fecha_movimiento,m.id_usuario,u.username,m.id_venta,m.nit_proveedor,m.observacion
+    SELECT m.id_movimiento,m.isbn,l.titulo,m.tipo_movimiento,m.cantidad,m.fecha_movimiento,m.id_usuario,u.username,
+           m.id_venta,m.id_compra,m.id_devolucion,m.nit_proveedor,m.observacion
     FROM movimientos_inventario m JOIN libros l ON l.isbn=m.isbn JOIN usuarios u ON u.id=m.id_usuario
     ORDER BY m.fecha_movimiento DESC;
 END$$
 
 CREATE PROCEDURE sp_movimientosporlibro(IN _isbn VARCHAR(20))
 BEGIN
-    SELECT id_movimiento,isbn,tipo_movimiento,cantidad,fecha_movimiento,id_usuario,id_venta,nit_proveedor,observacion
+    SELECT id_movimiento,isbn,tipo_movimiento,cantidad,fecha_movimiento,id_usuario,id_venta,id_compra,id_devolucion,nit_proveedor,observacion
     FROM movimientos_inventario WHERE isbn=_isbn ORDER BY fecha_movimiento DESC;
 END$$
 
@@ -325,6 +348,11 @@ BEGIN
     INSERT INTO ventas(subtotal,descuento,total,cui_cliente,id_usuario,usuario_autoriza_descuento)
     VALUES(0,0,0,_cui_cliente,_id_usuario,_usuario_autoriza);
     SET _id_venta=LAST_INSERT_ID();
+    UPDATE ventas
+       SET numero_comprobante=CONCAT('PV-',DATE_FORMAT(fecha_venta,'%Y%m%d'),'-',LPAD(_id_venta,8,'0')),
+           tipo_descuento=IF(_descuento>0,'MONTO','NINGUNO'),
+           valor_descuento=_descuento
+     WHERE id_venta=_id_venta;
 
     SET _n=JSON_LENGTH(_detalles);
     WHILE _i < _n DO
@@ -384,36 +412,125 @@ END$$
 
 CREATE PROCEDURE sp_ventasdeldiaporusuario(IN _id_usuario INT)
 BEGIN
-    SELECT id_venta,fecha_venta,subtotal,descuento,total,estado FROM ventas
-    WHERE id_usuario=_id_usuario AND fecha_venta >= CURDATE() AND fecha_venta < CURDATE()+INTERVAL 1 DAY
+    -- Estas columnas coinciden con VentaDAOImpl y evitan el error
+    -- "Column 'cui_cliente' not found" del Dashboard de Caja.
+    SELECT id_venta,fecha_venta,subtotal,descuento,total,estado,cui_cliente,id_usuario
+    FROM ventas
+    WHERE id_usuario=_id_usuario
+      AND fecha_venta >= CURDATE()
+      AND fecha_venta < CURDATE()+INTERVAL 1 DAY
     ORDER BY fecha_venta DESC;
 END$$
 
 CREATE PROCEDURE sp_anularventa(IN _id_venta INT, IN _id_usuario_anula INT, IN _motivo VARCHAR(255))
 BEGIN
     DECLARE _estado VARCHAR(20);
+    DECLARE _id_detalle INT;
     DECLARE _isbn VARCHAR(20);
     DECLARE _cantidad INT;
+    DECLARE _precio DECIMAL(10,2);
+    DECLARE _id_devolucion INT;
+    DECLARE _subtotal_venta DECIMAL(12,2) DEFAULT 0;
+    DECLARE _total_venta DECIMAL(12,2) DEFAULT 0;
+    DECLARE _factor_reembolso DECIMAL(18,8) DEFAULT 1;
     DECLARE _fin INT DEFAULT 0;
-    DECLARE cur_det CURSOR FOR SELECT isbn,cantidad FROM detalle_venta WHERE id_venta=_id_venta;
+    DECLARE cur_det CURSOR FOR SELECT id_detalle,isbn,cantidad,precio_unitario FROM detalle_venta WHERE id_venta=_id_venta;
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET _fin=1;
     DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN ROLLBACK; RESIGNAL; END;
 
+    IF NOT EXISTS(SELECT 1 FROM usuarios WHERE id=_id_usuario_anula AND activo=TRUE AND rol IN ('admin','cajero')) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='El usuario no puede anular ventas';
+    END IF;
+
     START TRANSACTION;
-    SELECT estado INTO _estado FROM ventas WHERE id_venta=_id_venta FOR UPDATE;
+    SELECT estado,subtotal,total INTO _estado,_subtotal_venta,_total_venta FROM ventas WHERE id_venta=_id_venta FOR UPDATE;
     IF _estado IS NULL THEN ROLLBACK; SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Venta no encontrada'; END IF;
     IF _estado <> 'COMPLETADA' THEN ROLLBACK; SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='La venta ya fue anulada o devuelta'; END IF;
+    IF _motivo IS NULL OR TRIM(_motivo)='' THEN ROLLBACK; SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='El motivo es obligatorio'; END IF;
 
-    UPDATE ventas SET estado='ANULADA',fecha_anulacion=CURRENT_TIMESTAMP,usuario_anulacion=_id_usuario_anula,motivo_anulacion=_motivo WHERE id_venta=_id_venta;
+    UPDATE ventas SET estado='ANULADA',fecha_anulacion=CURRENT_TIMESTAMP,usuario_anulacion=_id_usuario_anula,motivo_anulacion=TRIM(_motivo) WHERE id_venta=_id_venta;
+    INSERT INTO devoluciones(id_venta,tipo,id_usuario,motivo,total_devuelto)
+    VALUES(_id_venta,'ANULACION',_id_usuario_anula,TRIM(_motivo),0);
+    SET _id_devolucion=LAST_INSERT_ID();
+    SET _factor_reembolso=IF(_subtotal_venta=0,0,_total_venta/_subtotal_venta);
     OPEN cur_det;
     ciclo: LOOP
-        FETCH cur_det INTO _isbn,_cantidad;
+        FETCH cur_det INTO _id_detalle,_isbn,_cantidad,_precio;
         IF _fin=1 THEN LEAVE ciclo; END IF;
         UPDATE libros SET stock_actual=stock_actual+_cantidad WHERE isbn=_isbn;
-        INSERT INTO movimientos_inventario(isbn,tipo_movimiento,cantidad,id_usuario,id_venta,observacion)
-        VALUES(_isbn,'DEVOLUCION',_cantidad,_id_usuario_anula,_id_venta,CONCAT('Anulacion venta #',_id_venta));
+        UPDATE detalle_venta SET cantidad_devuelta=cantidad WHERE id_detalle=_id_detalle;
+        INSERT INTO detalle_devolucion(id_devolucion,id_detalle_venta,cantidad,monto)
+        VALUES(_id_devolucion,_id_detalle,_cantidad,ROUND(_cantidad*_precio*_factor_reembolso,2));
+        INSERT INTO movimientos_inventario(isbn,tipo_movimiento,cantidad,id_usuario,id_venta,id_devolucion,observacion)
+        VALUES(_isbn,'ANULACION_VENTA',_cantidad,_id_usuario_anula,_id_venta,_id_devolucion,CONCAT('Anulacion venta #',_id_venta));
     END LOOP;
     CLOSE cur_det;
+    UPDATE devoluciones SET total_devuelto=_total_venta WHERE id_devolucion=_id_devolucion;
+    INSERT INTO bitacora_sistema(id_usuario,accion,entidad,id_referencia,detalle)
+    VALUES(_id_usuario_anula,'ANULAR','VENTA',_id_venta,TRIM(_motivo));
+    COMMIT;
+END$$
+
+-- Compatible con VentaDAOImpl: devuelve todas las unidades pendientes de la venta.
+CREATE PROCEDURE sp_devolverventa(IN _id_venta INT, IN _id_usuario_devuelve INT, IN _motivo VARCHAR(255))
+BEGIN
+    DECLARE _estado VARCHAR(30);
+    DECLARE _fecha_venta DATETIME;
+    DECLARE _dias_max INT DEFAULT 30;
+    DECLARE _id_detalle INT;
+    DECLARE _isbn VARCHAR(20);
+    DECLARE _cantidad INT;
+    DECLARE _precio DECIMAL(10,2);
+    DECLARE _id_devolucion INT;
+    DECLARE _subtotal_venta DECIMAL(12,2) DEFAULT 0;
+    DECLARE _total_venta DECIMAL(12,2) DEFAULT 0;
+    DECLARE _factor_reembolso DECIMAL(18,8) DEFAULT 1;
+    DECLARE _total_calculado DECIMAL(12,2) DEFAULT 0;
+    DECLARE _items_procesados INT DEFAULT 0;
+    DECLARE _fin INT DEFAULT 0;
+    DECLARE cur_det CURSOR FOR
+        SELECT id_detalle,isbn,cantidad-cantidad_devuelta,precio_unitario
+        FROM detalle_venta
+        WHERE id_venta=_id_venta AND cantidad>cantidad_devuelta;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET _fin=1;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN ROLLBACK; RESIGNAL; END;
+
+    SELECT COALESCE((SELECT CAST(valor AS UNSIGNED) FROM configuracion_sistema WHERE clave='DIAS_MAX_DEVOLUCION' LIMIT 1),30)
+    INTO _dias_max;
+    IF NOT EXISTS(SELECT 1 FROM usuarios WHERE id=_id_usuario_devuelve AND activo=TRUE AND rol IN ('admin','cajero')) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='El usuario no puede registrar devoluciones';
+    END IF;
+    SET _dias_max=COALESCE(_dias_max,30);
+    START TRANSACTION;
+    SELECT estado,fecha_venta,subtotal,total INTO _estado,_fecha_venta,_subtotal_venta,_total_venta FROM ventas WHERE id_venta=_id_venta FOR UPDATE;
+    IF _estado IS NULL THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Venta no encontrada'; END IF;
+    IF _estado NOT IN ('COMPLETADA','PARCIALMENTE_DEVUELTA') THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='La venta no esta disponible para devolucion'; END IF;
+    IF _motivo IS NULL OR TRIM(_motivo)='' THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='El motivo es obligatorio'; END IF;
+    IF TIMESTAMPDIFF(DAY,_fecha_venta,CURRENT_TIMESTAMP)>_dias_max THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='La venta excede el plazo de devolucion'; END IF;
+
+    INSERT INTO devoluciones(id_venta,tipo,id_usuario,motivo,total_devuelto)
+    VALUES(_id_venta,'DEVOLUCION',_id_usuario_devuelve,TRIM(_motivo),0);
+    SET _id_devolucion=LAST_INSERT_ID();
+    SET _factor_reembolso=IF(_subtotal_venta=0,0,_total_venta/_subtotal_venta);
+    OPEN cur_det;
+    ciclo: LOOP
+        FETCH cur_det INTO _id_detalle,_isbn,_cantidad,_precio;
+        IF _fin=1 THEN LEAVE ciclo; END IF;
+        UPDATE libros SET stock_actual=stock_actual+_cantidad WHERE isbn=_isbn;
+        UPDATE detalle_venta SET cantidad_devuelta=cantidad_devuelta+_cantidad WHERE id_detalle=_id_detalle;
+        INSERT INTO detalle_devolucion(id_devolucion,id_detalle_venta,cantidad,monto)
+        VALUES(_id_devolucion,_id_detalle,_cantidad,ROUND(_cantidad*_precio*_factor_reembolso,2));
+        INSERT INTO movimientos_inventario(isbn,tipo_movimiento,cantidad,id_usuario,id_venta,id_devolucion,observacion)
+        VALUES(_isbn,'DEVOLUCION',_cantidad,_id_usuario_devuelve,_id_venta,_id_devolucion,CONCAT('Devolucion venta #',_id_venta));
+        SET _total_calculado=_total_calculado+ROUND(_cantidad*_precio*_factor_reembolso,2);
+        SET _items_procesados=_items_procesados+1;
+    END LOOP;
+    CLOSE cur_det;
+    IF _items_procesados=0 THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='La venta no tiene unidades pendientes de devolver'; END IF;
+    UPDATE devoluciones SET total_devuelto=_total_venta WHERE id_devolucion=_id_devolucion;
+    UPDATE ventas SET estado='DEVUELTA' WHERE id_venta=_id_venta;
+    INSERT INTO bitacora_sistema(id_usuario,accion,entidad,id_referencia,detalle)
+    VALUES(_id_usuario_devuelve,'DEVOLVER','VENTA',_id_venta,TRIM(_motivo));
     COMMIT;
 END$$
 
@@ -434,6 +551,184 @@ BEGIN UPDATE proveedores SET nombre_proveedor=TRIM(_nombre),telefono_proveedor=_
 CREATE PROCEDURE sp_eliminarproveedor(IN _nit VARCHAR(20))
 BEGIN UPDATE proveedores SET activo=FALSE WHERE nit_proveedor=_nit; END$$
 
+-- Compras a proveedores: cabecera, detalles, stock y costo promedio en una transaccion.
+CREATE PROCEDURE sp_registrar_compra(
+    IN _nit_proveedor VARCHAR(20),
+    IN _id_usuario INT,
+    IN _numero_documento VARCHAR(60),
+    IN _observacion VARCHAR(255),
+    IN _detalles JSON,
+    OUT _id_compra INT
+)
+BEGIN
+    DECLARE _i INT DEFAULT 0;
+    DECLARE _n INT DEFAULT 0;
+    DECLARE _isbn VARCHAR(20);
+    DECLARE _cantidad INT;
+    DECLARE _costo DECIMAL(10,2);
+    DECLARE _stock INT;
+    DECLARE _costo_anterior DECIMAL(10,2);
+    DECLARE _total DECIMAL(12,2) DEFAULT 0;
+    DECLARE _rol VARCHAR(20);
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN ROLLBACK; RESIGNAL; END;
+
+    IF JSON_TYPE(_detalles)<>'ARRAY' OR JSON_LENGTH(_detalles)=0 THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='La compra debe contener al menos un libro'; END IF;
+    IF NOT EXISTS(SELECT 1 FROM proveedores WHERE nit_proveedor=_nit_proveedor AND activo=TRUE) THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Proveedor inexistente o inactivo'; END IF;
+    SELECT rol INTO _rol FROM usuarios WHERE id=_id_usuario AND activo=TRUE;
+    IF _rol IS NULL OR _rol NOT IN ('admin','bodega') THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='El usuario no puede registrar compras'; END IF;
+
+    START TRANSACTION;
+    INSERT INTO compras(nit_proveedor,id_usuario,numero_documento,observacion)
+    VALUES(_nit_proveedor,_id_usuario,NULLIF(TRIM(_numero_documento),''),_observacion);
+    SET _id_compra=LAST_INSERT_ID();
+    SET _n=JSON_LENGTH(_detalles);
+    WHILE _i<_n DO
+        SET _isbn=JSON_UNQUOTE(JSON_EXTRACT(_detalles,CONCAT('$[',_i,'].isbn')));
+        SET _cantidad=CAST(JSON_UNQUOTE(JSON_EXTRACT(_detalles,CONCAT('$[',_i,'].cantidad'))) AS UNSIGNED);
+        SET _costo=CAST(JSON_UNQUOTE(JSON_EXTRACT(_detalles,CONCAT('$[',_i,'].costoUnitario'))) AS DECIMAL(10,2));
+        IF _isbn IS NULL OR _cantidad IS NULL OR _cantidad<=0 OR _costo IS NULL OR _costo<0 THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Detalle de compra invalido'; END IF;
+        SET _stock=NULL;
+        SELECT stock_actual,costo_promedio INTO _stock,_costo_anterior FROM libros WHERE isbn=_isbn AND activo=TRUE FOR UPDATE;
+        IF _stock IS NULL THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Libro inexistente o inactivo'; END IF;
+        INSERT INTO detalle_compra(id_compra,isbn,cantidad,costo_unitario,subtotal)
+        VALUES(_id_compra,_isbn,_cantidad,_costo,_cantidad*_costo);
+        UPDATE libros
+           SET costo_promedio=IF(stock_actual+_cantidad=0,0,ROUND(((stock_actual*costo_promedio)+(_cantidad*_costo))/(stock_actual+_cantidad),2)),
+               stock_actual=stock_actual+_cantidad
+         WHERE isbn=_isbn;
+        INSERT INTO proveedores_libro(nit_proveedor,isbn,costo_ultima_compra)
+        VALUES(_nit_proveedor,_isbn,_costo)
+        ON DUPLICATE KEY UPDATE costo_ultima_compra=VALUES(costo_ultima_compra),activo=TRUE;
+        INSERT INTO movimientos_inventario(isbn,tipo_movimiento,cantidad,id_usuario,id_compra,nit_proveedor,observacion)
+        VALUES(_isbn,'COMPRA',_cantidad,_id_usuario,_id_compra,_nit_proveedor,CONCAT('Compra #',_id_compra));
+        SET _total=_total+(_cantidad*_costo);
+        SET _i=_i+1;
+    END WHILE;
+    UPDATE compras SET subtotal=_total,total=_total WHERE id_compra=_id_compra;
+    INSERT INTO bitacora_sistema(id_usuario,accion,entidad,id_referencia,detalle)
+    VALUES(_id_usuario,'CREAR','COMPRA',_id_compra,CONCAT('Proveedor ',_nit_proveedor,', total Q',_total));
+    COMMIT;
+END$$
+
+CREATE PROCEDURE sp_listarcomprasproveedor(IN _desde DATE, IN _hasta DATE, IN _nit VARCHAR(20))
+BEGIN
+    IF _desde IS NULL OR _hasta IS NULL OR _desde>_hasta THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Rango de fechas invalido'; END IF;
+    SELECT c.id_compra,c.fecha_compra,c.nit_proveedor,p.nombre_proveedor,c.id_usuario,u.username,
+           c.numero_documento,c.subtotal,c.total,c.estado,c.observacion
+    FROM compras c
+    JOIN proveedores p ON p.nit_proveedor=c.nit_proveedor
+    JOIN usuarios u ON u.id=c.id_usuario
+    WHERE c.fecha_compra>=_desde AND c.fecha_compra<_hasta+INTERVAL 1 DAY
+      AND (_nit IS NULL OR _nit='' OR c.nit_proveedor=_nit)
+    ORDER BY c.fecha_compra DESC;
+END$$
+
+CREATE PROCEDURE sp_anularcompra(IN _id_compra INT, IN _id_usuario INT, IN _motivo VARCHAR(255))
+BEGIN
+    DECLARE _estado VARCHAR(20);
+    DECLARE _isbn VARCHAR(20);
+    DECLARE _cantidad INT;
+    DECLARE _stock INT;
+    DECLARE _fin INT DEFAULT 0;
+    DECLARE cur_det CURSOR FOR SELECT isbn,cantidad FROM detalle_compra WHERE id_compra=_id_compra;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET _fin=1;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN ROLLBACK; RESIGNAL; END;
+    IF _motivo IS NULL OR TRIM(_motivo)='' THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='El motivo es obligatorio'; END IF;
+    START TRANSACTION;
+    SELECT estado INTO _estado FROM compras WHERE id_compra=_id_compra FOR UPDATE;
+    IF _estado IS NULL THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Compra no encontrada'; END IF;
+    IF _estado<>'RECIBIDA' THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='La compra ya fue anulada'; END IF;
+    OPEN cur_det;
+    ciclo: LOOP
+        FETCH cur_det INTO _isbn,_cantidad;
+        IF _fin=1 THEN LEAVE ciclo; END IF;
+        SELECT stock_actual INTO _stock FROM libros WHERE isbn=_isbn FOR UPDATE;
+        IF _stock<_cantidad THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='No se puede anular: parte del stock ya fue utilizado'; END IF;
+        UPDATE libros SET stock_actual=stock_actual-_cantidad WHERE isbn=_isbn;
+        INSERT INTO movimientos_inventario(isbn,tipo_movimiento,cantidad,id_usuario,id_compra,observacion)
+        VALUES(_isbn,'DEVOLUCION_PROVEEDOR',_cantidad,_id_usuario,_id_compra,CONCAT('Anulacion compra #',_id_compra));
+    END LOOP;
+    CLOSE cur_det;
+    UPDATE compras SET estado='ANULADA',fecha_anulacion=CURRENT_TIMESTAMP,usuario_anulacion=_id_usuario,motivo_anulacion=TRIM(_motivo) WHERE id_compra=_id_compra;
+    COMMIT;
+END$$
+
+CREATE PROCEDURE sp_actualizarpreciolibro(IN _isbn VARCHAR(20), IN _precio_nuevo DECIMAL(10,2), IN _id_usuario INT, IN _motivo VARCHAR(255))
+BEGIN
+    DECLARE _precio_anterior DECIMAL(10,2);
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN ROLLBACK; RESIGNAL; END;
+    IF _precio_nuevo IS NULL OR _precio_nuevo<0 THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='El precio no puede ser negativo'; END IF;
+    IF NOT EXISTS(SELECT 1 FROM usuarios WHERE id=_id_usuario AND activo=TRUE AND rol='admin') THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Solo un administrador puede cambiar precios';
+    END IF;
+    START TRANSACTION;
+    SELECT precio INTO _precio_anterior FROM libros WHERE isbn=_isbn FOR UPDATE;
+    IF _precio_anterior IS NULL THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Libro no encontrado'; END IF;
+    IF _precio_anterior<>_precio_nuevo THEN
+        UPDATE libros SET precio=_precio_nuevo WHERE isbn=_isbn;
+        INSERT INTO historial_precios(isbn,precio_anterior,precio_nuevo,id_usuario,motivo)
+        VALUES(_isbn,_precio_anterior,_precio_nuevo,_id_usuario,_motivo);
+    END IF;
+    COMMIT;
+END$$
+
+CREATE PROCEDURE sp_listarstockcritico()
+BEGIN
+    SELECT l.isbn,l.titulo,l.stock_actual,l.stock_minimo,(l.stock_minimo-l.stock_actual) AS unidades_faltantes,
+           c.nombre_categoria,e.nombre_editorial
+    FROM libros l
+    JOIN categorias c ON c.id_categoria=l.id_categoria
+    JOIN editoriales e ON e.nit=l.nit_editorial
+    WHERE l.activo=TRUE AND l.stock_actual<=l.stock_minimo
+    ORDER BY (l.stock_minimo-l.stock_actual) DESC,l.titulo;
+END$$
+
+CREATE PROCEDURE sp_dashboardadmin()
+BEGIN
+    SELECT
+        (SELECT COALESCE(SUM(total),0) FROM ventas WHERE estado='COMPLETADA') AS ventas_totales,
+        (SELECT COALESCE(SUM(total),0) FROM ventas WHERE estado='COMPLETADA' AND fecha_venta>=CURDATE()) AS ventas_hoy,
+        (SELECT COUNT(*) FROM ventas WHERE estado='COMPLETADA' AND fecha_venta>=CURDATE()) AS transacciones_hoy,
+        (SELECT COUNT(*) FROM libros WHERE activo=TRUE) AS libros_activos,
+        (SELECT COALESCE(SUM(stock_actual),0) FROM libros WHERE activo=TRUE) AS unidades_en_stock,
+        (SELECT COALESCE(SUM(stock_actual*costo_promedio),0) FROM libros WHERE activo=TRUE) AS inventario_valorizado_costo,
+        (SELECT COUNT(*) FROM usuarios WHERE activo=TRUE) AS usuarios_activos,
+        (SELECT COUNT(*) FROM libros WHERE activo=TRUE AND stock_actual<=stock_minimo) AS libros_stock_critico;
+END$$
+
+CREATE PROCEDURE sp_reporte_ventas_periodo(IN _desde DATE, IN _hasta DATE)
+BEGIN
+    IF _desde IS NULL OR _hasta IS NULL OR _desde>_hasta THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Rango de fechas invalido'; END IF;
+    SELECT DATE(v.fecha_venta) AS fecha,COUNT(*) AS cantidad_ventas,
+           SUM(v.subtotal) AS subtotal,SUM(v.descuento) AS descuentos,SUM(v.total) AS total
+    FROM ventas v
+    WHERE v.estado='COMPLETADA' AND v.fecha_venta>=_desde AND v.fecha_venta<_hasta+INTERVAL 1 DAY
+    GROUP BY DATE(v.fecha_venta) ORDER BY fecha;
+END$$
+
+CREATE PROCEDURE sp_reporte_libros_mas_vendidos(IN _desde DATE, IN _hasta DATE, IN _limite INT)
+BEGIN
+    IF _desde IS NULL OR _hasta IS NULL OR _desde>_hasta THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Rango de fechas invalido'; END IF;
+    SET _limite=IFNULL(NULLIF(_limite,0),10);
+    IF _limite<1 OR _limite>100 THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='El limite debe estar entre 1 y 100'; END IF;
+    SELECT dv.isbn,l.titulo,SUM(dv.cantidad-dv.cantidad_devuelta) AS unidades_netas,
+           SUM((dv.cantidad-dv.cantidad_devuelta)*dv.precio_unitario) AS ingresos_brutos
+    FROM detalle_venta dv JOIN ventas v ON v.id_venta=dv.id_venta JOIN libros l ON l.isbn=dv.isbn
+    WHERE v.estado IN ('COMPLETADA','PARCIALMENTE_DEVUELTA')
+      AND v.fecha_venta>=_desde AND v.fecha_venta<_hasta+INTERVAL 1 DAY
+    GROUP BY dv.isbn,l.titulo HAVING unidades_netas>0
+    ORDER BY unidades_netas DESC,l.titulo LIMIT _limite;
+END$$
+
+CREATE PROCEDURE sp_reporte_stock_valorizado()
+BEGIN
+    SELECT l.isbn,l.titulo,l.stock_actual,l.costo_promedio,l.precio,
+           ROUND(l.stock_actual*l.costo_promedio,2) AS valor_costo,
+           ROUND(l.stock_actual*l.precio,2) AS valor_venta,
+           ROUND(l.stock_actual*(l.precio-l.costo_promedio),2) AS margen_potencial
+    FROM libros l WHERE l.activo=TRUE ORDER BY valor_costo DESC,l.titulo;
+END$$
+
 DELIMITER ;
 
 -- Vistas para dashboards y reportes
@@ -444,13 +739,15 @@ FROM libros l JOIN categorias c ON c.id_categoria=l.id_categoria
 WHERE l.activo=TRUE AND l.stock_actual <= l.stock_minimo;
 
 CREATE OR REPLACE VIEW vw_lista_movimientos_inventario AS
-SELECT m.id_movimiento,l.titulo,m.isbn,m.tipo_movimiento,m.cantidad,m.fecha_movimiento,u.username,m.id_venta,m.nit_proveedor,m.observacion
+SELECT m.id_movimiento,l.titulo,m.isbn,m.tipo_movimiento,m.cantidad,m.fecha_movimiento,u.username,
+       m.id_venta,m.id_compra,m.id_devolucion,m.nit_proveedor,m.observacion
 FROM movimientos_inventario m JOIN libros l ON l.isbn=m.isbn JOIN usuarios u ON u.id=m.id_usuario
 ORDER BY m.fecha_movimiento DESC;
 
 CREATE OR REPLACE VIEW vw_dashboard_admin AS
 SELECT
     (SELECT COALESCE(SUM(total),0) FROM ventas WHERE estado='COMPLETADA') AS ventas_totales,
+    (SELECT COALESCE(SUM(total),0) FROM ventas WHERE estado='COMPLETADA' AND fecha_venta>=CURDATE()) AS ventas_hoy,
     (SELECT COUNT(*) FROM libros WHERE activo=TRUE) AS libros_activos,
     (SELECT COALESCE(SUM(stock_actual),0) FROM libros WHERE activo=TRUE) AS unidades_en_stock,
     (SELECT COUNT(*) FROM usuarios WHERE activo=TRUE) AS usuarios_activos,
@@ -461,10 +758,52 @@ SELECT DATE(fecha_venta) fecha,COUNT(*) cantidad_ventas,COALESCE(SUM(subtotal),0
 FROM ventas WHERE estado='COMPLETADA' GROUP BY DATE(fecha_venta);
 
 CREATE OR REPLACE VIEW vw_libros_mas_vendidos AS
-SELECT dv.isbn,l.titulo,SUM(dv.cantidad) unidades_vendidas,SUM(dv.subtotal) ingresos
+SELECT dv.isbn,l.titulo,SUM(dv.cantidad-dv.cantidad_devuelta) unidades_vendidas,
+       SUM((dv.cantidad-dv.cantidad_devuelta)*dv.precio_unitario) ingresos
 FROM detalle_venta dv JOIN ventas v ON v.id_venta=dv.id_venta JOIN libros l ON l.isbn=dv.isbn
-WHERE v.estado='COMPLETADA' GROUP BY dv.isbn,l.titulo ORDER BY unidades_vendidas DESC;
+WHERE v.estado IN ('COMPLETADA','PARCIALMENTE_DEVUELTA')
+GROUP BY dv.isbn,l.titulo HAVING unidades_vendidas>0 ORDER BY unidades_vendidas DESC;
 
 CREATE OR REPLACE VIEW vw_stock_valorizado AS
-SELECT l.isbn,l.titulo,l.precio,l.stock_actual,(l.precio*l.stock_actual) valor_stock
+SELECT l.isbn,l.titulo,l.costo_promedio,l.precio,l.stock_actual,
+       (l.costo_promedio*l.stock_actual) valor_costo,
+       (l.precio*l.stock_actual) valor_venta
 FROM libros l WHERE l.activo=TRUE;
+
+CREATE OR REPLACE VIEW vw_lista_libros AS
+SELECT l.isbn,l.titulo,l.fecha_publicacion,l.precio,l.costo_promedio,l.stock_actual,l.stock_minimo,l.activo,
+       c.nombre_categoria,e.nombre_editorial,
+       GROUP_CONCAT(DISTINCT CONCAT(a.nombre_autor,' ',a.apellido_autor) ORDER BY a.apellido_autor SEPARATOR ', ') autores
+FROM libros l
+JOIN categorias c ON c.id_categoria=l.id_categoria
+JOIN editoriales e ON e.nit=l.nit_editorial
+LEFT JOIN autores_libro al ON al.isbn=l.isbn
+LEFT JOIN autores a ON a.id_autor=al.id_autor
+GROUP BY l.isbn,l.titulo,l.fecha_publicacion,l.precio,l.costo_promedio,l.stock_actual,l.stock_minimo,l.activo,c.nombre_categoria,e.nombre_editorial;
+
+CREATE OR REPLACE VIEW vw_factura_ventas AS
+SELECT v.id_venta,v.numero_comprobante,v.fecha_venta,v.estado,v.subtotal AS subtotal_venta,v.descuento,v.total,
+       v.cui_cliente,CONCAT(COALESCE(c.nombre_cliente,''),' ',COALESCE(c.apellido_cliente,'')) nombre_cliente,
+       u.username AS cajero,dv.id_detalle,dv.isbn,l.titulo,dv.cantidad,dv.cantidad_devuelta,dv.precio_unitario,dv.subtotal
+FROM ventas v
+JOIN usuarios u ON u.id=v.id_usuario
+LEFT JOIN clientes c ON c.cui=v.cui_cliente
+JOIN detalle_venta dv ON dv.id_venta=v.id_venta
+JOIN libros l ON l.isbn=dv.isbn;
+
+CREATE OR REPLACE VIEW vw_lista_compras AS
+SELECT c.id_compra,c.fecha_compra,c.numero_documento,c.estado,c.nit_proveedor,p.nombre_proveedor,
+       c.id_usuario,u.username,c.subtotal,c.total,c.observacion
+FROM compras c JOIN proveedores p ON p.nit_proveedor=c.nit_proveedor JOIN usuarios u ON u.id=c.id_usuario;
+
+CREATE OR REPLACE VIEW vw_factura_compras AS
+SELECT c.id_compra,c.fecha_compra,c.numero_documento,c.estado,c.nit_proveedor,p.nombre_proveedor,
+       dc.id_detalle_compra,dc.isbn,l.titulo,dc.cantidad,dc.costo_unitario,dc.subtotal,c.total
+FROM compras c
+JOIN proveedores p ON p.nit_proveedor=c.nit_proveedor
+JOIN detalle_compra dc ON dc.id_compra=c.id_compra
+JOIN libros l ON l.isbn=dc.isbn;
+
+CREATE OR REPLACE VIEW vw_lista_devoluciones AS
+SELECT d.id_devolucion,d.id_venta,d.tipo,d.fecha_devolucion,d.id_usuario,u.username,d.motivo,d.total_devuelto
+FROM devoluciones d JOIN usuarios u ON u.id=d.id_usuario;
