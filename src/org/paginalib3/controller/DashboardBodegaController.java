@@ -12,11 +12,11 @@ public class DashboardBodegaController extends DashboardBaseController {
 
     @Override
     protected String mensajeRol() {
-        return "Control de ingresos y existencias de la librería.";
+        return "Control de alertas de stock de la librería.";
     }
 
     @FXML
-    private void irAIngreso() {
-        Main.cambiarVista("/org/paginalib3/view/ingreso_inventario.fxml", "Pagina-Libreria | Ingreso de inventario", 1120, 720);
+    private void irAStockCritico() {
+        Main.cambiarVista("/org/paginalib3/view/stock_critico.fxml", "Pagina-Libreria | Stock crítico", 1050, 680);
     }
 }
