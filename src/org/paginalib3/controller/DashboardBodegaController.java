@@ -33,3 +33,29 @@ public class DashboardBodegaController extends DashboardBaseController {
     protected String mensajeRol() {
         return "Control de inventario y existencias de la librería.";
     }
+
+    @Override
+    @FXML
+    protected void initialize() {
+        super.initialize();
+        if (Sesion.getUsuarioActual() == null) {
+            return;
+        }
+        colIsbn.setCellValueFactory(new PropertyValueFactory<>("isbn"));
+        colTitulo.setCellValueFactory(new PropertyValueFactory<>("titulo"));
+        colStockActual.setCellValueFactory(new PropertyValueFactory<>("stockActual"));
+        colStockMinimo.setCellValueFactory(new PropertyValueFactory<>("stockMinimo"));
+        actualizarStockCritico();
+    }
+
+    @FXML
+    private void actualizarStockCritico() {
+        try {
+            List<Libro> l = dao.listarStockCritico();
+            tblCriticos.setItems(FXCollections.observableArrayList(l));
+            lblCriticos.setText(String.valueOf(l.size()));
+            lblEstadoInventario.setText(l.isEmpty() ? "Inventario sin alertas críticas." : l.size() + " libro(s) en nivel crítico.");
+        } catch (SQLException e) {
+            lblEstadoInventario.setText(e.getMessage());
+        }
+    }
