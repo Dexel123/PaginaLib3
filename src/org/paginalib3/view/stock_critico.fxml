@@ -2,7 +2,34 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.paginalib3.controller.StockCriticoController" style="-fx-background-color:#F7F1E8;">
-<top><HBox spacing="12" alignment="CENTER_LEFT" style="-fx-background-color:#3B1720; -fx-padding:18;"><Button text="← Volver" onAction="#volver" style="-fx-background-color:#FFF0D8; -fx-text-fill:#8C5616; -fx-font-weight:bold; -fx-background-radius:10; -fx-cursor:hand;"/><Label text="Alertas de stock crítico" style="-fx-text-fill:white; -fx-font-size:23px; -fx-font-weight:bold;"/><Region HBox.hgrow="ALWAYS"/><Label text="Críticos:" style="-fx-text-fill:#D9A441;"/><Label fx:id="lblCantidad" text="0" style="-fx-text-fill:white; -fx-font-size:24px; -fx-font-weight:bold;"/></HBox></top>
-<center><VBox spacing="12"><padding><Insets top="20" right="24" bottom="20" left="24"/></padding><Button text="Actualizar" onAction="#actualizar" style="-fx-background-color:#C47B21; -fx-text-fill:white; -fx-font-weight:bold; -fx-background-radius:10; -fx-padding:9 14; -fx-cursor:hand;"/><Label fx:id="lblEstado"/><TableView fx:id="tblCriticos" VBox.vgrow="ALWAYS"><columns><TableColumn fx:id="colIsbn" text="ISBN" prefWidth="170"/><TableColumn fx:id="colTitulo" text="Título" prefWidth="400"/><TableColumn fx:id="colStockActual" text="Stock actual" prefWidth="130"/><TableColumn fx:id="colStockMinimo" text="Stock mínimo" prefWidth="130"/></columns></TableView></VBox></center>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.paginalib3.controller.StockCriticoController"
+            style="-fx-background-color:#F7F1E8; -fx-font-family:'Segoe UI';">
+    <top>
+        <HBox spacing="14" alignment="CENTER_LEFT" style="-fx-background-color:#3B1720; -fx-padding:18 24;">
+            <Button text="← Volver" onAction="#volver" style="-fx-background-color:#FFF0D8; -fx-text-fill:#8C5616; -fx-font-weight:bold; -fx-background-radius:10; -fx-cursor:hand;"/>
+            <VBox HBox.hgrow="ALWAYS"><Label text="Stock crítico" style="-fx-text-fill:#FFF8EF; -fx-font-size:24px; -fx-font-weight:bold;"/><Label text="Regla: stock actual ≤ stock mínimo" style="-fx-text-fill:#D9A441;"/></VBox>
+            <VBox alignment="CENTER"><Label text="PRODUCTOS CRÍTICOS" style="-fx-text-fill:#E9D9C4; -fx-font-size:10px;"/><Label fx:id="lblCantidad" text="0" style="-fx-text-fill:#FFF8EF; -fx-font-size:28px; -fx-font-weight:bold;"/></VBox>
+        </HBox>
+    </top>
+    <center>
+        <VBox spacing="12">
+            <padding><Insets top="20" right="24" bottom="20" left="24"/></padding>
+            <HBox spacing="8">
+                <Button text="Actualizar" onAction="#actualizar" style="-fx-background-color:#C47B21; -fx-text-fill:white; -fx-font-weight:bold; -fx-background-radius:10; -fx-padding:9 14; -fx-cursor:hand;"/>
+                <Button text="Abrir ficha de libros" onAction="#abrirFicha" style="-fx-background-color:#6D3346; -fx-text-fill:white; -fx-font-weight:bold; -fx-background-radius:10; -fx-padding:9 14; -fx-cursor:hand;"/>
+            </HBox>
+            <Label fx:id="lblEstado" wrapText="true" style="-fx-text-fill:#765F55;"/>
+            <TableView fx:id="tblCriticos" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colIsbn" text="ISBN" prefWidth="150"/>
+                    <TableColumn fx:id="colTitulo" text="Título" prefWidth="350"/>
+                    <TableColumn fx:id="colCategoria" text="Categoría" prefWidth="180"/>
+                    <TableColumn fx:id="colStockActual" text="Stock actual" prefWidth="120"/>
+                    <TableColumn fx:id="colStockMinimo" text="Stock mínimo" prefWidth="120"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </center>
 </BorderPane>

@@ -283,7 +283,7 @@ public class UsuariosController {
                 new Scene(root, 380, 460);
 
         URL css = getClass().getResource(
-                "/org/paginalib3/view/styles.css"
+                "/org/paginalib3/view/style/styles.css"
         );
 
         if (css != null) {

@@ -46,9 +46,7 @@ public class MovimientoInventarioDAOImpl implements MovimientoInventarioDAO {
         try (Connection c = Conexion.getInstancia().conectar();
              CallableStatement s = c.prepareCall("{CALL sp_listarmovimientosinventario()}");
              ResultSet r = s.executeQuery()) {
-            while (r.next()) {
-                lista.add(map(r));
-            }
+            while (r.next()) lista.add(map(r));
         }
         return lista;
     }
@@ -60,9 +58,7 @@ public class MovimientoInventarioDAOImpl implements MovimientoInventarioDAO {
              CallableStatement s = c.prepareCall("{CALL sp_movimientosporlibro(?)}")) {
             s.setString(1, isbn);
             try (ResultSet r = s.executeQuery()) {
-                while (r.next()) {
-                    lista.add(map(r));
-                }
+                while (r.next()) lista.add(map(r));
             }
         }
         return lista;
@@ -72,9 +68,7 @@ public class MovimientoInventarioDAOImpl implements MovimientoInventarioDAO {
         Timestamp fecha = r.getTimestamp("fecha_movimiento");
         Integer idVenta = null;
         int valorVenta = r.getInt("id_venta");
-        if (!r.wasNull()) {
-            idVenta = valorVenta;
-        }
+        if (!r.wasNull()) idVenta = valorVenta;
         return new MovimientoInventario(
                 r.getInt("id_movimiento"),
                 r.getString("isbn"),
@@ -91,9 +85,7 @@ public class MovimientoInventarioDAOImpl implements MovimientoInventarioDAO {
     }
 
     private String limpiar(String texto) {
-        if (texto == null) {
-            return null;
-        }
+        if (texto == null) return null;
         String t = texto.trim();
         return t.isEmpty() ? null : t;
     }

@@ -20,8 +20,8 @@ public class MovimientoInventario {
     }
 
     public MovimientoInventario(int idMovimiento, String isbn, String titulo, String tipoMovimiento,
-                                int cantidad, LocalDateTime fechaMovimiento, int idUsuario,
-                                String username, Integer idVenta, String nitProveedor, String observacion) {
+            int cantidad, LocalDateTime fechaMovimiento, int idUsuario,
+            String username, Integer idVenta, String nitProveedor, String observacion) {
         this.idMovimiento = idMovimiento;
         this.isbn = isbn;
         this.titulo = titulo;

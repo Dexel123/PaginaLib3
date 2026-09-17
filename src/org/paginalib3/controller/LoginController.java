@@ -2,6 +2,7 @@ package org.paginalib3.controller;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.sql.SQLException;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -60,15 +61,34 @@ public class LoginController {
             intentosFallidos.remove(username);
             Sesion.iniciar(usuario);
             redirigirSegunRol(usuario);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            lblEstado.setText(mensajeErrorBaseDatos(ex));
+        } catch (IllegalArgumentException ex) {
+            lblEstado.setText(ex.getMessage());
         } catch (Exception ex) {
-            lblEstado.setText(ex.getMessage() == null ? "No fue posible iniciar sesión." : ex.getMessage());
+            ex.printStackTrace();
+            lblEstado.setText("No fue posible iniciar sesión. Revisa la consola para ver el error.");
         }
     }
 
-    @FXML
-    private void irARegistro() {
-        Main.cambiarVista("/org/paginalib3/view/registro.fxml",
-                "Pagina-Libreria | Registro", 650, 760);
+    private String mensajeErrorBaseDatos(SQLException ex) {
+        String mensaje = ex.getMessage() == null ? "" : ex.getMessage();
+        String minusculas = mensaje.toLowerCase();
+
+        if (minusculas.contains("access denied")) {
+            return "MySQL rechazó el usuario o contraseña de conexión. Revisa src/db.properties.";
+        }
+        if (minusculas.contains("unknown database")) {
+            return "La base libreriadb_in4cm no existe. Ejecuta primero el DDL, luego procedimientos y DML.";
+        }
+        if (minusculas.contains("does not exist") && minusculas.contains("sp_iniciar_sesion")) {
+            return "Falta el procedimiento sp_iniciar_sesion. Ejecuta el script de procedimientos.";
+        }
+        if (minusculas.contains("communications link failure") || minusculas.contains("connection refused")) {
+            return "No se pudo conectar con MySQL. Verifica que el servicio esté iniciado.";
+        }
+        return "Error de base de datos: " + mensaje;
     }
 
     @FXML

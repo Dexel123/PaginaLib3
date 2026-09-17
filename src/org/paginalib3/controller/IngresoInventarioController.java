@@ -28,12 +28,9 @@ public class IngresoInventarioController {
     @FXML private ComboBox<Libro> cmbLibro;
     @FXML private TextField txtCantidad;
     @FXML private TextArea txtObservacion;
-    @FXML private Label lblStockActual;
-    @FXML private Label lblEstado;
+    @FXML private Label lblStockActual, lblEstado;
     @FXML private TableView<MovimientoInventario> tblMovimientos;
-    @FXML private TableColumn<MovimientoInventario, String> colIsbn;
-    @FXML private TableColumn<MovimientoInventario, String> colLibro;
-    @FXML private TableColumn<MovimientoInventario, String> colTipo;
+    @FXML private TableColumn<MovimientoInventario, String> colIsbn, colLibro, colTipo;
     @FXML private TableColumn<MovimientoInventario, Integer> colCantidad;
     @FXML private TableColumn<MovimientoInventario, Object> colFecha;
 
@@ -42,9 +39,7 @@ public class IngresoInventarioController {
 
     @FXML
     private void initialize() {
-        if (!esBodega()) {
-            return;
-        }
+        if (!esBodega()) return;
         colIsbn.setCellValueFactory(new PropertyValueFactory<>("isbn"));
         colLibro.setCellValueFactory(new PropertyValueFactory<>("titulo"));
         colTipo.setCellValueFactory(new PropertyValueFactory<>("tipoMovimiento"));
@@ -67,20 +62,10 @@ public class IngresoInventarioController {
             advertencia("Selecciona un libro.");
             return;
         }
-
         int cantidad;
-        try {
-            cantidad = Integer.parseInt(txtCantidad.getText().trim());
-        } catch (Exception e) {
-            advertencia("La cantidad debe ser un entero mayor a 0.");
-            return;
-        }
-
-        if (cantidad <= 0) {
-            advertencia("La cantidad debe ser mayor a 0.");
-            return;
-        }
-
+        try { cantidad = Integer.parseInt(txtCantidad.getText().trim()); }
+        catch (Exception e) { advertencia("La cantidad debe ser un entero mayor a 0."); return; }
+        if (cantidad <= 0) { advertencia("La cantidad debe ser mayor a 0."); return; }
         Usuario usuario = Sesion.getUsuarioActual();
         try {
             movimientoDAO.registrarIngreso(libro.getIsbn(), cantidad, usuario.getId(), txtObservacion.getText());
@@ -123,27 +108,13 @@ public class IngresoInventarioController {
     }
 
     private boolean esBodega() {
-        if (Sesion.getUsuarioActual() != null && "bodega".equalsIgnoreCase(Sesion.getUsuarioActual().getRol())) {
-            return true;
-        }
+        if (Sesion.getUsuarioActual() != null && "bodega".equalsIgnoreCase(Sesion.getUsuarioActual().getRol())) return true;
         Main.cambiarVista("/org/paginalib3/view/login.fxml", "Pagina-Libreria | Iniciar sesión", 760, 560);
         return false;
     }
 
-    private String mensaje(SQLException e) {
-        return e.getMessage() == null ? "Error de base de datos" : e.getMessage();
-    }
-
-    private void informacion(String m) {
-        new Alert(Alert.AlertType.INFORMATION, m, ButtonType.OK).showAndWait();
-    }
-
-    private void advertencia(String m) {
-        new Alert(Alert.AlertType.WARNING, m, ButtonType.OK).showAndWait();
-    }
-
-    private void error(String m) {
-        lblEstado.setText(m);
-        new Alert(Alert.AlertType.ERROR, m, ButtonType.OK).showAndWait();
-    }
+    private String mensaje(SQLException e) { return e.getMessage() == null ? "Error de base de datos" : e.getMessage(); }
+    private void informacion(String m) { new Alert(Alert.AlertType.INFORMATION, m, ButtonType.OK).showAndWait(); }
+    private void advertencia(String m) { new Alert(Alert.AlertType.WARNING, m, ButtonType.OK).showAndWait(); }
+    private void error(String m) { lblEstado.setText(m); new Alert(Alert.AlertType.ERROR, m, ButtonType.OK).showAndWait(); }
 }

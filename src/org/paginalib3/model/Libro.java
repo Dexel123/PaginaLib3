@@ -19,61 +19,18 @@ public class Libro {
     public Libro() {
     }
 
-    public Libro(String isbn, String titulo, double precio,
-                 int stockActual, int stockMinimo,
-                 boolean activo, String autores) {
-
-        this(
-            isbn,
-            titulo,
-            null,
-            precio,
-            0,
-            null,
-            stockActual,
-            stockMinimo,
-            activo,
-            autores,
-            null
-        );
+    public Libro(String isbn, String titulo, double precio, int stockActual, int stockMinimo, boolean activo, String autores) {
+        this(isbn, titulo, null, precio, 0, null, stockActual, stockMinimo, activo, autores, null);
     }
 
-    public Libro(String isbn, String titulo,
-                 LocalDate fechaPublicacion,
-                 double precio,
-                 int idCategoria,
-                 String nitEditorial,
-                 int stockActual,
-                 int stockMinimo,
-                 boolean activo) {
-
-        this(
-            isbn,
-            titulo,
-            fechaPublicacion,
-            precio,
-            idCategoria,
-            nitEditorial,
-            stockActual,
-            stockMinimo,
-            activo,
-            "",
-            null
-        );
+    public Libro(String isbn, String titulo, LocalDate fechaPublicacion, double precio, int idCategoria,
+            String nitEditorial, int stockActual, int stockMinimo, boolean activo) {
+        this(isbn, titulo, fechaPublicacion, precio, idCategoria, nitEditorial, stockActual, stockMinimo, activo, "", null);
     }
 
-    public Libro(String isbn,
-                 String titulo,
-                 LocalDate fechaPublicacion,
-                 double precio,
-                 int idCategoria,
-                 String nitEditorial,
-                 int stockActual,
-                 int stockMinimo,
-                 boolean activo,
-                 String autores,
-                 String nombreCategoria) {
-
+    public Libro(String isbn, String titulo, LocalDate fechaPublicacion, double precio, int idCategoria,
+            String nitEditorial, int stockActual, int stockMinimo, boolean activo,
+            String autores, String nombreCategoria) {
         this.isbn = isbn;
         this.titulo = titulo;
         this.fechaPublicacion = fechaPublicacion;

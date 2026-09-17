@@ -47,7 +47,7 @@ public class LibroController {
         chkActivo.setSelected(true);
         cargarLibros();
     }
-        
+
     @FXML
     private void buscar() {
         try {
@@ -209,4 +209,3 @@ public class LibroController {
     private void advertencia(String m) { new Alert(Alert.AlertType.WARNING, m, ButtonType.OK).showAndWait(); }
     private void error(String m) { lblEstado.setText(m); new Alert(Alert.AlertType.ERROR, m, ButtonType.OK).showAndWait(); }
 }
- 

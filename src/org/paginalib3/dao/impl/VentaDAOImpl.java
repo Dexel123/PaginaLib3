@@ -78,7 +78,8 @@ public class VentaDAOImpl implements VentaDAO {
              CallableStatement s = c.prepareCall("{CALL sp_ventasdeldiaporusuario(?)}")) {
             s.setInt(1, idUsuario);
             try (ResultSet r = s.executeQuery()) {
-                while (r.next()) l.add(map(r));
+             
+                while (r.next()) l.add(mapResumen(r, idUsuario));
             }
         }
         return l;
@@ -109,9 +110,46 @@ public class VentaDAOImpl implements VentaDAO {
 
     private Venta map(ResultSet r) throws SQLException {
         Timestamp t = r.getTimestamp("fecha_venta");
+        String cuiCliente = getStringOpcional(r, "cui_cliente");
+        Integer idUsuario = getIntOpcional(r, "id_usuario");
+
         return new Venta(r.getInt("id_venta"), t == null ? null : t.toLocalDateTime(),
                 r.getDouble("subtotal"), r.getDouble("descuento"), r.getDouble("total"),
-                r.getString("estado"), r.getString("cui_cliente"), r.getInt("id_usuario"));
+                r.getString("estado"), cuiCliente, idUsuario == null ? 0 : idUsuario);
+    }
+
+   
+    private String getStringOpcional(ResultSet r, String columna) throws SQLException {
+        try {
+            return r.getString(columna);
+        } catch (SQLException ex) {
+            if (esColumnaInexistente(ex)) return null;
+            throw ex;
+        }
+    }
+
+    private Integer getIntOpcional(ResultSet r, String columna) throws SQLException {
+        try {
+            int valor = r.getInt(columna);
+            return r.wasNull() ? null : valor;
+        } catch (SQLException ex) {
+            if (esColumnaInexistente(ex)) return null;
+            throw ex;
+        }
+    }
+
+    private boolean esColumnaInexistente(SQLException ex) {
+        String mensaje = ex.getMessage();
+        return mensaje != null && mensaje.toLowerCase().contains("column")
+                && mensaje.toLowerCase().contains("not found");
+    }
+
+   
+    private Venta mapResumen(ResultSet r, int idUsuario) throws SQLException {
+        Timestamp t = r.getTimestamp("fecha_venta");
+        return new Venta(r.getInt("id_venta"), t == null ? null : t.toLocalDateTime(),
+                r.getDouble("subtotal"), r.getDouble("descuento"), r.getDouble("total"),
+                r.getString("estado"), null, idUsuario);
     }
 
     private String esc(String s) {

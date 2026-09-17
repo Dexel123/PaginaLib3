@@ -56,11 +56,11 @@ public class LibroDAOImpl implements LibroDAO {
              CallableStatement s = c.prepareCall("{CALL sp_buscarlibro(?)}")) {
             s.setString(1, isbn);
             try (ResultSet r = s.executeQuery()) {
-                return r.next() ? map(r) : null; 
+                return r.next() ? map(r) : null;
             }
         }
     }
- 
+
     @Override
     public boolean insertar(Libro libro) throws SQLException {
         try (Connection c = Conexion.getInstancia().conectar()) {
@@ -73,13 +73,13 @@ public class LibroDAOImpl implements LibroDAO {
                 s.setString(1, libro.getIsbn());
                 s.setInt(2, libro.getStockMinimo());
                 s.setBoolean(3, libro.isActivo());
-                s.executeUpdate(); 
+                s.executeUpdate();
             }
             c.commit();
             return true;
         }
     }
- 
+
     @Override
     public boolean actualizar(Libro libro) throws SQLException {
         try (Connection c = Conexion.getInstancia().conectar()) {
@@ -117,6 +117,27 @@ public class LibroDAOImpl implements LibroDAO {
         }
     }
 
+    @Override
+    public List<Libro> listarStockCritico() throws SQLException {
+        List<Libro> lista = new ArrayList<>();
+        String sql = "SELECT isbn,titulo,stock_actual,stock_minimo,nombre_categoria FROM vw_stock_critico ORDER BY stock_actual,titulo";
+        try (Connection c = Conexion.getInstancia().conectar();
+             PreparedStatement s = c.prepareStatement(sql);
+             ResultSet r = s.executeQuery()) {
+            while (r.next()) {
+                Libro libro = new Libro();
+                libro.setIsbn(r.getString("isbn"));
+                libro.setTitulo(r.getString("titulo"));
+                libro.setStockActual(r.getInt("stock_actual"));
+                libro.setStockMinimo(r.getInt("stock_minimo"));
+                libro.setNombreCategoria(r.getString("nombre_categoria"));
+                libro.setActivo(true);
+                lista.add(libro);
+            }
+        }
+        return lista;
+    }
+
     private void cargarDatosLibro(CallableStatement s, Libro libro) throws SQLException {
         s.setString(1, libro.getIsbn());
         s.setString(2, libro.getTitulo());
@@ -125,32 +146,6 @@ public class LibroDAOImpl implements LibroDAO {
         s.setDouble(4, libro.getPrecio());
         s.setInt(5, libro.getIdCategoria());
         s.setString(6, libro.getNitEditorial());
-    }
-
-    @Override
-    public List<Libro> listarStockCritico() throws SQLException {
-        List<Libro> lista = new ArrayList<>();
-        String sql = "SELECT isbn,titulo,stock_actual,stock_minimo FROM vw_stock_critico ORDER BY stock_actual,titulo";
-        try (Connection c = Conexion.getInstancia().conectar(); PreparedStatement s = c.prepareStatement(sql); ResultSet r = s.executeQuery()) {
-            while (r.next()) {
-                Libro libro = new Libro(r.getString("isbn"), r.getString("titulo"), 0, r.getInt("stock_actual"), r.getInt("stock_minimo"), true, "");
-                lista.add(libro);
-            }
-        }
-        return lista;
-    }
-
-    @Override
-    public List<Libro> listarStockCritico() throws SQLException {
-        List<Libro> lista = new ArrayList<>();
-        String sql = "SELECT isbn,titulo,stock_actual,stock_minimo FROM vw_stock_critico ORDER BY stock_actual,titulo";
-        try (Connection c = Conexion.getInstancia().conectar(); PreparedStatement s = c.prepareStatement(sql); ResultSet r = s.executeQuery()) {
-            while (r.next()) {
-                Libro libro = new Libro(r.getString("isbn"), r.getString("titulo"), 0, r.getInt("stock_actual"), r.getInt("stock_minimo"), true, "");
-                lista.add(libro);
-            }
-        }
-        return lista;
     }
 
     private Libro map(ResultSet r) throws SQLException {
