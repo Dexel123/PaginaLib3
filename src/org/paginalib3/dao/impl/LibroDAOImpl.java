@@ -73,7 +73,7 @@ public class LibroDAOImpl implements LibroDAO {
                 s.setString(1, libro.getIsbn());
                 s.setInt(2, libro.getStockMinimo());
                 s.setBoolean(3, libro.isActivo());
-                s.executeUpdate();
+                s.executeUpdate(); 
             }
             c.commit();
             return true;
