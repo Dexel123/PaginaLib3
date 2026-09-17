@@ -60,7 +60,7 @@ public class LibroDAOImpl implements LibroDAO {
             }
         }
     }
-
+ 
     @Override
     public boolean insertar(Libro libro) throws SQLException {
         try (Connection c = Conexion.getInstancia().conectar()) {
