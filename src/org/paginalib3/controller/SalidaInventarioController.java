@@ -57,4 +57,31 @@ public class SalidaInventarioController {
         Libro libro = cmbLibro.getValue();
         lblStockActual.setText(libro == null ? "-" : String.valueOf(libro.getStockActual()));
     }
+
+    @FXML
+    private void registrarSalida() {
+        Libro libro = cmbLibro.getValue();
+        String tipo = cmbTipoSalida.getValue();
+        if (libro == null) { advertencia("Selecciona un libro."); return; }
+        if (tipo == null || tipo.isBlank()) { advertencia("Selecciona el tipo de salida."); return; }
+        int cantidad;
+        try { cantidad = Integer.parseInt(txtCantidad.getText().trim()); }
+        catch (Exception e) { advertencia("La cantidad debe ser un entero mayor a 0."); return; }
+        if (cantidad <= 0) { advertencia("La cantidad debe ser mayor a 0."); return; }
+        if (cantidad > libro.getStockActual()) {
+            advertencia("La cantidad supera el stock disponible. Stock actual: " + libro.getStockActual());
+            return;
+        }
+        Usuario usuario = Sesion.getUsuarioActual();
+        try {
+            movimientoDAO.registrarSalida(libro.getIsbn(), cantidad, tipo, usuario.getId(), txtObservacion.getText());
+            informacion("Salida registrada correctamente.");
+            txtCantidad.setText("1");
+            txtObservacion.clear();
+            cargarDatos();
+            seleccionarPorIsbn(libro.getIsbn());
+            lblEstado.setText("Salida aplicada y stock actualizado.");
+        } catch (SQLException e) {
+            error("No se pudo registrar la salida: " + mensaje(e));
+        }
     }
