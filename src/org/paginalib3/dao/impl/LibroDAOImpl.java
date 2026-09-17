@@ -79,7 +79,7 @@ public class LibroDAOImpl implements LibroDAO {
             return true;
         }
     }
-
+ 
     @Override
     public boolean actualizar(Libro libro) throws SQLException {
         try (Connection c = Conexion.getInstancia().conectar()) {

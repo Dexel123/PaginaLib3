@@ -13,3 +13,4 @@ public interface LibroDAO {
     boolean actualizar(Libro libro) throws SQLException;
     boolean cambiarEstado(String isbn, int stockMinimo, boolean activo) throws SQLException;
 }
+ 
