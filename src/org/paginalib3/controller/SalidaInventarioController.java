@@ -85,3 +85,20 @@ public class SalidaInventarioController {
             error("No se pudo registrar la salida: " + mensaje(e));
         }
     }
+
+    @FXML
+    private void volver() {
+        Main.cambiarVista("/org/paginalib3/view/dashboard_bodega.fxml", "Pagina-Libreria | Dashboard Bodega", 1180, 720);
+    }
+
+    private void cargarDatos() {
+        try {
+            List<Libro> libros = libroDAO.listar();
+            cmbLibro.setItems(FXCollections.observableArrayList(libros));
+            tblMovimientos.setItems(FXCollections.observableArrayList(movimientoDAO.listar()));
+            lblEstado.setText("Inventario actualizado.");
+            actualizarStockSeleccionado();
+        } catch (SQLException e) {
+            error("No se pudieron cargar los datos: " + mensaje(e));
+        }
+    }

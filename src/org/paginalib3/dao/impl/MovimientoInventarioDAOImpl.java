@@ -39,3 +39,64 @@ public class MovimientoInventarioDAOImpl implements MovimientoInventarioDAO {
             return true;
         }
     }
+
+    @Override
+    public List<MovimientoInventario> listar() throws SQLException {
+        List<MovimientoInventario> lista = new ArrayList<>();
+        try (Connection c = Conexion.getInstancia().conectar();
+             CallableStatement s = c.prepareCall("{CALL sp_listarmovimientosinventario()}");
+             ResultSet r = s.executeQuery()) {
+            while (r.next()) lista.add(map(r));
+        }
+        return lista;
+    }
+
+    @Override
+    public List<MovimientoInventario> listarPorLibro(String isbn) throws SQLException {
+        List<MovimientoInventario> lista = new ArrayList<>();
+        try (Connection c = Conexion.getInstancia().conectar();
+             CallableStatement s = c.prepareCall("{CALL sp_movimientosporlibro(?)}")) {
+            s.setString(1, isbn);
+            try (ResultSet r = s.executeQuery()) {
+                while (r.next()) lista.add(map(r));
+            }
+        }
+        return lista;
+    }
+
+    private MovimientoInventario map(ResultSet r) throws SQLException {
+        Timestamp fecha = r.getTimestamp("fecha_movimiento");
+        Integer idVenta = null;
+        int valorVenta = r.getInt("id_venta");
+        if (!r.wasNull()) idVenta = valorVenta;
+        return new MovimientoInventario(
+                r.getInt("id_movimiento"),
+                r.getString("isbn"),
+                has(r, "titulo") ? r.getString("titulo") : "",
+                r.getString("tipo_movimiento"),
+                r.getInt("cantidad"),
+                fecha == null ? null : fecha.toLocalDateTime(),
+                r.getInt("id_usuario"),
+                has(r, "username") ? r.getString("username") : "",
+                idVenta,
+                r.getString("nit_proveedor"),
+                r.getString("observacion")
+        );
+    }
+
+    private String limpiar(String texto) {
+        if (texto == null) return null;
+        String t = texto.trim();
+        return t.isEmpty() ? null : t;
+    }
+
+    private boolean has(ResultSet r, String nombre) {
+        try {
+            r.findColumn(nombre);
+            return true;
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+}
+
