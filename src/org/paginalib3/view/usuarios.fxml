@@ -8,29 +8,38 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox xmlns="http://javafx.com/javafx/21" 
-      xmlns:fx="http://javafx.com/fxml/1" 
-      fx:controller="org.paginalib3.controller.UsuariosController" 
-      spacing="18" 
-      styleClass="root">
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.paginalib3.controller.UsuariosController"
+      spacing="14"
+      style="-fx-background-color:#F7F1E8; -fx-font-family:'Segoe UI';">
     <padding>
-        <Insets top="30" right="30" bottom="30" left="30"/>
+        <Insets top="28" right="30" bottom="24" left="30"/>
     </padding>
-    <Label text="Gestion de usuarios" styleClass="title-label"/>
-    <Label text="Registra y administra las cuentas del sistema." styleClass="subtitle-label"/>
-    <TableView fx:id="tablaUsuarios" VBox.vgrow="ALWAYS">
-        <columns>
-            <TableColumn fx:id="colUsername" text="Usuario" prefWidth="140"/>
-            <TableColumn fx:id="colNombre" text="Nombre" prefWidth="220"/>
-            <TableColumn fx:id="colRol" text="Rol" prefWidth="120"/>
-            <TableColumn fx:id="colEstado" text="Estado" prefWidth="120"/>
-        </columns>
-    </TableView>
+    <Label text="Gestión de usuarios" style="-fx-text-fill:#3B1720; -fx-font-size:26px; -fx-font-weight:bold;"/>
+    <Label text="Registra y administra las cuentas del sistema." style="-fx-text-fill:#765F55; -fx-font-size:13px;"/>
+    <VBox spacing="8" VBox.vgrow="ALWAYS"
+          style="-fx-background-color:#FFFDF9; -fx-background-radius:14; -fx-border-color:#E5D8C8; -fx-border-radius:14; -fx-padding:16;">
+        <TableView fx:id="tablaUsuarios" VBox.vgrow="ALWAYS"
+                   style="-fx-background-color:#FFFDF9; -fx-border-color:#E5D8C8; -fx-border-radius:8;">
+            <columns>
+                <TableColumn fx:id="colUsername" text="Usuario" prefWidth="140"/>
+                <TableColumn fx:id="colNombre" text="Nombre" prefWidth="220"/>
+                <TableColumn fx:id="colRol" text="Rol" prefWidth="120"/>
+                <TableColumn fx:id="colEstado" text="Estado" prefWidth="120"/>
+            </columns>
+        </TableView>
+    </VBox>
     <HBox spacing="10">
-        <Button text="+ Registrar usuario" styleClass="btn-primary" onAction="#registrar"/>
-        <Button text="Editar datos" styleClass="btn-secondary" onAction="#editar"/>
-        <Button text="Cambiar rol" styleClass="btn-secondary" onAction="#cambiarRol"/>
-        <Button text="Activar / desactivar" styleClass="btn-secondary" onAction="#cambiarEstado"/>
-        <Button text="Volver" styleClass="btn-secondary" onAction="#volver"/>
+        <Button text="+ Registrar usuario" onAction="#registrar"
+                style="-fx-background-color:#7A2938; -fx-text-fill:#FFF8EF; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:11 14; -fx-cursor:hand;"/>
+        <Button text="Editar datos" onAction="#editar"
+                style="-fx-background-color:#EFE4D6; -fx-text-fill:#5A3039; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:10 12; -fx-cursor:hand;"/>
+        <Button text="Cambiar rol" onAction="#cambiarRol"
+                style="-fx-background-color:#EFE4D6; -fx-text-fill:#5A3039; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:10 12; -fx-cursor:hand;"/>
+        <Button text="Activar / desactivar" onAction="#cambiarEstado"
+                style="-fx-background-color:#EFE4D6; -fx-text-fill:#5A3039; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:10 12; -fx-cursor:hand;"/>
+        <Button text="Volver" onAction="#volver"
+                style="-fx-background-color:#D9A441; -fx-text-fill:#3B1720; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:10 12; -fx-cursor:hand;"/>
     </HBox>
 </VBox>

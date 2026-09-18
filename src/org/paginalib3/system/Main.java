@@ -36,7 +36,7 @@ System.out.println(">>> CONTROLADOR: " + loader.getController());
             controladorVistaActual = loader.getController();
 
             Scene scene = new Scene(root, ancho, alto);
-            URL css = Main.class.getResource("/org/paginalib3/view/styles.css");
+            URL css = Main.class.getResource("/org/paginalib3/view/style/styles.css");
             if (css != null) scene.getStylesheets().add(css.toExternalForm());
 
             stagePrincipal.setTitle(titulo);

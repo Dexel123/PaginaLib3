@@ -4,28 +4,36 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
 <StackPane xmlns="http://javafx.com/javafx/21"
            xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="org.paginalib3.controller.CambiarContrasenaController"
-           styleClass="root">
+           style="-fx-background-color:#F7F1E8; -fx-font-family:'Segoe UI';">
     <padding>
         <Insets top="30" right="30" bottom="30" left="30"/>
     </padding>
 
-    <VBox alignment="CENTER" maxWidth="470" spacing="12" styleClass="card">
-        <Label text="Cambiar contrasena" styleClass="title-label"/>
-        <Label text="Actualiza de forma segura la contrasena de tu cuenta." styleClass="subtitle-label"/>
+    <VBox alignment="CENTER" maxWidth="470" spacing="12"
+          style="-fx-background-color:#FFFDF9; -fx-background-radius:18; -fx-border-color:#E5D8C8; -fx-border-radius:18; -fx-padding:28;">
+        <Label text="Cambiar contrasena" style="-fx-text-fill:#3B1720; -fx-font-size:24px; -fx-font-weight:bold;"/>
+        <Label text="Actualiza de forma segura la contrasena de tu cuenta." style="-fx-text-fill:#765F55; -fx-font-size:13px;"/>
+        <Region prefHeight="4"/>
 
-        <PasswordField fx:id="txtActual" promptText="Contrasena actual"/>
-        <PasswordField fx:id="txtNueva" promptText="Nueva contrasena"/>
-        <PasswordField fx:id="txtConfirmar" promptText="Confirmar nueva contrasena"/>
+        <PasswordField fx:id="txtActual" promptText="Contrasena actual"
+                       style="-fx-background-color:#F6EFE5; -fx-background-radius:9; -fx-border-color:#E5D8C8; -fx-border-radius:9; -fx-pref-height:40;"/>
+        <PasswordField fx:id="txtNueva" promptText="Nueva contrasena"
+                       style="-fx-background-color:#F6EFE5; -fx-background-radius:9; -fx-border-color:#E5D8C8; -fx-border-radius:9; -fx-pref-height:40;"/>
+        <PasswordField fx:id="txtConfirmar" promptText="Confirmar nueva contrasena"
+                       style="-fx-background-color:#F6EFE5; -fx-background-radius:9; -fx-border-color:#E5D8C8; -fx-border-radius:9; -fx-pref-height:40;"/>
 
-        <Button text="Guardar contrasena" styleClass="btn-primary" maxWidth="Infinity" onAction="#guardar"/>
-        <Button text="Cancelar" styleClass="btn-secondary" maxWidth="Infinity" onAction="#cancelar"/>
+        <Button text="Guardar contrasena" maxWidth="Infinity" onAction="#guardar"
+                style="-fx-background-color:#7A2938; -fx-text-fill:#FFF8EF; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:12 14; -fx-cursor:hand;"/>
+        <Button text="Cancelar" maxWidth="Infinity" onAction="#cancelar"
+                style="-fx-background-color:#EFE4D6; -fx-text-fill:#5A3039; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:11 14; -fx-cursor:hand;"/>
 
-        <Label fx:id="lblEstado" styleClass="error-label" wrapText="true"/>
+        <Label fx:id="lblEstado" style="-fx-text-fill:#D9534F; -fx-font-weight:bold;" wrapText="true"/>
     </VBox>
 </StackPane>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.paginalib3.controller.LibroController"
+            style="-fx-background-color:#F7F1E8; -fx-font-family:'Segoe UI';">
+    <top>
+        <VBox spacing="10" style="-fx-background-color:#3B1720; -fx-padding:18 24;">
+            <HBox spacing="12" alignment="CENTER_LEFT">
+                <Button text="← Volver" onAction="#volver" style="-fx-background-color:#EFE4D6; -fx-text-fill:#3B1720; -fx-font-weight:bold;"/>
+                <VBox>
+                    <Label text="Gestión de libros" style="-fx-text-fill:#FFF8EF; -fx-font-size:24px; -fx-font-weight:bold;"/>
+                    <Label text="Alta, edición, estado y stock mínimo del catálogo" style="-fx-text-fill:#D9A441;"/>
+                </VBox>
+            </HBox>
+            <HBox spacing="8">
+                <TextField fx:id="txtBuscar" promptText="Buscar por ISBN o título" HBox.hgrow="ALWAYS"/>
+                <Button text="Buscar" onAction="#buscar" style="-fx-background-color:#D9A441; -fx-text-fill:#3B1720; -fx-font-weight:bold;"/>
+                <Button text="Mostrar todos" onAction="#nuevo" style="-fx-background-color:#FFF8EF; -fx-text-fill:#3B1720;"/>
+            </HBox>
+        </VBox>
+    </top>
+    <center>
+        <SplitPane dividerPositions="0.38">
+            <VBox spacing="11" style="-fx-padding:18; -fx-background-color:#FFFDF9;">
+                <Label text="Ficha del libro" style="-fx-font-size:18px; -fx-font-weight:bold; -fx-text-fill:#3B1720;"/>
+                <Label text="ISBN"/><TextField fx:id="txtIsbn" promptText="978-..."/>
+                <Label text="Título"/><TextField fx:id="txtTitulo"/>
+                <Label text="Fecha de publicación"/><DatePicker fx:id="dpFechaPublicacion" maxWidth="Infinity"/>
+                <Label text="Precio"/><TextField fx:id="txtPrecio" promptText="0.00"/>
+                <HBox spacing="8">
+                    <VBox HBox.hgrow="ALWAYS"><Label text="ID categoría"/><TextField fx:id="txtIdCategoria"/></VBox>
+                    <VBox HBox.hgrow="ALWAYS"><Label text="NIT editorial"/><TextField fx:id="txtNitEditorial"/></VBox>
+                </HBox>
+                <HBox spacing="8">
+                    <VBox HBox.hgrow="ALWAYS"><Label text="Stock mínimo"/><TextField fx:id="txtStockMinimo"/></VBox>
+                    <VBox HBox.hgrow="ALWAYS"><Label text="Stock actual"/><Label fx:id="lblStockActual" text="0" style="-fx-font-size:18px; -fx-font-weight:bold;"/></VBox>
+                </HBox>
+                <CheckBox fx:id="chkActivo" text="Libro activo" selected="true"/>
+                <HBox spacing="8">
+                    <Button fx:id="btnGuardar" text="Guardar" onAction="#guardar" maxWidth="Infinity" HBox.hgrow="ALWAYS" style="-fx-background-color:#6D3346; -fx-text-fill:white; -fx-font-weight:bold; -fx-background-radius:10; -fx-padding:9 14; -fx-cursor:hand;"/>
+                    <Button text="Nuevo / Limpiar" onAction="#nuevo" maxWidth="Infinity" HBox.hgrow="ALWAYS" style="-fx-background-color:#EFE4D6; -fx-text-fill:#3B1720; -fx-font-weight:bold; -fx-background-radius:10; -fx-cursor:hand;"/>
+                </HBox>
+                <Button fx:id="btnEstado" text="Activar / Desactivar" onAction="#cambiarEstado" maxWidth="Infinity" style="-fx-background-color:#D9A441; -fx-text-fill:#3B1720; -fx-font-weight:bold;"/>
+                <Label fx:id="lblEstado" wrapText="true" style="-fx-text-fill:#765F55;"/>
+            </VBox>
+            <VBox spacing="10" style="-fx-padding:18;">
+                <Label text="Catálogo" style="-fx-font-size:18px; -fx-font-weight:bold; -fx-text-fill:#3B1720;"/>
+                <TableView fx:id="tblLibros" onMouseClicked="#seleccionarLibro" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colIsbn" text="ISBN" prefWidth="130"/>
+                        <TableColumn fx:id="colTitulo" text="Título" prefWidth="230"/>
+                        <TableColumn fx:id="colPrecio" text="Precio" prefWidth="90"/>
+                        <TableColumn fx:id="colStockActual" text="Stock" prefWidth="80"/>
+                        <TableColumn fx:id="colStockMinimo" text="Mínimo" prefWidth="80"/>
+                        <TableColumn fx:id="colEstado" text="Estado" prefWidth="90"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </SplitPane>
+    </center>
+</BorderPane>
