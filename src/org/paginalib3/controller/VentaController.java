@@ -74,7 +74,6 @@ public class VentaController {
         cargarLibros();
         refrescarTotales();
 
-        // Bloquea el botón cuando no hay selección o el libro ya no tiene stock disponible.
         tblLibros.getSelectionModel().selectedItemProperty().addListener((obs, anterior, actual) -> {
             actualizarEstadoBotonAgregar(actual);
         });
@@ -84,18 +83,13 @@ public class VentaController {
     }
     
     private void cargarClientes() {
-    try {
-        List<Cliente> clientes = clienteDAO.listar();
-
-        cmbCliente.setItems(
-            FXCollections.observableArrayList(clientes)
-        );
-
-    } catch (Exception e) {
-        e.printStackTrace();
+        try {
+            List<Cliente> clientes = clienteDAO.listar();
+            cmbCliente.setItems(FXCollections.observableArrayList(clientes));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-}
-  
 
     private void cargarLibros() {
         try {
@@ -155,10 +149,8 @@ public class VentaController {
             int c = Integer.parseInt(txtCantidad.getText().trim());
             if (c <= 0) throw new NumberFormatException();
 
-            // stockActual aquí representa lo que todavía queda disponible en esta venta.
             if (c > l.getStockActual()) {
-                alert(Alert.AlertType.WARNING,
-                        "Stock insuficiente. Disponible para esta venta: " + l.getStockActual());
+                alert(Alert.AlertType.WARNING, "Stock insuficiente. Disponible para esta venta: " + l.getStockActual());
                 return;
             }
 
@@ -176,7 +168,6 @@ public class VentaController {
                 d.setSubtotal(total * d.getPrecioUnitario());
             }
 
-            // Reserva visualmente esas unidades sin tocar todavía MySQL.
             l.setStockActual(l.getStockActual() - c);
             tblLibros.refresh();
             actualizarEstadoBotonAgregar(l);
@@ -198,15 +189,9 @@ public class VentaController {
 
         carrito.remove(d);
         refrescarCarrito();
-
-        // Recarga el stock de BD y descuenta únicamente lo que todavía siga en el carrito.
         refrescarCatalogoVisible();
     }
 
-    /**
-     * Convierte el stock almacenado en BD en stock disponible para la venta actual.
-     * No modifica MySQL: solamente descuenta temporalmente lo que ya está en el carrito.
-     */
     private List<Libro> aplicarStockReservado(List<Libro> lista) {
         for (Libro libro : lista) {
             int reservado = cantidadEnCarrito(libro.getIsbn());
@@ -244,7 +229,9 @@ public class VentaController {
         }
     }
 
-    private double calcularSubtotal() { return carrito.stream().mapToDouble(DetalleVenta::getSubtotal).sum(); }
+    private double calcularSubtotal() { 
+        return carrito.stream().mapToDouble(DetalleVenta::getSubtotal).sum(); 
+    }
 
     private double calcularDescuento(double subtotal) {
         if (txtDescuento.getText() == null || txtDescuento.getText().isBlank()) return 0;
@@ -258,35 +245,60 @@ public class VentaController {
     }
 
     @FXML private void actualizarDescuento() {
-        try { refrescarTotales(); }
-        catch (Exception e) { lblEstado.setText(e.getMessage()); }
+        try { 
+            refrescarTotales(); 
+            lblEstado.setText("");
+        } catch (Exception e) { 
+            lblEstado.setText(e.getMessage()); 
+        }
     }
 
-    private void refrescarCarrito() { tblCarrito.setItems(FXCollections.observableArrayList(carrito)); refrescarTotales(); }
+    private void refrescarCarrito() { 
+        tblCarrito.setItems(FXCollections.observableArrayList(carrito)); 
+        refrescarTotales(); 
+    }
 
     private void refrescarTotales() {
         double subtotal = calcularSubtotal();
         double descuento = 0;
-        try { descuento = calcularDescuento(subtotal); } catch (Exception ignored) { }
+        try { 
+            descuento = calcularDescuento(subtotal); 
+        } catch (Exception ignored) { }
+        
         lblSubtotal.setText(String.format("Q%.2f", subtotal));
         lblDescuento.setText(String.format("Q%.2f", descuento));
         lblTotal.setText(String.format("Q%.2f", subtotal - descuento));
     }
 
     @FXML private void registrar() {
-        if (carrito.isEmpty()) { alert(Alert.AlertType.WARNING, "El carrito está vacío."); return; }
+        if (carrito.isEmpty()) { 
+            alert(Alert.AlertType.WARNING, "El carrito está vacío."); 
+            return; 
+        }
         Usuario u = Sesion.getUsuarioActual();
-        if (u == null || !"cajero".equalsIgnoreCase(u.getRol())) { alert(Alert.AlertType.ERROR, "Se requiere una sesión activa de cajero."); return; }
+        if (u == null || !"cajero".equalsIgnoreCase(u.getRol())) { 
+            alert(Alert.AlertType.ERROR, "Se requiere una sesión activa de cajero."); 
+            return; 
+        }
         String cui = ventaEnCurso ? cuiVenta : textoCuiActual();
-        if (!cui.isEmpty()) try { Long.parseLong(cui); } catch (NumberFormatException e) { alert(Alert.AlertType.WARNING, "El CUI debe ser numérico."); return; }
+        if (!cui.isEmpty()) {
+            try { 
+                Long.parseLong(cui); 
+            } catch (NumberFormatException e) { 
+                alert(Alert.AlertType.WARNING, "El CUI debe ser numérico."); 
+                return; 
+            }
+        }
 
         try {
             double subtotal = calcularSubtotal();
             double descuento = calcularDescuento(subtotal);
             Integer autorizador = null;
             if (descuento > 0) autorizador = validarAutorizacionAdmin();
+            
             Venta v = new Venta(subtotal, descuento, subtotal - descuento, "COMPLETADA", cui, u.getId());
             if (!ventaDAO.registrarVenta(v, new ArrayList<>(carrito), autorizador)) return;
+            
             int id = v.getIdVenta();
             alert(Alert.AlertType.INFORMATION, "Venta #" + id + " registrada correctamente.");
             carrito.clear();
@@ -294,9 +306,12 @@ public class VentaController {
             refrescarCarrito();
             cargarLibros();
             quitarProteccionCierre();
+            
             Main.cambiarVista("/org/paginalib3/view/comprobante.fxml", "Pagina-Libreria | Comprobante", 900, 760);
             Main.configurarVistaActual(x -> { if (x instanceof ComprobanteController c) c.cargarVenta(id); });
-        } catch (Exception e) { alert(Alert.AlertType.ERROR, "No se pudo registrar la venta: " + e.getMessage()); }
+        } catch (Exception e) { 
+            alert(Alert.AlertType.ERROR, "No se pudo registrar la venta: " + e.getMessage()); 
+        }
     }
 
     private int validarAutorizacionAdmin() throws Exception {
@@ -314,8 +329,14 @@ public class VentaController {
         carrito.clear();
         finalizarVenta();
         refrescarCatalogoVisible();
-        txtCuiCliente.clear(); cmbCliente.getSelectionModel().clearSelection(); txtCantidad.setText("1");
-        txtDescuento.clear(); txtUsuarioAutoriza.clear(); txtClaveAutoriza.clear(); cmbTipoDescuento.setValue("MONTO"); refrescarCarrito();
+        txtCuiCliente.clear(); 
+        cmbCliente.getSelectionModel().clearSelection(); 
+        txtCantidad.setText("1");
+        txtDescuento.clear(); 
+        txtUsuarioAutoriza.clear(); 
+        txtClaveAutoriza.clear(); 
+        cmbTipoDescuento.setValue("MONTO"); 
+        refrescarCarrito();
         lblEstado.setText(fueCancelada ? "Venta cancelada. Ya puedes seleccionar otro cliente." : "Formulario limpio.");
     }
 
@@ -330,7 +351,6 @@ public class VentaController {
 
     private void iniciarVenta() {
         if (ventaEnCurso) return;
-
         ventaEnCurso = true;
         clienteVenta = cmbCliente.getValue();
         cuiVenta = textoCuiActual();
@@ -378,5 +398,7 @@ public class VentaController {
         if (Main.getStagePrincipal() != null) Main.getStagePrincipal().setOnCloseRequest(null);
     }
 
-    private void alert(Alert.AlertType t, String m) { new Alert(t, m, ButtonType.OK).showAndWait(); }
+    private void alert(Alert.AlertType t, String m) { 
+        new Alert(t, m, ButtonType.OK).showAndWait(); 
+    }
 }
