@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.paginalib3.controller.SalidaInventarioController"
+            style="-fx-background-color:#F7F1E8; -fx-font-family:'Segoe UI';">
+    <top>
+        <HBox spacing="14" alignment="CENTER_LEFT" style="-fx-background-color:#3B1720; -fx-padding:18 24;">
+            <Button text="← Volver" onAction="#volver" style="-fx-background-color:#F5E2E2; -fx-text-fill:#8C3434; -fx-font-weight:bold; -fx-background-radius:10; -fx-cursor:hand;"/>
+            <VBox><Label text="Salida de inventario" style="-fx-text-fill:#FFF8EF; -fx-font-size:24px; -fx-font-weight:bold;"/><Label text="Mermas, traslados y devoluciones a proveedor" style="-fx-text-fill:#D9A441;"/></VBox>
+        </HBox>
+    </top>
+    <center>
+        <VBox spacing="14">
+            <padding><Insets top="20" right="24" bottom="20" left="24"/></padding>
+            <HBox spacing="12">
+                <VBox HBox.hgrow="ALWAYS" spacing="5"><Label text="Libro"/><ComboBox fx:id="cmbLibro" onAction="#actualizarStockSeleccionado" maxWidth="Infinity"/></VBox>
+                <VBox prefWidth="130" spacing="5"><Label text="Stock actual"/><Label fx:id="lblStockActual" text="-" style="-fx-font-size:22px; -fx-font-weight:bold; -fx-text-fill:#7A2938;"/></VBox>
+                <VBox prefWidth="160" spacing="5"><Label text="Tipo de salida"/><ComboBox fx:id="cmbTipoSalida" maxWidth="Infinity"/></VBox>
+                <VBox prefWidth="120" spacing="5"><Label text="Cantidad"/><TextField fx:id="txtCantidad"/></VBox>
+            </HBox>
+            <Label text="Motivo / observación"/><TextArea fx:id="txtObservacion" prefRowCount="2" wrapText="true"/>
+            <Button text="Registrar salida" onAction="#registrarSalida" maxWidth="Infinity" style="-fx-background-color:#A34747; -fx-text-fill:white; -fx-font-weight:bold; -fx-padding:12; -fx-background-radius:11; -fx-cursor:hand;"/>
+            <Label fx:id="lblEstado" wrapText="true" style="-fx-text-fill:#765F55;"/>
+            <Label text="Movimientos recientes" style="-fx-font-size:17px; -fx-font-weight:bold;"/>
+            <TableView fx:id="tblMovimientos" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colIsbn" text="ISBN" prefWidth="130"/>
+                    <TableColumn fx:id="colLibro" text="Libro" prefWidth="300"/>
+                    <TableColumn fx:id="colTipo" text="Tipo" prefWidth="130"/>
+                    <TableColumn fx:id="colCantidad" text="Cantidad" prefWidth="90"/>
+                    <TableColumn fx:id="colFecha" text="Fecha" prefWidth="190"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </center>
+</BorderPane>

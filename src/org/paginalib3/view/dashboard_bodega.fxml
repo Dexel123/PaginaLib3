@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.paginalib3.controller.DashboardBodegaController"
+            style="-fx-background-color:#F7F1E8; -fx-font-family:'Segoe UI';">
+    <left>
+        <VBox prefWidth="245" spacing="14" style="-fx-background-color:#3B1720;">
+            <padding><Insets top="28" right="20" bottom="22" left="20"/></padding>
+            <Label text="PÁGINA" style="-fx-text-fill:#FFF8EF; -fx-font-size:25px; -fx-font-weight:bold;"/>
+            <Label text="LIBRERÍA" style="-fx-text-fill:#D9A441; -fx-font-size:12px; -fx-font-weight:bold;"/>
+            <VBox spacing="4" style="-fx-background-color:#54232E; -fx-background-radius:12; -fx-padding:14;">
+                <Label text="SESIÓN ACTIVA" style="-fx-text-fill:#D9A441; -fx-font-size:10px; -fx-font-weight:bold;"/>
+                <Label fx:id="lblNombreUsuario" wrapText="true" style="-fx-text-fill:#FFF8EF; -fx-font-size:15px; -fx-font-weight:bold;"/>
+                <Label fx:id="lblRolUsuario" style="-fx-text-fill:#E9D9C4; -fx-font-size:11px;"/>
+            </VBox>
+            <Label text="INVENTARIO" style="-fx-text-fill:#CDB7A5; -fx-font-size:10px; -fx-font-weight:bold;"/>
+            <Button text="Inicio" maxWidth="Infinity" style="-fx-background-color:#D9A441; -fx-text-fill:#3B1720; -fx-font-weight:bold;"/>
+            <Button text="Libros" maxWidth="Infinity" onAction="#irALibros" style="-fx-background-color:#6D3346; -fx-text-fill:#FFF8EF; -fx-font-weight:bold; -fx-background-radius:10; -fx-padding:10 14; -fx-cursor:hand;"/>
+            <Button text="+  Registrar ingreso" maxWidth="Infinity" onAction="#irAIngreso" style="-fx-background-color:#2F7D62; -fx-text-fill:white; -fx-font-weight:bold; -fx-background-radius:10; -fx-padding:10 14; -fx-cursor:hand;"/>
+            <Button text="-  Registrar salida" maxWidth="Infinity" onAction="#irASalida" style="-fx-background-color:#A34747; -fx-text-fill:white; -fx-font-weight:bold; -fx-background-radius:10; -fx-padding:10 14; -fx-cursor:hand;"/>
+            <Button text="!  Stock crítico" maxWidth="Infinity" onAction="#irAStockCritico" style="-fx-background-color:#C47B21; -fx-text-fill:white; -fx-font-weight:bold; -fx-background-radius:10; -fx-padding:10 14; -fx-cursor:hand;"/>
+            <Region VBox.vgrow="ALWAYS"/>
+            <Button text="Cambiar contraseña" maxWidth="Infinity" onAction="#irACambiarContrasena"/>
+            <Button text="Cerrar sesión" maxWidth="Infinity" onAction="#cerrarSesion" style="-fx-background-color:#8F3D45; -fx-text-fill:#FFF8EF; -fx-font-weight:bold;"/>
+        </VBox>
+    </left>
+    <center>
+        <VBox spacing="16">
+            <padding><Insets top="24" right="28" bottom="24" left="28"/></padding>
+            <VBox spacing="3">
+                <Label text="Panel de bodega" style="-fx-text-fill:#3B1720; -fx-font-size:29px; -fx-font-weight:bold;"/>
+                <Label fx:id="lblSaludo" wrapText="true" style="-fx-text-fill:#765F55; -fx-font-size:13px;"/>
+            </VBox>
+            <HBox spacing="12">
+                <VBox HBox.hgrow="ALWAYS" spacing="5" style="-fx-background-color:#3B1720; -fx-background-radius:14; -fx-padding:16;">
+                    <Label text="USUARIO" style="-fx-text-fill:#E9D9C4; -fx-font-size:10px; -fx-font-weight:bold;"/>
+                    <Label fx:id="lblUsuarioMetric" style="-fx-text-fill:#FFF8EF; -fx-font-size:20px; -fx-font-weight:bold;"/>
+                    <Label text="sesión activa" style="-fx-text-fill:#CDB7A5;"/>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS" spacing="5" style="-fx-background-color:#F0D9A6; -fx-background-radius:14; -fx-padding:16;">
+                    <Label text="STOCK CRÍTICO" style="-fx-text-fill:#6B3A12; -fx-font-size:10px; -fx-font-weight:bold;"/>
+                    <Label fx:id="lblCriticos" text="0" style="-fx-text-fill:#3B1720; -fx-font-size:25px; -fx-font-weight:bold;"/>
+                    <Label text="libros por revisar" style="-fx-text-fill:#765F55;"/>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS" spacing="5" style="-fx-background-color:#FFFDF9; -fx-background-radius:14; -fx-border-color:#E5D8C8; -fx-border-radius:14; -fx-padding:16;">
+                    <Label text="ÁREA" style="-fx-text-fill:#765F55; -fx-font-size:10px; -fx-font-weight:bold;"/>
+                    <Label text="Inventario" style="-fx-text-fill:#7A2938; -fx-font-size:20px; -fx-font-weight:bold;"/>
+                    <Label fx:id="lblEstadoInventario" text="Consultando..." wrapText="true" style="-fx-text-fill:#9A857A;"/>
+                </VBox>
+            </HBox>
+            <HBox spacing="10">
+                <Button text="Libros" onAction="#irALibros" HBox.hgrow="ALWAYS" maxWidth="Infinity" style="-fx-background-color:#6D3346; -fx-text-fill:white; -fx-font-weight:bold; -fx-background-radius:11; -fx-padding:11; -fx-cursor:hand;"/>
+                <Button text="+ Ingreso" onAction="#irAIngreso" HBox.hgrow="ALWAYS" maxWidth="Infinity" style="-fx-background-color:#2F7D62; -fx-text-fill:white; -fx-font-weight:bold; -fx-background-radius:11; -fx-padding:11; -fx-cursor:hand;"/>
+                <Button text="- Salida" onAction="#irASalida" HBox.hgrow="ALWAYS" maxWidth="Infinity" style="-fx-background-color:#A34747; -fx-text-fill:white; -fx-font-weight:bold; -fx-background-radius:11; -fx-padding:11; -fx-cursor:hand;"/>
+                <Button text="! Alertas" onAction="#irAStockCritico" HBox.hgrow="ALWAYS" maxWidth="Infinity" style="-fx-background-color:#C47B21; -fx-text-fill:white; -fx-font-weight:bold; -fx-background-radius:11; -fx-padding:11; -fx-cursor:hand;"/>
+                <Button text="Actualizar" onAction="#actualizarStockCritico" style="-fx-background-color:#EFE4D6; -fx-text-fill:#3B1720; -fx-font-weight:bold; -fx-background-radius:11; -fx-padding:11; -fx-cursor:hand;"/>
+            </HBox>
+            <Label text="Libros con stock crítico" style="-fx-font-size:17px; -fx-font-weight:bold; -fx-text-fill:#3B1720;"/>
+            <TableView fx:id="tblCriticos" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colIsbn" text="ISBN" prefWidth="150"/>
+                    <TableColumn fx:id="colTitulo" text="Título" prefWidth="360"/>
+                    <TableColumn fx:id="colStockActual" text="Stock actual" prefWidth="120"/>
+                    <TableColumn fx:id="colStockMinimo" text="Stock mínimo" prefWidth="120"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </center>
+</BorderPane>

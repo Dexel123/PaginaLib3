@@ -1,0 +1,98 @@
+.root {
+    -fx-background-color: #F6F7FB;
+    -fx-font-family: "Segoe UI", "System";
+}
+
+.brand-label {
+    -fx-text-fill: white;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+.sidebar {
+    -fx-background-color: #6C5CE7;
+}
+
+.sidebar-user {
+    -fx-text-fill: #E9E7FF;
+    -fx-font-size: 13px;
+}
+
+.title-label {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #20212A;
+}
+
+.subtitle-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #737783;
+}
+
+.section-label {
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #20212A;
+}
+
+.metric-value {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #20212A;
+}
+
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 18;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 18, 0.2, 0, 5);
+    -fx-padding: 24;
+}
+
+.metric-card {
+    -fx-background-color: white;
+    -fx-background-radius: 14;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 14, 0.2, 0, 4);
+    -fx-padding: 16;
+    -fx-pref-width: 220;
+}
+
+.text-field, .password-field, .combo-box {
+    -fx-background-color: #F1F2F6;
+    -fx-background-radius: 10;
+    -fx-border-color: transparent;
+    -fx-pref-height: 42;
+}
+
+.btn-primary {
+    -fx-background-color: #6C5CE7;
+    -fx-text-fill: white;
+    -fx-background-radius: 10;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-pref-height: 42;
+}
+
+.btn-primary:hover {
+    -fx-background-color: #5145B8;
+}
+
+.btn-secondary {
+    -fx-background-color: #EEEFF5;
+    -fx-text-fill: #20212A;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+    -fx-pref-height: 40;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: #E2E3ED;
+}
+
+.error-label {
+    -fx-text-fill: #D9534F;
+}
+
+.table-view {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+}
