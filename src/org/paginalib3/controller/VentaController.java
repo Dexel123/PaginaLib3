@@ -6,7 +6,6 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableColumn;
@@ -30,6 +29,8 @@ import org.paginalib3.model.Venta;
 import org.paginalib3.system.Main;
 import org.paginalib3.util.Seguridad;
 import org.paginalib3.util.Sesion;
+import org.paginalib3.util.Permisos;
+import org.paginalib3.util.MensajesUI;
 
 public class VentaController {
     @FXML private ComboBox<Cliente> cmbCliente;
@@ -59,6 +60,7 @@ public class VentaController {
 
     @FXML
     private void initialize() {
+        if (!Permisos.requerirCaja("Caja / Ventas")) return;
         colLibroIsbn.setCellValueFactory(new PropertyValueFactory<>("isbn"));
         colLibroTitulo.setCellValueFactory(new PropertyValueFactory<>("titulo"));
         colLibroPrecio.setCellValueFactory(new PropertyValueFactory<>("precio"));
@@ -74,6 +76,7 @@ public class VentaController {
         cargarLibros();
         refrescarTotales();
 
+        // Bloquea el botón cuando no hay selección o el libro ya no tiene stock disponible.
         tblLibros.getSelectionModel().selectedItemProperty().addListener((obs, anterior, actual) -> {
             actualizarEstadoBotonAgregar(actual);
         });
@@ -87,9 +90,11 @@ public class VentaController {
             List<Cliente> clientes = clienteDAO.listar();
             cmbCliente.setItems(FXCollections.observableArrayList(clientes));
         } catch (Exception e) {
-            e.printStackTrace();
+            lblEstado.setText("No se pudieron cargar los clientes.");
+            MensajesUI.registrarError(e);
         }
     }
+  
 
     private void cargarLibros() {
         try {
@@ -97,7 +102,8 @@ public class VentaController {
             tblLibros.setItems(FXCollections.observableArrayList(libros));
             actualizarEstadoBotonAgregar(tblLibros.getSelectionModel().getSelectedItem());
         } catch (Exception e) {
-            lblEstado.setText("No se pudieron cargar libros: " + e.getMessage());
+            lblEstado.setText("No se pudieron cargar los libros.");
+            MensajesUI.registrarError(e);
         }
     }
 
@@ -108,7 +114,8 @@ public class VentaController {
             tblLibros.setItems(FXCollections.observableArrayList(resultado));
             actualizarEstadoBotonAgregar(tblLibros.getSelectionModel().getSelectedItem());
         } catch (Exception e) {
-            lblEstado.setText("Error al buscar: " + e.getMessage());
+            lblEstado.setText("No se pudo completar la búsqueda.");
+            MensajesUI.registrarError(e);
         }
     }
 
@@ -149,8 +156,10 @@ public class VentaController {
             int c = Integer.parseInt(txtCantidad.getText().trim());
             if (c <= 0) throw new NumberFormatException();
 
+            // stockActual aquí representa lo que todavía queda disponible en esta venta.
             if (c > l.getStockActual()) {
-                alert(Alert.AlertType.WARNING, "Stock insuficiente. Disponible para esta venta: " + l.getStockActual());
+                alert(Alert.AlertType.WARNING,
+                        "Stock insuficiente. Disponible para esta venta: " + l.getStockActual());
                 return;
             }
 
@@ -168,6 +177,7 @@ public class VentaController {
                 d.setSubtotal(total * d.getPrecioUnitario());
             }
 
+            // Reserva visualmente esas unidades sin tocar todavía MySQL.
             l.setStockActual(l.getStockActual() - c);
             tblLibros.refresh();
             actualizarEstadoBotonAgregar(l);
@@ -189,9 +199,15 @@ public class VentaController {
 
         carrito.remove(d);
         refrescarCarrito();
+
+        // Recarga el stock de BD y descuenta únicamente lo que todavía siga en el carrito.
         refrescarCatalogoVisible();
     }
 
+    /**
+     * Convierte el stock almacenado en BD en stock disponible para la venta actual.
+     * No modifica MySQL: solamente descuenta temporalmente lo que ya está en el carrito.
+     */
     private List<Libro> aplicarStockReservado(List<Libro> lista) {
         for (Libro libro : lista) {
             int reservado = cantidadEnCarrito(libro.getIsbn());
@@ -229,9 +245,7 @@ public class VentaController {
         }
     }
 
-    private double calcularSubtotal() { 
-        return carrito.stream().mapToDouble(DetalleVenta::getSubtotal).sum(); 
-    }
+    private double calcularSubtotal() { return carrito.stream().mapToDouble(DetalleVenta::getSubtotal).sum(); }
 
     private double calcularDescuento(double subtotal) {
         if (txtDescuento.getText() == null || txtDescuento.getText().isBlank()) return 0;
@@ -245,60 +259,35 @@ public class VentaController {
     }
 
     @FXML private void actualizarDescuento() {
-        try { 
-            refrescarTotales(); 
-            lblEstado.setText("");
-        } catch (Exception e) { 
-            lblEstado.setText(e.getMessage()); 
-        }
+        try { refrescarTotales(); }
+        catch (Exception e) { lblEstado.setText(e.getMessage()); }
     }
 
-    private void refrescarCarrito() { 
-        tblCarrito.setItems(FXCollections.observableArrayList(carrito)); 
-        refrescarTotales(); 
-    }
+    private void refrescarCarrito() { tblCarrito.setItems(FXCollections.observableArrayList(carrito)); refrescarTotales(); }
 
     private void refrescarTotales() {
         double subtotal = calcularSubtotal();
         double descuento = 0;
-        try { 
-            descuento = calcularDescuento(subtotal); 
-        } catch (Exception ignored) { }
-        
+        try { descuento = calcularDescuento(subtotal); } catch (Exception ignored) { }
         lblSubtotal.setText(String.format("Q%.2f", subtotal));
         lblDescuento.setText(String.format("Q%.2f", descuento));
         lblTotal.setText(String.format("Q%.2f", subtotal - descuento));
     }
 
     @FXML private void registrar() {
-        if (carrito.isEmpty()) { 
-            alert(Alert.AlertType.WARNING, "El carrito está vacío."); 
-            return; 
-        }
+        if (carrito.isEmpty()) { alert(Alert.AlertType.WARNING, "El carrito está vacío."); return; }
         Usuario u = Sesion.getUsuarioActual();
-        if (u == null || !"cajero".equalsIgnoreCase(u.getRol())) { 
-            alert(Alert.AlertType.ERROR, "Se requiere una sesión activa de cajero."); 
-            return; 
-        }
+        if (!Permisos.puedeCaja()) { alert(Alert.AlertType.ERROR, "Se requiere una sesión activa de caja o administración."); return; }
         String cui = ventaEnCurso ? cuiVenta : textoCuiActual();
-        if (!cui.isEmpty()) {
-            try { 
-                Long.parseLong(cui); 
-            } catch (NumberFormatException e) { 
-                alert(Alert.AlertType.WARNING, "El CUI debe ser numérico."); 
-                return; 
-            }
-        }
+        if (!cui.isEmpty()) try { Long.parseLong(cui); } catch (NumberFormatException e) { alert(Alert.AlertType.WARNING, "El CUI debe ser numérico."); return; }
 
         try {
             double subtotal = calcularSubtotal();
             double descuento = calcularDescuento(subtotal);
             Integer autorizador = null;
             if (descuento > 0) autorizador = validarAutorizacionAdmin();
-            
             Venta v = new Venta(subtotal, descuento, subtotal - descuento, "COMPLETADA", cui, u.getId());
             if (!ventaDAO.registrarVenta(v, new ArrayList<>(carrito), autorizador)) return;
-            
             int id = v.getIdVenta();
             alert(Alert.AlertType.INFORMATION, "Venta #" + id + " registrada correctamente.");
             carrito.clear();
@@ -306,15 +295,18 @@ public class VentaController {
             refrescarCarrito();
             cargarLibros();
             quitarProteccionCierre();
-            
             Main.cambiarVista("/org/paginalib3/view/comprobante.fxml", "Pagina-Libreria | Comprobante", 900, 760);
             Main.configurarVistaActual(x -> { if (x instanceof ComprobanteController c) c.cargarVenta(id); });
-        } catch (Exception e) { 
-            alert(Alert.AlertType.ERROR, "No se pudo registrar la venta: " + e.getMessage()); 
+        } catch (Exception e) {
+            lblEstado.setText("No se pudo registrar la venta.");
+            MensajesUI.error("Registrar venta",
+                    "No se pudo registrar la venta.\nDetalle: " + MensajesUI.mensajeTecnico(e), e);
         }
     }
 
     private int validarAutorizacionAdmin() throws Exception {
+        Usuario actual = Sesion.getUsuarioActual();
+        if (actual != null && "admin".equalsIgnoreCase(actual.getRol())) return actual.getId();
         String username = txtUsuarioAutoriza.getText() == null ? "" : txtUsuarioAutoriza.getText().trim();
         String password = txtClaveAutoriza.getText() == null ? "" : txtClaveAutoriza.getText();
         if (username.isBlank() || password.isBlank()) throw new IllegalArgumentException("Un descuento requiere usuario y contraseña de administrador.");
@@ -329,14 +321,8 @@ public class VentaController {
         carrito.clear();
         finalizarVenta();
         refrescarCatalogoVisible();
-        txtCuiCliente.clear(); 
-        cmbCliente.getSelectionModel().clearSelection(); 
-        txtCantidad.setText("1");
-        txtDescuento.clear(); 
-        txtUsuarioAutoriza.clear(); 
-        txtClaveAutoriza.clear(); 
-        cmbTipoDescuento.setValue("MONTO"); 
-        refrescarCarrito();
+        txtCuiCliente.clear(); cmbCliente.getSelectionModel().clearSelection(); txtCantidad.setText("1");
+        txtDescuento.clear(); txtUsuarioAutoriza.clear(); txtClaveAutoriza.clear(); cmbTipoDescuento.setValue("MONTO"); refrescarCarrito();
         lblEstado.setText(fueCancelada ? "Venta cancelada. Ya puedes seleccionar otro cliente." : "Formulario limpio.");
     }
 
@@ -346,11 +332,12 @@ public class VentaController {
             return;
         }
         quitarProteccionCierre();
-        Main.cambiarVista("/org/paginalib3/view/dashboard_cajero.fxml", "Pagina-Libreria | Dashboard Caja", 1100, 680);
+        Permisos.volverDashboardSegunRol();
     }
 
     private void iniciarVenta() {
         if (ventaEnCurso) return;
+
         ventaEnCurso = true;
         clienteVenta = cmbCliente.getValue();
         cuiVenta = textoCuiActual();
@@ -374,14 +361,9 @@ public class VentaController {
     }
 
     private boolean confirmarCancelacion() {
-        Alert confirmacion = new Alert(
-                Alert.AlertType.CONFIRMATION,
-                "Se eliminarán todos los libros agregados y se liberará el cliente seleccionado. ¿Deseas cancelar la venta?",
-                ButtonType.YES,
-                ButtonType.NO);
-        confirmacion.setTitle("Cancelar venta");
-        confirmacion.setHeaderText("Hay una venta en curso");
-        return confirmacion.showAndWait().orElse(ButtonType.NO) == ButtonType.YES;
+        return MensajesUI.confirmar(
+                "Cancelar venta",
+                "Se eliminarán todos los libros agregados y se liberará el cliente seleccionado. ¿Deseas cancelar la venta?");
     }
 
     private void configurarProteccionCierre() {
@@ -398,7 +380,13 @@ public class VentaController {
         if (Main.getStagePrincipal() != null) Main.getStagePrincipal().setOnCloseRequest(null);
     }
 
-    private void alert(Alert.AlertType t, String m) { 
-        new Alert(t, m, ButtonType.OK).showAndWait(); 
+    private void alert(Alert.AlertType t, String m) {
+        if (t == Alert.AlertType.ERROR) {
+            MensajesUI.error("Caja / Ventas", m);
+        } else if (t == Alert.AlertType.WARNING) {
+            MensajesUI.advertencia("Caja / Ventas", m);
+        } else {
+            MensajesUI.informacion("Caja / Ventas", m);
+        }
     }
 }
