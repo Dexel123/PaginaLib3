@@ -85,6 +85,17 @@ public class VentaDAOImpl implements VentaDAO {
         return l;
     }
 
+
+    @Override
+    public List<Venta> listarVentas() throws SQLException {
+        List<Venta> lista = new ArrayList<>();
+        try (Connection c = Conexion.getInstancia().conectar();
+             CallableStatement s = c.prepareCall("{CALL sp_listarventas()}");
+             ResultSet r = s.executeQuery()) {
+            while (r.next()) lista.add(map(r));
+        }
+        return lista;
+    }
     @Override
     public boolean anularVenta(int idVenta, int idUsuario, String motivo) throws SQLException {
         return ejecutarCambioEstado("sp_anularventa", idVenta, idUsuario, motivo);
