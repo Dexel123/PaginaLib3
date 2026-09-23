@@ -59,3 +59,68 @@ public class DevolucionController {
                     "No fue posible cargar las ventas recientes.\nDetalle: " + MensajesUI.mensajeTecnico(e), e);
         }
     }
+
+    @FXML
+    private void seleccionarVenta() {
+        Venta v = tblVentas.getSelectionModel().getSelectedItem();
+        if (v != null) {
+            txtIdVenta.setText(String.valueOf(v.getIdVenta()));
+            lblEstado.setText("Venta #" + v.getIdVenta() + " seleccionada.");
+        }
+    }
+
+    @FXML
+    private void ejecutar() {
+        Usuario u = Sesion.getUsuarioActual();
+        if (u == null) {
+            MensajesUI.advertencia("Sesión requerida", "No hay una sesión activa.");
+            return;
+        }
+
+        try {
+            String idTexto = txtIdVenta.getText() == null ? "" : txtIdVenta.getText().trim();
+            if (idTexto.isBlank()) throw new IllegalArgumentException("Selecciona o escribe el número de venta.");
+            int id = Integer.parseInt(idTexto);
+            String motivo = txtMotivo.getText() == null ? "" : txtMotivo.getText().trim();
+            if (motivo.isBlank()) throw new IllegalArgumentException("El motivo es obligatorio.");
+
+            Venta venta = dao.buscarPorId(id);
+            if (venta == null) throw new IllegalArgumentException("La venta no existe.");
+            if (!"COMPLETADA".equalsIgnoreCase(venta.getEstado())) {
+                throw new IllegalArgumentException("La venta ya no está disponible para esta operación.");
+            }
+
+            String operacion = cmbOperacion.getValue();
+            String pregunta = "DEVOLVER".equals(operacion)
+                    ? "¿Confirmas la devolución de la venta #" + id + "? El stock será repuesto."
+                    : "¿Confirmas la anulación de la venta #" + id + "? El stock será repuesto.";
+            if (!MensajesUI.confirmar("Confirmar operación", pregunta)) return;
+
+            boolean ok = "DEVOLVER".equals(operacion)
+                    ? dao.devolverVenta(id, u.getId(), motivo)
+                    : dao.anularVenta(id, u.getId(), motivo);
+
+            if (ok) {
+                MensajesUI.informacion("Operación completada", "La operación sobre la venta #" + id + " se realizó correctamente.");
+                txtIdVenta.clear();
+                txtMotivo.clear();
+                cargarRecientes();
+            } else {
+                MensajesUI.advertencia("Sin cambios", "La operación no pudo aplicarse. Actualiza la lista e inténtalo nuevamente.");
+            }
+        } catch (NumberFormatException e) {
+            MensajesUI.advertencia("Dato inválido", "El número de venta debe ser un entero válido.");
+        } catch (IllegalArgumentException e) {
+            MensajesUI.advertencia("Revisa los datos", e.getMessage());
+        } catch (Exception e) {
+            lblEstado.setText("No se pudo completar la operación.");
+            MensajesUI.error("Anulaciones y devoluciones",
+                    "No se pudo completar la operación.\nDetalle: " + MensajesUI.mensajeTecnico(e), e);
+        }
+    }
+
+    @FXML
+    private void volver() {
+        Permisos.volverDashboardSegunRol();
+    }
+}
