@@ -30,7 +30,7 @@ public class DashboardIndicadores {
     public int getTransaccionesHoy() {
         return transaccionesHoy;
     }
-
+  
     public void setTransaccionesHoy(int transaccionesHoy) {
         this.transaccionesHoy = transaccionesHoy;
     }
