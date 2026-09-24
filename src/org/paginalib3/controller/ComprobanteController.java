@@ -21,6 +21,7 @@ import org.paginalib3.dao.impl.ComprobanteVentaDAOImpl;
 import org.paginalib3.model.DetalleVenta;
 import org.paginalib3.model.Venta;
 import org.paginalib3.system.Main;
+import org.paginalib3.util.Permisos;
 
 public class ComprobanteController {
     @FXML private VBox comprobante;
@@ -33,6 +34,7 @@ public class ComprobanteController {
 
     @FXML
     private void initialize() {
+        if (!Permisos.requerirCaja("Comprobante de venta")) return;
         colIsbn.setCellValueFactory(new PropertyValueFactory<>("isbn"));
         colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
         colPrecio.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getPrecioUnitarioFormateado()));
@@ -91,5 +93,5 @@ public class ComprobanteController {
     }
 
     @FXML private void nuevaVenta() { Main.cambiarVista("/org/paginalib3/view/venta.fxml", "Pagina-Libreria | Registrar venta", 1200, 760); }
-    @FXML private void volver() { Main.cambiarVista("/org/paginalib3/view/dashboard_cajero.fxml", "Pagina-Libreria | Dashboard Caja", 1100, 680); }
+    @FXML private void volver() { Permisos.volverDashboardSegunRol(); }
 }
