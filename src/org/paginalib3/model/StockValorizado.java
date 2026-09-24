@@ -10,7 +10,7 @@ public class StockValorizado {
     private double valorCosto;
     private double valorVenta;
     private double margenPotencial;
-  
+
     public StockValorizado(String isbn, String titulo, int stockActual, double costoPromedio, double precio, double valorCosto, double valorVenta, double margenPotencial) {
         this.isbn = isbn;
         this.titulo = titulo;

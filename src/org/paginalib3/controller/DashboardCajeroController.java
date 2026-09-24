@@ -11,6 +11,7 @@ import org.paginalib3.model.Usuario;
 import org.paginalib3.model.Venta;
 import org.paginalib3.system.Main;
 import org.paginalib3.util.Sesion;
+import org.paginalib3.util.MensajesUI;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -76,7 +77,8 @@ public class DashboardCajeroController extends DashboardBaseController {
             lblTotalVendido.setText(String.format("Q%.2f", total));
             lblEstadoVentas.setText(v.size() + " venta(s) registrada(s) hoy.");
         } catch (SQLException e) {
-            lblEstadoVentas.setText("Error al consultar ventas del día: " + e.getMessage());
+            MensajesUI.registrarError(e);
+            lblEstadoVentas.setText("Error al consultar ventas del día: " + MensajesUI.mensajeTecnico(e));
         }
     }
 

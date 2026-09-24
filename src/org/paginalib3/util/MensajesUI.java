@@ -5,6 +5,10 @@ import java.util.logging.Logger;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
+/**
+ * Utilidad central para mensajes de interfaz y registro de errores. Evita que
+ * cada controlador muestre errores de una forma distinta.
+ */
 public final class MensajesUI {
 
     private static final Logger LOGGER = Logger.getLogger(MensajesUI.class.getName());

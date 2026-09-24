@@ -13,6 +13,7 @@ import org.paginalib3.dao.impl.LibroDAOImpl;
 import org.paginalib3.model.Libro;
 import org.paginalib3.system.Main;
 import org.paginalib3.util.Sesion;
+import org.paginalib3.util.MensajesUI;
 
 public class DashboardBodegaController extends DashboardBaseController {
 
@@ -49,8 +50,9 @@ public class DashboardBodegaController extends DashboardBaseController {
             lblCriticos.setText(String.valueOf(criticos.size()));
             lblEstadoInventario.setText(criticos.isEmpty() ? "Inventario sin alertas críticas." : criticos.size() + " libro(s) en nivel crítico.");
         } catch (SQLException e) {
+            MensajesUI.registrarError(e);
             lblCriticos.setText("-");
-            lblEstadoInventario.setText("No se pudo consultar inventario: " + e.getMessage());
+            lblEstadoInventario.setText("No se pudo consultar inventario: " + MensajesUI.mensajeTecnico(e));
         }
     }
 

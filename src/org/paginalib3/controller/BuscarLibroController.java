@@ -1,14 +1,19 @@
 package org.paginalib3.controller;
 
+import java.sql.SQLException;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import org.paginalib3.dao.LibroDAO;
 import org.paginalib3.dao.impl.LibroDAOImpl;
 import org.paginalib3.model.Libro;
 import org.paginalib3.system.Main;
-
-import java.sql.SQLException;
+import org.paginalib3.util.MensajesUI;
+import org.paginalib3.util.Permisos;
 
 public class BuscarLibroController {
 
@@ -23,11 +28,12 @@ public class BuscarLibroController {
 
     @FXML
     private void initialize() {
-        colIsbn.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("isbn"));
-        colTitulo.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("titulo"));
-        colAutores.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("autores"));
-        colPrecio.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("precio"));
-        colStock.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("stockActual"));
+        if (!Permisos.requerirCaja("Búsqueda de libros para caja")) return;
+        colIsbn.setCellValueFactory(new PropertyValueFactory<>("isbn"));
+        colTitulo.setCellValueFactory(new PropertyValueFactory<>("titulo"));
+        colAutores.setCellValueFactory(new PropertyValueFactory<>("autores"));
+        colPrecio.setCellValueFactory(new PropertyValueFactory<>("precio"));
+        colStock.setCellValueFactory(new PropertyValueFactory<>("stockActual"));
         buscar();
     }
 
@@ -38,7 +44,9 @@ public class BuscarLibroController {
             tblLibros.setItems(FXCollections.observableArrayList(lista));
             lblEstado.setText(lista.size() + " libro(s) encontrado(s).");
         } catch (SQLException e) {
-            lblEstado.setText("Error al consultar libros: " + e.getMessage());
+            lblEstado.setText("No se pudieron consultar los libros.");
+            MensajesUI.error("Búsqueda de libros",
+                    "No fue posible consultar el catálogo.\nDetalle: " + MensajesUI.mensajeTecnico(e), e);
         }
     }
 
@@ -55,6 +63,6 @@ public class BuscarLibroController {
 
     @FXML
     private void volver() {
-        Main.cambiarVista("/org/paginalib3/view/dashboard_cajero.fxml", "Pagina-Libreria | Dashboard Caja", 1100, 680);
+        Permisos.volverDashboardSegunRol();
     }
 }

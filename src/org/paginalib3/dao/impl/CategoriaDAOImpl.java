@@ -15,26 +15,27 @@ public class CategoriaDAOImpl implements CategoriaDAO {
     @Override
     public List<Categoria> listar() throws SQLException {
         List<Categoria> lista = new ArrayList<>();
-        
-        try (Connection c = Conexion.getInstancia().conectar();
-             CallableStatement s = c.prepareCall("{CALL sp_listarcategorias()}");
-             ResultSet r = s.executeQuery()) {
-            
+        try (Connection c = Conexion.getInstancia().conectar(); CallableStatement s = c.prepareCall("{CALL sp_listarcategorias()}"); ResultSet r = s.executeQuery()) {
             while (r.next()) {
-                lista.add(new Categoria(r.getInt("id_categoria"), r.getString("nombre_categoria")));
+                boolean activo = true;
+                try {
+                    activo = r.getBoolean("activo");
+                } catch (SQLException ignorada) {
+                    // Compatibilidad temporal si se usa una BD anterior al ajuste.
+                }
+                lista.add(new Categoria(
+                        r.getInt("id_categoria"),
+                        r.getString("nombre_categoria"),
+                        activo));
             }
         }
-        
         return lista;
     }
 
     @Override
     public boolean insertar(String nombre) throws SQLException {
         validarNombre(nombre);
-        
-        try (Connection c = Conexion.getInstancia().conectar();
-             CallableStatement s = c.prepareCall("{CALL sp_insertarcategoria(?)}")) {
-            
+        try (Connection c = Conexion.getInstancia().conectar(); CallableStatement s = c.prepareCall("{CALL sp_insertarcategoria(?)}")) {
             s.setString(1, nombre.trim());
             s.execute();
             return true;
@@ -47,10 +48,7 @@ public class CategoriaDAOImpl implements CategoriaDAO {
             throw new IllegalArgumentException("Categoría inválida.");
         }
         validarNombre(nombre);
-        
-        try (Connection c = Conexion.getInstancia().conectar();
-             CallableStatement s = c.prepareCall("{CALL sp_actualizarcategoria(?,?)}")) {
-            
+        try (Connection c = Conexion.getInstancia().conectar(); CallableStatement s = c.prepareCall("{CALL sp_actualizarcategoria(?,?)}")) {
             s.setInt(1, id);
             s.setString(2, nombre.trim());
             s.execute();
@@ -63,11 +61,21 @@ public class CategoriaDAOImpl implements CategoriaDAO {
         if (id <= 0) {
             throw new IllegalArgumentException("Categoría inválida.");
         }
-        
-        try (Connection c = Conexion.getInstancia().conectar();
-             CallableStatement s = c.prepareCall("{CALL sp_eliminarcategoria(?)}")) {
-            
+        try (Connection c = Conexion.getInstancia().conectar(); CallableStatement s = c.prepareCall("{CALL sp_eliminarcategoria(?)}")) {
             s.setInt(1, id);
+            s.execute();
+            return true;
+        }
+    }
+
+    @Override
+    public boolean cambiarEstado(int id, boolean activo) throws SQLException {
+        if (id <= 0) {
+            throw new IllegalArgumentException("Categoría inválida.");
+        }
+        try (Connection c = Conexion.getInstancia().conectar(); CallableStatement s = c.prepareCall("{CALL sp_cambiar_estado_categoria(?,?)}")) {
+            s.setInt(1, id);
+            s.setBoolean(2, activo);
             s.execute();
             return true;
         }

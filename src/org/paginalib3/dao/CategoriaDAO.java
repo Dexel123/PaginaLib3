@@ -13,4 +13,6 @@ public interface CategoriaDAO {
     boolean actualizar(int id, String nombre) throws SQLException;
 
     boolean eliminar(int id) throws SQLException;
+
+    boolean cambiarEstado(int id, boolean activo) throws SQLException;
 }

@@ -4,8 +4,6 @@ import java.sql.SQLException;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -14,7 +12,8 @@ import org.paginalib3.dao.LibroDAO;
 import org.paginalib3.dao.impl.LibroDAOImpl;
 import org.paginalib3.model.Libro;
 import org.paginalib3.system.Main;
-import org.paginalib3.util.Sesion;
+import org.paginalib3.util.MensajesUI;
+import org.paginalib3.util.Permisos;
 
 public class StockCriticoController {
 
@@ -27,7 +26,7 @@ public class StockCriticoController {
 
     @FXML
     private void initialize() {
-        if (!esBodega()) return;
+        if (!Permisos.requerirInventario("Stock crítico")) return;
         colIsbn.setCellValueFactory(new PropertyValueFactory<>("isbn"));
         colTitulo.setCellValueFactory(new PropertyValueFactory<>("titulo"));
         colCategoria.setCellValueFactory(new PropertyValueFactory<>("nombreCategoria"));
@@ -42,9 +41,13 @@ public class StockCriticoController {
             List<Libro> libros = libroDAO.listarStockCritico();
             tblCriticos.setItems(FXCollections.observableArrayList(libros));
             lblCantidad.setText(String.valueOf(libros.size()));
-            lblEstado.setText(libros.isEmpty() ? "No hay productos en stock crítico." : libros.size() + " producto(s) requieren atención.");
+            lblEstado.setText(libros.isEmpty()
+                    ? "No hay productos en stock crítico."
+                    : libros.size() + " producto(s) requieren atención.");
         } catch (SQLException e) {
-            error("No se pudo consultar el stock crítico: " + (e.getMessage() == null ? "Error de base de datos" : e.getMessage()));
+            lblEstado.setText("No se pudo consultar el stock crítico.");
+            MensajesUI.error("Stock crítico",
+                    "No fue posible consultar las existencias críticas.\nDetalle: " + MensajesUI.mensajeTecnico(e), e);
         }
     }
 
@@ -55,14 +58,6 @@ public class StockCriticoController {
 
     @FXML
     private void volver() {
-        Main.cambiarVista("/org/paginalib3/view/dashboard_bodega.fxml", "Pagina-Libreria | Dashboard Bodega", 1180, 720);
+        Permisos.volverDashboardSegunRol();
     }
-
-    private boolean esBodega() {
-        if (Sesion.getUsuarioActual() != null && "bodega".equalsIgnoreCase(Sesion.getUsuarioActual().getRol())) return true;
-        Main.cambiarVista("/org/paginalib3/view/login.fxml", "Pagina-Libreria | Iniciar sesión", 760, 560);
-        return false;
-    }
-
-    private void error(String m) { lblEstado.setText(m); new Alert(Alert.AlertType.ERROR, m, ButtonType.OK).showAndWait(); }
 }

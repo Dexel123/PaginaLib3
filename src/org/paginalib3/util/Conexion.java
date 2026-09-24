@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class Conexion {
+
     private static Conexion instancia;
 
     private static final String CONFIG_FILE = "/db.properties";
@@ -20,7 +21,8 @@ public class Conexion {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
-            System.err.println("Error Driver: " + e.getMessage());
+            throw new IllegalStateException(
+                    "No se encontró el MySQL Connector. Revisa la librería MYSQL_8 del proyecto.", e);
         }
 
         Properties config = new Properties();

@@ -4,8 +4,6 @@ import java.sql.SQLException;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -20,8 +18,9 @@ import org.paginalib3.dao.impl.MovimientoInventarioDAOImpl;
 import org.paginalib3.model.Libro;
 import org.paginalib3.model.MovimientoInventario;
 import org.paginalib3.model.Usuario;
-import org.paginalib3.system.Main;
 import org.paginalib3.util.Sesion;
+import org.paginalib3.util.MensajesUI;
+import org.paginalib3.util.Permisos;
 
 public class IngresoInventarioController {
 
@@ -39,7 +38,7 @@ public class IngresoInventarioController {
 
     @FXML
     private void initialize() {
-        if (!esBodega()) return;
+        if (!Permisos.requerirInventario("Inventario")) return;
         colIsbn.setCellValueFactory(new PropertyValueFactory<>("isbn"));
         colLibro.setCellValueFactory(new PropertyValueFactory<>("titulo"));
         colTipo.setCellValueFactory(new PropertyValueFactory<>("tipoMovimiento"));
@@ -82,7 +81,7 @@ public class IngresoInventarioController {
 
     @FXML
     private void volver() {
-        Main.cambiarVista("/org/paginalib3/view/dashboard_bodega.fxml", "Pagina-Libreria | Dashboard Bodega", 1180, 720);
+        Permisos.volverDashboardSegunRol();
     }
 
     private void cargarDatos() {
@@ -107,14 +106,11 @@ public class IngresoInventarioController {
         }
     }
 
-    private boolean esBodega() {
-        if (Sesion.getUsuarioActual() != null && "bodega".equalsIgnoreCase(Sesion.getUsuarioActual().getRol())) return true;
-        Main.cambiarVista("/org/paginalib3/view/login.fxml", "Pagina-Libreria | Iniciar sesión", 760, 560);
-        return false;
+    private String mensaje(SQLException e) { return MensajesUI.mensajeTecnico(e); }
+    private void informacion(String m) { MensajesUI.informacion("Inventario", m); }
+    private void advertencia(String m) { MensajesUI.advertencia("Revisa los datos", m); }
+    private void error(String m) {
+        lblEstado.setText(m);
+        MensajesUI.error("Inventario", m);
     }
-
-    private String mensaje(SQLException e) { return e.getMessage() == null ? "Error de base de datos" : e.getMessage(); }
-    private void informacion(String m) { new Alert(Alert.AlertType.INFORMATION, m, ButtonType.OK).showAndWait(); }
-    private void advertencia(String m) { new Alert(Alert.AlertType.WARNING, m, ButtonType.OK).showAndWait(); }
-    private void error(String m) { lblEstado.setText(m); new Alert(Alert.AlertType.ERROR, m, ButtonType.OK).showAndWait(); }
 }

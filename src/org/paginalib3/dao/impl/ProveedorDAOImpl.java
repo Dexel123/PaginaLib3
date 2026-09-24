@@ -15,23 +15,13 @@ public class ProveedorDAOImpl implements ProveedorDAO {
     @Override
     public List<Proveedor> listar() throws SQLException {
         List<Proveedor> lista = new ArrayList<>();
-        
-        try (Connection c = Conexion.getInstancia().conectar();
-             CallableStatement s = c.prepareCall("{CALL sp_listarproveedores()}");
-             ResultSet r = s.executeQuery()) {
-            
+        try (Connection c = Conexion.getInstancia().conectar(); CallableStatement s = c.prepareCall("{CALL sp_listarproveedores()}"); ResultSet r = s.executeQuery()) {
             while (r.next()) {
-                lista.add(new Proveedor(
-                        r.getString("nit_proveedor"),
-                        r.getString("nombre_proveedor"),
-                        r.getString("telefono_proveedor"),
-                        r.getString("direccion_proveedor"),
-                        r.getString("correo_proveedor"),
-                        r.getBoolean("activo")
-                ));
+                lista.add(new Proveedor(r.getString("nit_proveedor"), r.getString("nombre_proveedor"),
+                        r.getString("telefono_proveedor"), r.getString("direccion_proveedor"),
+                        r.getString("correo_proveedor"), r.getBoolean("activo")));
             }
         }
-        
         return lista;
     }
 
@@ -47,16 +37,12 @@ public class ProveedorDAOImpl implements ProveedorDAO {
 
     private boolean guardar(String sp, Proveedor p) throws SQLException {
         validar(p);
-        
-        try (Connection c = Conexion.getInstancia().conectar();
-             CallableStatement s = c.prepareCall("{CALL " + sp + "(?,?,?,?,?)}")) {
-            
+        try (Connection c = Conexion.getInstancia().conectar(); CallableStatement s = c.prepareCall("{CALL " + sp + "(?,?,?,?,?)}")) {
             s.setString(1, p.getNit().trim());
             s.setString(2, p.getNombre().trim());
             s.setString(3, limpio(p.getTelefono()));
             s.setString(4, limpio(p.getDireccion()));
             s.setString(5, limpio(p.getCorreo()));
-            
             s.execute();
             return true;
         }
@@ -67,10 +53,7 @@ public class ProveedorDAOImpl implements ProveedorDAO {
         if (nit == null || nit.isBlank()) {
             throw new IllegalArgumentException("Selecciona un proveedor.");
         }
-        
-        try (Connection c = Conexion.getInstancia().conectar();
-             CallableStatement s = c.prepareCall("{CALL sp_eliminarproveedor(?)}")) {
-            
+        try (Connection c = Conexion.getInstancia().conectar(); CallableStatement s = c.prepareCall("{CALL sp_eliminarproveedor(?)}")) {
             s.setString(1, nit.trim());
             s.execute();
             return true;

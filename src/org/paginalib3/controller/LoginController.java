@@ -14,6 +14,7 @@ import org.paginalib3.dao.impl.UsuarioDAOImpl;
 import org.paginalib3.model.Usuario;
 import org.paginalib3.util.Seguridad;
 import org.paginalib3.util.Sesion;
+import org.paginalib3.util.MensajesUI;
 
 public class LoginController {
 
@@ -62,13 +63,13 @@ public class LoginController {
             Sesion.iniciar(usuario);
             redirigirSegunRol(usuario);
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            MensajesUI.registrarError(ex);
             lblEstado.setText(mensajeErrorBaseDatos(ex));
         } catch (IllegalArgumentException ex) {
             lblEstado.setText(ex.getMessage());
         } catch (Exception ex) {
-            ex.printStackTrace();
-            lblEstado.setText("No fue posible iniciar sesión. Revisa la consola para ver el error.");
+            MensajesUI.registrarError(ex);
+            lblEstado.setText("No fue posible iniciar sesión: " + MensajesUI.mensajeTecnico(ex));
         }
     }
 
