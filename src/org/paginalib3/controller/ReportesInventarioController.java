@@ -17,7 +17,7 @@ import org.paginalib3.model.ReporteLibroVendido;
 import org.paginalib3.model.StockValorizado;
 import org.paginalib3.system.Main;
 import org.paginalib3.util.Sesion;
-   
+    
 public class ReportesInventarioController {
     @FXML private DatePicker dpDesde, dpHasta;
     @FXML private TableView<ReporteLibroVendido> tablaMasVendidos;
