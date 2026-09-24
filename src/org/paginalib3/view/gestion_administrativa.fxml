@@ -1,1 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.paginalib3.controller.GestionAdministrativaController"
+      spacing="16" styleClass="app-root">
+    <children>
+        <HBox spacing="12" alignment="CENTER_LEFT" styleClass="page-header">
+            <Button text="← Volver" onAction="#volver" styleClass="btn-light"/>
+            <VBox HBox.hgrow="ALWAYS">
+                <Label text="Gestión administrativa" styleClass="page-title-light"/>
+                <Label text="Categorías, proveedores y control de precios desde un solo módulo." styleClass="page-subtitle-light"/>
+            </VBox>
+        </HBox>
+
+        <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+            <tabs>
+                <Tab text="Categorías">
+                    <BorderPane styleClass="content-panel">
+                        <center>
+                            <VBox spacing="8">
+                                <Label text="Listado de categorías" styleClass="section-title"/>
+                                <Label text="Selecciona una fila para editar o eliminar." styleClass="hint-label"/>
+                                <TableView fx:id="tablaCategorias" VBox.vgrow="ALWAYS">
+                                    <columns>
+                                        <TableColumn fx:id="colCategoriaId" text="ID" prefWidth="90"/>
+                                        <TableColumn fx:id="colCategoriaNombre" text="Categoría" prefWidth="360"/>
+                                    </columns>
+                                </TableView>
+                            </VBox>
+                        </center>
+                        <right>
+                            <VBox spacing="10" prefWidth="335" styleClass="form-panel">
+                                <Label text="Ficha de categoría" styleClass="section-title"/>
+                                <Label text="Nombre"/>
+                                <TextField fx:id="txtCategoria" promptText="Ej. Novela histórica"/>
+                                <HBox spacing="8">
+                                    <Button text="Nueva" onAction="#nuevaCategoria" HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="btn-secondary"/>
+                                    <Button text="Guardar" onAction="#guardarCategoria" HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="btn-primary"/>
+                                </HBox>
+                                <Separator/>
+                                <Button text="Eliminar categoría" onAction="#eliminarCategoria" maxWidth="Infinity" styleClass="btn-danger"/>
+                                <Label text="Si una categoría está asociada a libros, la base de datos impedirá eliminarla para conservar la integridad." wrapText="true" styleClass="hint-label"/>
+                            </VBox>
+                        </right>
+                    </BorderPane>
+                </Tab>
+
+                <Tab text="Proveedores">
+                    <BorderPane styleClass="content-panel">
+                        <center>
+                            <VBox spacing="8">
+                                <Label text="Listado de proveedores" styleClass="section-title"/>
+                                <Label text="Selecciona un proveedor para modificar sus datos o desactivarlo." styleClass="hint-label"/>
+                                <TableView fx:id="tablaProveedores" VBox.vgrow="ALWAYS">
+                                    <columns>
+                                        <TableColumn fx:id="colNit" text="NIT" prefWidth="110"/>
+                                        <TableColumn fx:id="colProveedor" text="Proveedor" prefWidth="220"/>
+                                        <TableColumn fx:id="colTelefono" text="Teléfono" prefWidth="120"/>
+                                        <TableColumn fx:id="colCorreo" text="Correo" prefWidth="220"/>
+                                        <TableColumn fx:id="colEstadoProveedor" text="Estado" prefWidth="100"/>
+                                    </columns>
+                                </TableView>
+                            </VBox>
+                        </center>
+                        <right>
+                            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefWidth="380" styleClass="transparent-scroll">
+                                <content>
+                                    <VBox spacing="8" styleClass="form-panel">
+                                        <Label text="Ficha de proveedor" styleClass="section-title"/>
+                                        <Label text="NIT"/>
+                                        <TextField fx:id="txtNit" promptText="NIT del proveedor"/>
+                                        <Label text="Nombre"/>
+                                        <TextField fx:id="txtProveedor" promptText="Razón social o nombre"/>
+                                        <Label text="Teléfono"/>
+                                        <TextField fx:id="txtTelefono" promptText="Teléfono"/>
+                                        <Label text="Correo"/>
+                                        <TextField fx:id="txtCorreo" promptText="correo@ejemplo.com"/>
+                                        <Label text="Dirección"/>
+                                        <TextArea fx:id="txtDireccion" prefRowCount="3" wrapText="true"/>
+                                        <HBox spacing="8">
+                                            <Button text="Nuevo" onAction="#nuevoProveedor" HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="btn-secondary"/>
+                                            <Button text="Guardar" onAction="#guardarProveedor" HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="btn-primary"/>
+                                        </HBox>
+                                        <Separator/>
+                                        <Button text="Desactivar proveedor" onAction="#desactivarProveedor" maxWidth="Infinity" styleClass="btn-danger"/>
+                                    </VBox>
+                                </content>
+                            </ScrollPane>
+                        </right>
+                    </BorderPane>
+                </Tab>
+
+                <Tab text="Precios">
+                    <BorderPane styleClass="content-panel">
+                        <center>
+                            <VBox spacing="8">
+                                <Label text="Libros y precios actuales" styleClass="section-title"/>
+                                <Label text="Selecciona un libro para realizar un ajuste de precio auditado." styleClass="hint-label"/>
+                                <TableView fx:id="tablaLibros" VBox.vgrow="ALWAYS">
+                                    <columns>
+                                        <TableColumn fx:id="colLibroIsbn" text="ISBN" prefWidth="150"/>
+                                        <TableColumn fx:id="colLibroTitulo" text="Libro" prefWidth="360"/>
+                                        <TableColumn fx:id="colLibroPrecio" text="Precio actual" prefWidth="130"/>
+                                    </columns>
+                                </TableView>
+                            </VBox>
+                        </center>
+                        <right>
+                            <VBox spacing="10" prefWidth="365" styleClass="form-panel">
+                                <Label text="Actualizar precio" styleClass="section-title"/>
+                                <Label fx:id="lblLibroSeleccionado" text="Selecciona un libro de la tabla" wrapText="true" styleClass="hint-label"/>
+                                <Separator/>
+                                <Label text="Nuevo precio"/>
+                                <TextField fx:id="txtNuevoPrecio" promptText="0.00"/>
+                                <Label text="Motivo / observación"/>
+                                <TextField fx:id="txtMotivo" promptText="Ej. ajuste de proveedor"/>
+                                <Button text="Aplicar nuevo precio" onAction="#actualizarPrecio" maxWidth="Infinity" styleClass="btn-primary"/>
+                                <Label text="El cambio queda registrado con fecha, usuario administrador, precio anterior, precio nuevo y motivo." wrapText="true" styleClass="hint-label"/>
+                            </VBox>
+                        </right>
+                    </BorderPane>
+                </Tab>
+            </tabs>
+        </TabPane>
+
+        <Label fx:id="lblEstado" text="Listo." styleClass="status-strip" maxWidth="Infinity"/>
+    </children>
+</VBox>
