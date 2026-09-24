@@ -1,5 +1,6 @@
 package org.paginalib3.controller;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -14,11 +15,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.FileChooser;
 import org.paginalib3.dao.ReporteDAO;
 import org.paginalib3.dao.impl.ReporteDAOImpl;
 import org.paginalib3.model.ReporteVenta;
 import org.paginalib3.system.Main;
-import org.paginalib3.util.Sesion;
+import org.paginalib3.util.ExportadorCSV;
+import org.paginalib3.util.Permisos;
+import org.paginalib3.util.MensajesUI;
 
 public class ReportesVentasController {
 
@@ -42,11 +46,10 @@ public class ReportesVentasController {
 
     @FXML
     private void initialize() {
-        tablaVentas.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
-        if (Sesion.getUsuarioActual() == null || !"admin".equalsIgnoreCase(Sesion.getUsuarioActual().getRol())) {
-            lblEstado.setText("Acceso reservado para administración.");
+        if (!Permisos.requerirAdmin("Reportes de ventas")) {
             return;
         }
+        tablaVentas.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
         colFecha.setCellValueFactory(new PropertyValueFactory<>("fecha"));
         colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidadVentas"));
         colSubtotal.setCellValueFactory(new PropertyValueFactory<>("subtotal"));
@@ -88,7 +91,37 @@ public class ReportesVentasController {
             lblCantidadVentas.setText(String.valueOf(cantidad));
             lblEstado.setText(datosActuales.isEmpty() ? "No hay ventas en el período seleccionado." : "Reporte actualizado.");
         } catch (SQLException | IllegalArgumentException e) {
-            lblEstado.setText("No se pudo generar el reporte: " + e.getMessage());
+            lblEstado.setText("No se pudo generar el reporte: " + MensajesUI.mensajeTecnico(e));
+            MensajesUI.error("Reportes de ventas", "No se pudo generar el reporte.\n\nDetalle: " + MensajesUI.mensajeTecnico(e), e);
+        }
+    }
+
+    @FXML
+    private void exportarExcel() {
+        if (datosActuales.isEmpty()) {
+            lblEstado.setText("Primero genera un reporte con datos.");
+            return;
+        }
+        FileChooser fc = new FileChooser();
+        fc.setTitle("Exportar reporte de ventas");
+        fc.setInitialFileName("reporte_ventas_" + dpDesde.getValue() + "_" + dpHasta.getValue() + ".csv");
+        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivo CSV compatible con Excel", "*.csv"));
+        File f = fc.showSaveDialog(Main.getStagePrincipal());
+        if (f == null) {
+            return;
+        }
+        try {
+            List<String[]> filas = new ArrayList<>();
+            filas.add(new String[]{"Fecha", "Cantidad de ventas", "Subtotal", "Descuentos", "Total"});
+            for (ReporteVenta r : datosActuales) {
+                filas.add(new String[]{r.getFecha().toString(), String.valueOf(r.getCantidadVentas()),
+                    num(r.getSubtotal()), num(r.getDescuentos()), num(r.getTotal())});
+            }
+            ExportadorCSV.guardar(f, filas);
+            lblEstado.setText("Reporte exportado: " + f.getName());
+        } catch (Exception e) {
+            lblEstado.setText("No se pudo exportar: " + MensajesUI.mensajeTecnico(e));
+            MensajesUI.error("Exportar reporte", "No se pudo exportar el archivo.\n\nDetalle: " + MensajesUI.mensajeTecnico(e), e);
         }
     }
 
@@ -99,5 +132,9 @@ public class ReportesVentasController {
 
     private String moneda(double v) {
         return String.format("Q%,.2f", v);
+    }
+
+    private String num(double v) {
+        return String.format(java.util.Locale.US, "%.2f", v);
     }
 }
