@@ -3,7 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/christian_garcia/b4/PaginaLib3/src/org/paginalib3/model/Libro.java</file>
+            <file>file:/C:/PaginaLib3/src/org/paginalib3/model/MovimientoInventario.java</file>
+            <file>file:/C:/PaginaLib3/src/org/paginalib3/dao/LibroDAO.java</file>
+            <file>file:/C:/PaginaLib3/src/db.properties</file>
+            <file>file:/C:/PaginaLib3/src/org/paginalib3/dao/impl/MovimientoInventarioDAOImpl.java</file>
+            <file>file:/C:/PaginaLib3/src/org/paginalib3/controller/BuscarLibroController.java</file>
+            <file>file:/C:/PaginaLib3/src/org/paginalib3/dao/impl/LibroDAOImpl.java</file>
+            <file>file:/C:/PaginaLib3/src/org/paginalib3/dao/MovimientoInventarioDAO.java</file>
         </group>
     </open-files>
 </project-private>

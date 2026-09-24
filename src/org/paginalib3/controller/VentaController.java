@@ -6,7 +6,6 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableColumn;
@@ -30,6 +29,8 @@ import org.paginalib3.model.Venta;
 import org.paginalib3.system.Main;
 import org.paginalib3.util.Seguridad;
 import org.paginalib3.util.Sesion;
+import org.paginalib3.util.Permisos;
+import org.paginalib3.util.MensajesUI;
 
 public class VentaController {
     @FXML private ComboBox<Cliente> cmbCliente;
@@ -59,6 +60,7 @@ public class VentaController {
 
     @FXML
     private void initialize() {
+        if (!Permisos.requerirCaja("Caja / Ventas")) return;
         colLibroIsbn.setCellValueFactory(new PropertyValueFactory<>("isbn"));
         colLibroTitulo.setCellValueFactory(new PropertyValueFactory<>("titulo"));
         colLibroPrecio.setCellValueFactory(new PropertyValueFactory<>("precio"));
@@ -84,17 +86,14 @@ public class VentaController {
     }
     
     private void cargarClientes() {
-    try {
-        List<Cliente> clientes = clienteDAO.listar();
-
-        cmbCliente.setItems(
-            FXCollections.observableArrayList(clientes)
-        );
-
-    } catch (Exception e) {
-        e.printStackTrace();
+        try {
+            List<Cliente> clientes = clienteDAO.listar();
+            cmbCliente.setItems(FXCollections.observableArrayList(clientes));
+        } catch (Exception e) {
+            lblEstado.setText("No se pudieron cargar los clientes.");
+            MensajesUI.registrarError(e);
+        }
     }
-}
   
 
     private void cargarLibros() {
@@ -103,7 +102,8 @@ public class VentaController {
             tblLibros.setItems(FXCollections.observableArrayList(libros));
             actualizarEstadoBotonAgregar(tblLibros.getSelectionModel().getSelectedItem());
         } catch (Exception e) {
-            lblEstado.setText("No se pudieron cargar libros: " + e.getMessage());
+            lblEstado.setText("No se pudieron cargar los libros.");
+            MensajesUI.registrarError(e);
         }
     }
 
@@ -114,7 +114,8 @@ public class VentaController {
             tblLibros.setItems(FXCollections.observableArrayList(resultado));
             actualizarEstadoBotonAgregar(tblLibros.getSelectionModel().getSelectedItem());
         } catch (Exception e) {
-            lblEstado.setText("Error al buscar: " + e.getMessage());
+            lblEstado.setText("No se pudo completar la búsqueda.");
+            MensajesUI.registrarError(e);
         }
     }
 
@@ -276,7 +277,7 @@ public class VentaController {
     @FXML private void registrar() {
         if (carrito.isEmpty()) { alert(Alert.AlertType.WARNING, "El carrito está vacío."); return; }
         Usuario u = Sesion.getUsuarioActual();
-        if (u == null || !"cajero".equalsIgnoreCase(u.getRol())) { alert(Alert.AlertType.ERROR, "Se requiere una sesión activa de cajero."); return; }
+        if (!Permisos.puedeCaja()) { alert(Alert.AlertType.ERROR, "Se requiere una sesión activa de caja o administración."); return; }
         String cui = ventaEnCurso ? cuiVenta : textoCuiActual();
         if (!cui.isEmpty()) try { Long.parseLong(cui); } catch (NumberFormatException e) { alert(Alert.AlertType.WARNING, "El CUI debe ser numérico."); return; }
 
@@ -296,10 +297,16 @@ public class VentaController {
             quitarProteccionCierre();
             Main.cambiarVista("/org/paginalib3/view/comprobante.fxml", "Pagina-Libreria | Comprobante", 900, 760);
             Main.configurarVistaActual(x -> { if (x instanceof ComprobanteController c) c.cargarVenta(id); });
-        } catch (Exception e) { alert(Alert.AlertType.ERROR, "No se pudo registrar la venta: " + e.getMessage()); }
+        } catch (Exception e) {
+            lblEstado.setText("No se pudo registrar la venta.");
+            MensajesUI.error("Registrar venta",
+                    "No se pudo registrar la venta.\nDetalle: " + MensajesUI.mensajeTecnico(e), e);
+        }
     }
 
     private int validarAutorizacionAdmin() throws Exception {
+        Usuario actual = Sesion.getUsuarioActual();
+        if (actual != null && "admin".equalsIgnoreCase(actual.getRol())) return actual.getId();
         String username = txtUsuarioAutoriza.getText() == null ? "" : txtUsuarioAutoriza.getText().trim();
         String password = txtClaveAutoriza.getText() == null ? "" : txtClaveAutoriza.getText();
         if (username.isBlank() || password.isBlank()) throw new IllegalArgumentException("Un descuento requiere usuario y contraseña de administrador.");
@@ -325,7 +332,7 @@ public class VentaController {
             return;
         }
         quitarProteccionCierre();
-        Main.cambiarVista("/org/paginalib3/view/dashboard_cajero.fxml", "Pagina-Libreria | Dashboard Caja", 1100, 680);
+        Permisos.volverDashboardSegunRol();
     }
 
     private void iniciarVenta() {
@@ -354,14 +361,9 @@ public class VentaController {
     }
 
     private boolean confirmarCancelacion() {
-        Alert confirmacion = new Alert(
-                Alert.AlertType.CONFIRMATION,
-                "Se eliminarán todos los libros agregados y se liberará el cliente seleccionado. ¿Deseas cancelar la venta?",
-                ButtonType.YES,
-                ButtonType.NO);
-        confirmacion.setTitle("Cancelar venta");
-        confirmacion.setHeaderText("Hay una venta en curso");
-        return confirmacion.showAndWait().orElse(ButtonType.NO) == ButtonType.YES;
+        return MensajesUI.confirmar(
+                "Cancelar venta",
+                "Se eliminarán todos los libros agregados y se liberará el cliente seleccionado. ¿Deseas cancelar la venta?");
     }
 
     private void configurarProteccionCierre() {
@@ -378,5 +380,13 @@ public class VentaController {
         if (Main.getStagePrincipal() != null) Main.getStagePrincipal().setOnCloseRequest(null);
     }
 
-    private void alert(Alert.AlertType t, String m) { new Alert(t, m, ButtonType.OK).showAndWait(); }
+    private void alert(Alert.AlertType t, String m) {
+        if (t == Alert.AlertType.ERROR) {
+            MensajesUI.error("Caja / Ventas", m);
+        } else if (t == Alert.AlertType.WARNING) {
+            MensajesUI.advertencia("Caja / Ventas", m);
+        } else {
+            MensajesUI.informacion("Caja / Ventas", m);
+        }
+    }
 }
