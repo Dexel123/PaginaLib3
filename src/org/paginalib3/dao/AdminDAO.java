@@ -6,3 +6,4 @@ import org.paginalib3.model.DashboardIndicadores;
 public interface AdminDAO {
     DashboardIndicadores obtenerIndicadores() throws SQLException;
 }
+ 
