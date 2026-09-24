@@ -9,11 +9,10 @@ import org.paginalib3.model.DashboardIndicadores;
 import org.paginalib3.util.Conexion;
 
 public class AdminDAOImpl implements AdminDAO {
+
     @Override
     public DashboardIndicadores obtenerIndicadores() throws SQLException {
-        try (Connection c = Conexion.getInstancia().conectar();
-             CallableStatement s = c.prepareCall("{CALL sp_dashboardadmin()}");
-             ResultSet r = s.executeQuery()) {
+        try (Connection c = Conexion.getInstancia().conectar(); CallableStatement s = c.prepareCall("{CALL sp_dashboardadmin()}"); ResultSet r = s.executeQuery()) {
             DashboardIndicadores d = new DashboardIndicadores();
             if (r.next()) {
                 d.setVentasTotales(r.getDouble("ventas_totales"));
@@ -29,3 +28,4 @@ public class AdminDAOImpl implements AdminDAO {
         }
     }
 }
+   
