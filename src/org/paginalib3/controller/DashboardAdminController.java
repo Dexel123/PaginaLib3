@@ -19,4 +19,9 @@ public class DashboardAdminController extends DashboardBaseController {
     private void irAUsuarios() {
         Main.cambiarVista("/org/paginalib3/view/usuarios.fxml", "Pagina-Libreria | Usuarios", 1000, 650);
     }
+
+    @FXML
+    private void irAReportesVentas() {
+        Main.cambiarVista("/org/paginalib3/view/reportes_ventas.fxml", "Pagina-Libreria | Reportes de ventas", 1160, 720);
+    }
 }

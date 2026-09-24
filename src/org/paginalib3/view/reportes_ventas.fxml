@@ -5,20 +5,12 @@
     <children>
         <HBox spacing="12" alignment="CENTER_LEFT" styleClass="page-header">
             <Button text="← Volver" onAction="#volver" styleClass="btn-light"/>
-            <VBox HBox.hgrow="ALWAYS"><Label text="Reportes de ventas" styleClass="page-title-light"/><Label text="Consulta resultados por día, semana, mes o rango personalizado." styleClass="page-subtitle-light"/></VBox>
+            <VBox HBox.hgrow="ALWAYS">
+                <Label text="Reportes de ventas" styleClass="page-title-light"/>
+                <Label text="Consulta resultados por día, semana, mes o rango personalizado." styleClass="page-subtitle-light"/>
+            </VBox>
             
         </HBox>
         <VBox spacing="14" styleClass="content-panel" VBox.vgrow="ALWAYS">
             <HBox spacing="10" alignment="CENTER_LEFT">
-                <Label text="Período:"/><ComboBox fx:id="cmbPeriodo" onAction="#aplicarPeriodo" prefWidth="155"/>
-                <Label text="Desde:"/><DatePicker fx:id="dpDesde"/><Label text="Hasta:"/><DatePicker fx:id="dpHasta"/>
-                <Button text="Generar reporte" onAction="#consultar" styleClass="btn-primary"/>
-            </HBox>
-            <HBox spacing="14"><VBox styleClass="kpi-card"><Label text="VENTAS DEL PERÍODO" styleClass="kpi-label"/><Label fx:id="lblTotalVentas" text="Q0.00" styleClass="kpi-value"/></VBox><VBox styleClass="kpi-card"><Label text="TRANSACCIONES" styleClass="kpi-label"/><Label fx:id="lblCantidadVentas" text="0" styleClass="kpi-value"/></VBox></HBox>
-            <TableView fx:id="tablaVentas" VBox.vgrow="ALWAYS">
-                <columns><TableColumn fx:id="colFecha" text="Fecha"/><TableColumn fx:id="colCantidad" text="Ventas"/><TableColumn fx:id="colSubtotal" text="Subtotal"/><TableColumn fx:id="colDescuento" text="Descuentos"/><TableColumn fx:id="colTotal" text="Total"/></columns>
-            </TableView>
-            <Label fx:id="lblEstado" text="Listo." styleClass="hint-label"/>
-        </VBox>
-    </children>
-</VBox>
+             
