@@ -77,6 +77,48 @@ BEGIN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Se esperaba al menos un libro en stock crítico para las pruebas';
     END IF;
 
+
+    -- Sprint 4: procedimientos obligatorios de administración y reportes.
+    IF EXISTS (
+        SELECT req.nombre
+        FROM (
+            SELECT 'sp_dashboardadmin' nombre UNION ALL
+            SELECT 'sp_reporte_ventas_periodo' UNION ALL
+            SELECT 'sp_reporte_libros_mas_vendidos' UNION ALL
+            SELECT 'sp_reporte_stock_valorizado' UNION ALL
+            SELECT 'sp_insertarcategoria' UNION ALL
+            SELECT 'sp_actualizarcategoria' UNION ALL
+            SELECT 'sp_eliminarcategoria' UNION ALL
+            SELECT 'sp_insertarproveedor' UNION ALL
+            SELECT 'sp_actualizarproveedor' UNION ALL
+            SELECT 'sp_eliminarproveedor' UNION ALL
+            SELECT 'sp_actualizarpreciolibro' UNION ALL
+            SELECT 'sp_insertarlibro_stock_inicial' UNION ALL
+            SELECT 'sp_cambiar_estado_libro'
+        ) req
+        LEFT JOIN information_schema.routines r
+          ON r.routine_schema=DATABASE()
+         AND r.routine_type='PROCEDURE'
+         AND r.routine_name=req.nombre
+        WHERE r.routine_name IS NULL
+    ) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Falta al menos un procedimiento requerido por Sprint 4';
+    END IF;
+
+    IF NOT EXISTS(
+        SELECT 1 FROM information_schema.tables
+        WHERE table_schema=DATABASE() AND table_name='historial_precios'
+    ) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Falta historial_precios para auditar cambios de precio';
+    END IF;
+
+    IF NOT EXISTS(
+        SELECT 1 FROM information_schema.tables
+        WHERE table_schema=DATABASE() AND table_name='movimientos_inventario'
+    ) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Falta movimientos_inventario para trazabilidad de stock';
+    END IF;
+
     SELECT 'OK' AS estado,
            'La estructura, restricciones, vistas y procedimientos principales están instalados.' AS resultado,
            (SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE() AND table_type='BASE TABLE') AS tablas,
@@ -104,3 +146,12 @@ CALL sp_ventasdeldiaporusuario((SELECT id FROM usuarios WHERE username='cajero1'
 SELECT COUNT(*) AS total_libros FROM libros;
 SELECT COUNT(*) AS total_clientes FROM clientes;
 SELECT COUNT(*) AS stock_critico FROM libros WHERE activo=TRUE AND stock_actual<=stock_minimo;
+
+
+-- Sprint 4: consultas de regresión de reportes (solo lectura).
+CALL sp_reporte_ventas_periodo(CURDATE() - INTERVAL 30 DAY, CURDATE());
+CALL sp_reporte_libros_mas_vendidos(CURDATE() - INTERVAL 365 DAY, CURDATE(), 10);
+SELECT COUNT(*) AS categorias_disponibles FROM categorias;
+SELECT COUNT(*) AS proveedores_activos FROM proveedores WHERE activo=TRUE;
+SELECT COUNT(*) AS cambios_precio_auditados FROM historial_precios;
+SELECT COUNT(*) AS movimientos_inventario_registrados FROM movimientos_inventario;
