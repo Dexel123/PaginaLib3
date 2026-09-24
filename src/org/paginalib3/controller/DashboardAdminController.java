@@ -9,7 +9,7 @@ import org.paginalib3.model.DashboardIndicadores;
 import org.paginalib3.system.Main;
 import org.paginalib3.util.Sesion;
 import org.paginalib3.util.MensajesUI;
-     
+         
 public class DashboardAdminController extends DashboardBaseController {
 
     @FXML
