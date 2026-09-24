@@ -1,13 +1,11 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
- */
 package org.paginalib3.dao;
 
-/**
- *
- * @author informatica
- */
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.List;
+import org.paginalib3.model.ReporteVenta;
+
 public interface ReporteDAO {
-    
+
+    List<ReporteVenta> ventasPorPeriodo(LocalDate desde, LocalDate hasta) throws SQLException;
 }
