@@ -7,7 +7,7 @@ import org.paginalib3.model.ReporteLibroVendido;
 import org.paginalib3.model.StockValorizado;
 
 public interface ReporteDAO {
-
+ 
     List<ReporteLibroVendido> librosMasVendidos(LocalDate desde, LocalDate hasta, int limite) throws SQLException;
 
     List<StockValorizado> stockValorizado() throws SQLException;
