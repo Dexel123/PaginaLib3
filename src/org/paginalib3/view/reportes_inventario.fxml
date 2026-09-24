@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.paginalib3.controller.ReportesInventarioController" spacing="16" styleClass="app-root">
+ <children>
+  <HBox spacing="12" alignment="CENTER_LEFT" styleClass="page-header"><Button text="← Volver" onAction="#volver" styleClass="btn-light"/><VBox HBox.hgrow="ALWAYS"><Label text="Reportes de inventario" styleClass="page-title-light"/><Label text="Libros más vendidos y valorización del stock actual." styleClass="page-subtitle-light"/></VBox></HBox>
+  <VBox spacing="12" styleClass="content-panel" VBox.vgrow="ALWAYS">
+   <HBox spacing="10" alignment="CENTER_LEFT"><Label text="Ranking desde:"/><DatePicker fx:id="dpDesde"/><Label text="hasta:"/><DatePicker fx:id="dpHasta"/><Button text="Actualizar" onAction="#consultar" styleClass="btn-primary"/></HBox>
+   <HBox spacing="14"><VBox styleClass="kpi-card"><Label text="VALOR A COSTO" styleClass="kpi-label"/><Label fx:id="lblValorCosto" text="Q0.00" styleClass="kpi-value"/></VBox><VBox styleClass="kpi-card"><Label text="VALOR POTENCIAL DE VENTA" styleClass="kpi-label"/><Label fx:id="lblValorVenta" text="Q0.00" styleClass="kpi-value"/></VBox></HBox>
+   <SplitPane orientation="VERTICAL" VBox.vgrow="ALWAYS">
+    <VBox spacing="6"><Label text="Top de libros más vendidos" styleClass="section-title"/><TableView fx:id="tablaMasVendidos" VBox.vgrow="ALWAYS"><columns><TableColumn fx:id="colIsbnV" text="ISBN"/><TableColumn fx:id="colTituloV" text="Libro"/><TableColumn fx:id="colUnidadesV" text="Unidades"/><TableColumn fx:id="colIngresosV" text="Ingresos"/></columns></TableView></VBox>
+    <VBox spacing="6"><Label text="Stock valorizado" styleClass="section-title"/><TableView fx:id="tablaStock" VBox.vgrow="ALWAYS"><columns><TableColumn fx:id="colIsbnS" text="ISBN"/><TableColumn fx:id="colTituloS" text="Libro"/><TableColumn fx:id="colStockS" text="Stock"/><TableColumn fx:id="colCostoS" text="Costo prom."/><TableColumn fx:id="colPrecioS" text="Precio"/><TableColumn fx:id="colValorCostoS" text="Valor costo"/><TableColumn fx:id="colValorVentaS" text="Valor venta"/></columns></TableView></VBox>
+   </SplitPane>
+   <Label fx:id="lblEstado" text="Listo." styleClass="hint-label"/>
+  </VBox>
+ </children>
+</VBox>
