@@ -20,7 +20,7 @@ import org.paginalib3.model.ReporteVenta;
 import org.paginalib3.system.Main;
 import org.paginalib3.util.Sesion;
 
-public class ReporteVentaController {
+public class ReportesVentasController {
     @FXML private ComboBox<String> cmbPeriodo;
     @FXML private DatePicker dpDesde, dpHasta;
     @FXML private TableView<ReporteVenta> tablaVentas;
