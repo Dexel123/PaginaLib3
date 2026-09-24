@@ -18,8 +18,8 @@ public class ReporteDAOImpl implements ReporteDAO {
         }
         List<ReporteVenta> lista = new ArrayList<>();
         try (Connection c = Conexion.getInstancia().conectar(); CallableStatement s = c.prepareCall("{CALL sp_reporte_ventas_periodo(?,?)}")) {
-            s.setDate(1, Date.valueOf(desde));
-            s.setDate(2, Date.valueOf(hasta));
+            s.setDate(1, java.sql.Date.valueOf(desde));
+            s.setDate(2, java.sql.Date.valueOf(hasta));
             try (ResultSet r = s.executeQuery()) {
                 while (r.next()) {
                     lista.add(new ReporteVenta(r.getDate("fecha").toLocalDate(), r.getInt("cantidad_ventas"), r.getDouble("subtotal"), r.getDouble("descuentos"), r.getDouble("total")));
