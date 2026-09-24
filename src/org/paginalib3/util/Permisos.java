@@ -3,7 +3,6 @@ package org.paginalib3.util;
 import org.paginalib3.model.Usuario;
 import org.paginalib3.system.Main;
 
-/** Reglas de acceso de la aplicación en un solo lugar. */
 public final class Permisos {
 
     private Permisos() {

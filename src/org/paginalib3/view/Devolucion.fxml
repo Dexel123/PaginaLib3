@@ -1,19 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+
 <BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="org.paginalib3.controller.DevolucionController"
-            style="-fx-background-color:#F7F1E8; -fx-font-family:'Segoe UI';">
+            fx:controller="org.paginalib3.controller.DevolucionController" styleClass="app-root">
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="12" styleClass="page-header">
+            <VBox HBox.hgrow="ALWAYS" spacing="3">
+                <Label text="Anulación y devolución de ventas" styleClass="page-title-light"/>
+                <Label text="Selecciona una venta reciente; el sistema conserva la trazabilidad y restaura el stock." styleClass="page-subtitle-light"/>
+            </VBox>
+            <Button text="← Volver" onAction="#volver" styleClass="btn-light"/>
+        </HBox>
+    </top>
     <center>
-        <VBox spacing="14">
-            <padding><Insets top="28" right="30" bottom="20" left="30"/></padding>
-            <Label text="Anulación y devolución de ventas" style="-fx-text-fill:#3B1720; -fx-font-size:26px; -fx-font-weight:bold;"/>
-            <Label text="Selecciona una venta reciente. La operación conserva la trazabilidad y restaura el stock." style="-fx-text-fill:#765F55; -fx-font-size:13px;"/>
-            <VBox spacing="8" VBox.vgrow="ALWAYS"
-                  style="-fx-background-color:#FFFDF9; -fx-background-radius:14; -fx-border-color:#E5D8C8; -fx-border-radius:14; -fx-padding:16;">
-                <TableView fx:id="tblVentas" VBox.vgrow="ALWAYS" onMouseClicked="#seleccionarVenta"
-                           style="-fx-background-color:#FFFDF9; -fx-border-color:#E5D8C8; -fx-border-radius:8;">
+        <VBox spacing="12">
+            <VBox spacing="8" styleClass="content-panel" VBox.vgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT">
+                    <Label text="Ventas recientes" styleClass="section-title" HBox.hgrow="ALWAYS"/>
+                    <Button text="Actualizar lista" onAction="#cargarRecientes" styleClass="btn-secondary"/>
+                </HBox>
+                <TableView fx:id="tblVentas" VBox.vgrow="ALWAYS" onMouseClicked="#seleccionarVenta">
                     <columns>
                         <TableColumn fx:id="colId" text="# Venta" prefWidth="120"/>
                         <TableColumn fx:id="colEstado" text="Estado" prefWidth="180"/>
@@ -21,25 +28,27 @@
                     </columns>
                 </TableView>
             </VBox>
-            <HBox spacing="10">
-                <Label text="Venta:" style="-fx-text-fill:#765F55; -fx-font-weight:bold;"/>
-                <TextField fx:id="txtIdVenta" prefWidth="110"
-                           style="-fx-background-color:#F6EFE5; -fx-background-radius:9; -fx-border-color:#E5D8C8; -fx-border-radius:9; -fx-pref-height:38;"/>
-                <Label text="Operación:" style="-fx-text-fill:#765F55; -fx-font-weight:bold;"/>
-                <ComboBox fx:id="cmbOperacion" prefWidth="130"
-                          style="-fx-background-color:#F6EFE5; -fx-background-radius:9; -fx-border-color:#E5D8C8; -fx-border-radius:9; -fx-pref-height:38;"/>
-                <Button text="Actualizar" onAction="#cargarRecientes"
-                        style="-fx-background-color:#EFE4D6; -fx-text-fill:#5A3039; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:10 12; -fx-cursor:hand;"/>
-            </HBox>
-            <TextArea fx:id="txtMotivo" promptText="Motivo obligatorio" prefRowCount="3" wrapText="true"
-                      style="-fx-background-color:#F6EFE5; -fx-background-radius:9; -fx-border-color:#E5D8C8; -fx-border-radius:9;"/>
-            <Label fx:id="lblEstado" style="-fx-text-fill:#765F55; -fx-font-size:12px;"/>
-            <HBox alignment="CENTER_RIGHT" spacing="10">
-                <Button text="Ejecutar" onAction="#ejecutar"
-                        style="-fx-background-color:#7A2938; -fx-text-fill:#FFF8EF; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:11 14; -fx-cursor:hand;"/>
-                <Button text="Volver" onAction="#volver"
-                        style="-fx-background-color:#D9A441; -fx-text-fill:#3B1720; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:10 12; -fx-cursor:hand;"/>
-            </HBox>
+
+            <VBox spacing="10" styleClass="form-panel">
+                <Label text="Procesar operación" styleClass="section-title"/>
+                <HBox spacing="10" alignment="BOTTOM_LEFT">
+                    <VBox prefWidth="130" spacing="5">
+                        <Label text="Venta seleccionada"/>
+                        <TextField fx:id="txtIdVenta" promptText="#"/>
+                    </VBox>
+                    <VBox prefWidth="190" spacing="5">
+                        <Label text="Operación"/>
+                        <ComboBox fx:id="cmbOperacion" maxWidth="Infinity"/>
+                    </VBox>
+                    <VBox HBox.hgrow="ALWAYS"/>
+                    <Button text="Ejecutar operación" onAction="#ejecutar" styleClass="btn-danger"/>
+                </HBox>
+                <VBox spacing="5">
+                    <Label text="Motivo obligatorio"/>
+                    <TextArea fx:id="txtMotivo" promptText="Explica el motivo de la anulación o devolución..." prefRowCount="2" wrapText="true"/>
+                </VBox>
+            </VBox>
+            <Label fx:id="lblEstado" text="" styleClass="status-strip" maxWidth="Infinity"/>
         </VBox>
     </center>
 </BorderPane>
