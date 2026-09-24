@@ -45,6 +45,8 @@ DROP PROCEDURE IF EXISTS sp_cambiar_estado_usuario$$
 DROP PROCEDURE IF EXISTS sp_cambiar_rol_usuario$$
 DROP PROCEDURE IF EXISTS sp_cambiar_contrasena$$
 DROP PROCEDURE IF EXISTS sp_actualizarstocklibro$$
+DROP PROCEDURE IF EXISTS sp_insertarlibro_stock_inicial$$
+DROP PROCEDURE IF EXISTS sp_cambiar_estado_libro$$
 DROP PROCEDURE IF EXISTS sp_registrar_ingreso_inventario$$
 DROP PROCEDURE IF EXISTS sp_registrar_salida_inventario$$
 DROP PROCEDURE IF EXISTS sp_listarmovimientosinventario$$
@@ -146,18 +148,20 @@ END$$
 CREATE PROCEDURE sp_listarlibros()
 BEGIN
     SELECT l.isbn,l.titulo,l.fecha_publicacion,l.precio,l.costo_promedio,l.id_categoria,l.nit_editorial,
-           l.stock_actual,l.stock_minimo,l.activo,
+           l.stock_actual,l.stock_minimo,l.activo,c.nombre_categoria,
            GROUP_CONCAT(DISTINCT CONCAT(a.nombre_autor,' ',a.apellido_autor) ORDER BY a.apellido_autor SEPARATOR ', ') AS autores
     FROM libros l
+    JOIN categorias c ON c.id_categoria=l.id_categoria
     LEFT JOIN autores_libro al ON al.isbn=l.isbn
     LEFT JOIN autores a ON a.id_autor=al.id_autor
-    GROUP BY l.isbn,l.titulo,l.fecha_publicacion,l.precio,l.costo_promedio,l.id_categoria,l.nit_editorial,l.stock_actual,l.stock_minimo,l.activo
+    GROUP BY l.isbn,l.titulo,l.fecha_publicacion,l.precio,l.costo_promedio,l.id_categoria,l.nit_editorial,l.stock_actual,l.stock_minimo,l.activo,c.nombre_categoria
     ORDER BY l.titulo;
 END$$
 
 CREATE PROCEDURE sp_buscarlibro(IN _isbn VARCHAR(20))
 BEGIN
-    SELECT isbn,titulo,fecha_publicacion,precio,costo_promedio,id_categoria,nit_editorial,stock_actual,stock_minimo,activo FROM libros WHERE isbn=_isbn;
+    SELECT l.isbn,l.titulo,l.fecha_publicacion,l.precio,l.costo_promedio,l.id_categoria,l.nit_editorial,l.stock_actual,l.stock_minimo,l.activo,c.nombre_categoria
+    FROM libros l JOIN categorias c ON c.id_categoria=l.id_categoria WHERE l.isbn=_isbn;
 END$$
 
 CREATE PROCEDURE sp_buscar_libros(IN _texto VARCHAR(150))
@@ -255,6 +259,32 @@ END$$
 
 -- Inventario
 
+-- Alta de libro con stock inicial: mantiene la trazabilidad del inventario desde el primer día.
+CREATE PROCEDURE sp_insertarlibro_stock_inicial(
+    IN _isbn VARCHAR(20), IN _titulo VARCHAR(150), IN _fecha DATE, IN _precio DECIMAL(10,2),
+    IN _categoria INT, IN _editorial VARCHAR(20), IN _stock_inicial INT, IN _id_usuario INT)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN ROLLBACK; RESIGNAL; END;
+    IF _stock_inicial < 0 THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='El stock inicial no puede ser negativo'; END IF;
+    IF _precio < 0 THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='El precio no puede ser negativo'; END IF;
+    IF NOT EXISTS(SELECT 1 FROM usuarios WHERE id=_id_usuario AND activo=TRUE AND rol IN ('admin','bodega')) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='El usuario no puede registrar libros';
+    END IF;
+    START TRANSACTION;
+    INSERT INTO libros(isbn,titulo,fecha_publicacion,precio,id_categoria,nit_editorial,stock_actual,stock_minimo,activo)
+    VALUES(_isbn,TRIM(_titulo),_fecha,_precio,_categoria,_editorial,_stock_inicial,0,TRUE);
+    IF _stock_inicial > 0 THEN
+        INSERT INTO movimientos_inventario(isbn,tipo_movimiento,cantidad,id_usuario,observacion)
+        VALUES(_isbn,'INGRESO',_stock_inicial,_id_usuario,'Stock inicial al crear el libro');
+    END IF;
+    COMMIT;
+END$$
+
+CREATE PROCEDURE sp_cambiar_estado_libro(IN _isbn VARCHAR(20), IN _activo BOOLEAN)
+BEGIN
+    UPDATE libros SET activo=_activo WHERE isbn=_isbn;
+END$$
+
 CREATE PROCEDURE sp_actualizarstocklibro(IN _isbn VARCHAR(20), IN _stock_minimo INT, IN _activo BOOLEAN)
 BEGIN
     IF _stock_minimo < 0 THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='El stock minimo no puede ser negativo'; END IF;
@@ -335,7 +365,7 @@ BEGIN
     IF JSON_TYPE(_detalles) <> 'ARRAY' OR JSON_LENGTH(_detalles)=0 THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='La venta debe contener al menos un libro'; END IF;
 
     SELECT rol INTO _rol FROM usuarios WHERE id=_id_usuario AND activo=TRUE;
-    IF _rol IS NULL OR _rol <> 'cajero' THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='El usuario no es un cajero activo'; END IF;
+    IF _rol IS NULL OR _rol NOT IN ('cajero','admin') THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='El usuario no tiene permiso para registrar ventas'; END IF;
 
     IF _descuento > 0 THEN
         IF _usuario_autoriza IS NULL OR NOT EXISTS(SELECT 1 FROM usuarios WHERE id=_usuario_autoriza AND activo=TRUE AND rol='admin') THEN
