@@ -18,4 +18,8 @@
                 <Label text="Desde:"/>
                 <DatePicker fx:id="dpDesde"/>
                 <Label text="Hasta:"/>
-              
+                <DatePicker fx:id="dpHasta"/>
+                <Button text="Generar reporte" onAction="#consultar" styleClass="btn-primary"/>
+            </HBox>
+            <HBox spacing="14">
+         
