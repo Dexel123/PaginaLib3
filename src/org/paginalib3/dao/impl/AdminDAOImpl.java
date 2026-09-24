@@ -2,8 +2,10 @@ package org.paginalib3.dao.impl;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.paginalib3.dao.AdminDAO;
+import org.paginalib3.model.DashboardIndicadores;
 import org.paginalib3.util.Conexion;
 
 public class AdminDAOImpl implements AdminDAO {
