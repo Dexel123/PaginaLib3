@@ -1,13 +1,8 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
- */
 package org.paginalib3.dao;
 
-/**
- *
- * @author informatica
- */
+import java.sql.SQLException;
+
 public interface AdminDAO {
-    
+
+    boolean actualizarPrecio(String isbn, double nuevoPrecio, int idUsuario, String motivo) throws SQLException;
 }
