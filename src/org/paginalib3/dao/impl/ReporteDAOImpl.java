@@ -8,7 +8,7 @@ import org.paginalib3.model.*;
 import org.paginalib3.util.Conexion;
 
 public class ReporteDAOImpl implements ReporteDAO {
-
+  
     public List<ReporteLibroVendido> librosMasVendidos(LocalDate desde, LocalDate hasta, int limite) throws SQLException {
         if (desde == null || hasta == null) {
             throw new IllegalArgumentException("Selecciona ambas fechas.");
