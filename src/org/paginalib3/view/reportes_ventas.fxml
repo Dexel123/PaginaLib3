@@ -13,4 +13,9 @@
         </HBox>
         <VBox spacing="14" styleClass="content-panel" VBox.vgrow="ALWAYS">
             <HBox spacing="10" alignment="CENTER_LEFT">
-             
+                <Label text="Período:"/>
+                <ComboBox fx:id="cmbPeriodo" onAction="#aplicarPeriodo" prefWidth="155"/>
+                <Label text="Desde:"/>
+                <DatePicker fx:id="dpDesde"/>
+                <Label text="Hasta:"/>
+              
