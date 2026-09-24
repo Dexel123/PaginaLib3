@@ -22,4 +22,13 @@
                 <Button text="Generar reporte" onAction="#consultar" styleClass="btn-primary"/>
             </HBox>
             <HBox spacing="14">
-         
+                <VBox styleClass="kpi-card">
+                    <Label text="VENTAS DEL PERÍODO" styleClass="kpi-label"/>
+                    <Label fx:id="lblTotalVentas" text="Q0.00" styleClass="kpi-value"/>
+                </VBox>
+                <VBox styleClass="kpi-card">
+                    <Label text="TRANSACCIONES" styleClass="kpi-label"/>
+                    <Label fx:id="lblCantidadVentas" text="0" styleClass="kpi-value"/>
+                </VBox>
+            </HBox>
+           
