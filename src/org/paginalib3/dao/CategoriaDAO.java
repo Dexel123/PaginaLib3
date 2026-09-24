@@ -1,13 +1,16 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
- */
 package org.paginalib3.dao;
 
-/**
- *
- * @author informatica
- */
+import java.sql.SQLException;
+import java.util.List;
+import org.paginalib3.model.Categoria;
+
 public interface CategoriaDAO {
-    
+
+    List<Categoria> listar() throws SQLException;
+
+    boolean insertar(String nombre) throws SQLException;
+
+    boolean actualizar(int id, String nombre) throws SQLException;
+
+    boolean eliminar(int id) throws SQLException;
 }
