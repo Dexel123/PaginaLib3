@@ -25,6 +25,9 @@ import org.paginalib3.model.Libro;
 import org.paginalib3.model.Usuario;
 import org.paginalib3.util.Permisos;
 import org.paginalib3.util.Sesion;
+import org.paginalib3.dao.EditorialDAO;
+import org.paginalib3.dao.impl.EditorialDAOImpl;
+import org.paginalib3.model.Editorial;
 
 public class LibroController {
 
