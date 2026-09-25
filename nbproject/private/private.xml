@@ -3,13 +3,23 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/PaginaLib3/src/org/paginalib3/model/MovimientoInventario.java</file>
-            <file>file:/C:/PaginaLib3/src/org/paginalib3/dao/LibroDAO.java</file>
-            <file>file:/C:/PaginaLib3/src/db.properties</file>
-            <file>file:/C:/PaginaLib3/src/org/paginalib3/dao/impl/MovimientoInventarioDAOImpl.java</file>
-            <file>file:/C:/PaginaLib3/src/org/paginalib3/controller/BuscarLibroController.java</file>
-            <file>file:/C:/PaginaLib3/src/org/paginalib3/dao/impl/LibroDAOImpl.java</file>
-            <file>file:/C:/PaginaLib3/src/org/paginalib3/dao/MovimientoInventarioDAO.java</file>
+            <file>file:/C:/JoaquinSanchez/bim_cuatro/FINAL/PaginaLib3/src/org/paginalib3/dao/impl/EditorialDAOImpl.java</file>
+            <file>file:/C:/JoaquinSanchez/bim_cuatro/FINAL/PaginaLib3/src/org/paginalib3/view/login.fxml</file>
+            <file>file:/C:/JoaquinSanchez/bim_cuatro/FINAL/PaginaLib3/src/org/paginalib3/view/buscar_libros.fxml</file>
+            <file>file:/C:/JoaquinSanchez/bim_cuatro/FINAL/PaginaLib3/src/org/paginalib3/dao/impl/CategoriaDAOImpl.java</file>
+            <file>file:/C:/JoaquinSanchez/bim_cuatro/FINAL/PaginaLib3/src/org/paginalib3/controller/EditorialesController.java</file>
+            <file>file:/C:/JoaquinSanchez/bim_cuatro/FINAL/PaginaLib3/src/org/paginalib3/controller/DevolucionController.java</file>
+            <file>file:/C:/JoaquinSanchez/bim_cuatro/FINAL/PaginaLib3/src/org/paginalib3/model/Categoria.java</file>
+            <file>file:/C:/JoaquinSanchez/bim_cuatro/FINAL/PaginaLib3/src/org/paginalib3/model/Editorial.java</file>
+            <file>file:/C:/JoaquinSanchez/bim_cuatro/FINAL/PaginaLib3/src/org/paginalib3/controller/GestionAdministrativaController.java</file>
+            <file>file:/C:/JoaquinSanchez/bim_cuatro/FINAL/PaginaLib3/src/org/paginalib3/system/Main.java</file>
+            <file>file:/C:/JoaquinSanchez/bim_cuatro/FINAL/PaginaLib3/src/org/paginalib3/view/cambiar_contrasena.fxml</file>
+            <file>file:/C:/JoaquinSanchez/bim_cuatro/FINAL/PaginaLib3/src/org/paginalib3/controller/IngresoInventarioController.java</file>
+            <file>file:/C:/JoaquinSanchez/bim_cuatro/FINAL/PaginaLib3/src/org/paginalib3/controller/LibroController.java</file>
+            <file>file:/C:/JoaquinSanchez/bim_cuatro/FINAL/PaginaLib3/src/org/paginalib3/dao/impl/LibroDAOImpl.java</file>
+            <file>file:/C:/JoaquinSanchez/bim_cuatro/FINAL/PaginaLib3/src/org/paginalib3/view/libros.fxml</file>
+            <file>file:/C:/JoaquinSanchez/bim_cuatro/FINAL/PaginaLib3/src/org/paginalib3/dao/LibroDAO.java</file>
+            <file>file:/C:/JoaquinSanchez/bim_cuatro/FINAL/PaginaLib3/src/org/paginalib3/dao/EditorialDAO.java</file>
         </group>
     </open-files>
 </project-private>
