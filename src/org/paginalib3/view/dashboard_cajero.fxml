@@ -2,43 +2,51 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+
 <BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.paginalib3.controller.DashboardCajeroController"
-            style="-fx-background-color:#F7F1E8; -fx-font-family:'Segoe UI';">
+            styleClass="app-root">
     <left>
-        <VBox prefWidth="245" spacing="16" style="-fx-background-color:#3B1720;">
-            <padding><Insets top="28" right="20" bottom="22" left="20"/></padding>
-            <Label text="PÁGINA" style="-fx-text-fill:#FFF8EF; -fx-font-size:25px; -fx-font-weight:bold;"/>
-            <Label text="LIBRERÍA" style="-fx-text-fill:#D9A441; -fx-font-size:12px; -fx-font-weight:bold;"/>
-            <Region prefHeight="4"/>
-            <VBox spacing="4" style="-fx-background-color:#54232E; -fx-background-radius:12; -fx-padding:14;">
-                <Label text="SESION ACTIVA" style="-fx-text-fill:#D9A441; -fx-font-size:10px; -fx-font-weight:bold;"/>
-                <Label fx:id="lblNombreUsuario" wrapText="true" style="-fx-text-fill:#FFF8EF; -fx-font-size:15px; -fx-font-weight:bold;"/>
-                <Label fx:id="lblRolUsuario" style="-fx-text-fill:#E9D9C4; -fx-font-size:11px;"/>
-            </VBox>
-            <Label text="CAJA" style="-fx-text-fill:#CDB7A5; -fx-font-size:10px; -fx-font-weight:bold;"/>
-            <Button text="  INICIO" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#actualizarVentas"
-                    style="-fx-background-color:#D9A441; -fx-text-fill:#3B1720; -fx-font-size:13px; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:12 14; -fx-cursor:hand;"/>
-            <Button text="  BUSCAR LIBROS" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#irABuscarLibros"
-                    style="-fx-background-color:transparent; -fx-text-fill:#FFF8EF; -fx-font-size:13px; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:12 14; -fx-cursor:hand;"/>
-            <Button text="  NUEVA VENTA" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#irACaja"
-                    style="-fx-background-color:#7A2938; -fx-text-fill:#FFF8EF; -fx-font-size:13px; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:12 14; -fx-cursor:hand;"/>
-            <Button text="  ANULACIONES / DEVOLUCIONES" maxWidth="Infinity" alignment="CENTER_LEFT" onAction="#irADevolucion"
-                    style="-fx-background-color:transparent; -fx-text-fill:#FFF8EF; -fx-font-size:12px; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:12 14; -fx-cursor:hand;"/>
-            <Region VBox.vgrow="ALWAYS"/>
-            <Button text="Cerrar sesión" maxWidth="Infinity" onAction="#cerrarSesion"
-                    style="-fx-background-color:#8F3D45; -fx-text-fill:#FFF8EF; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:11 14; -fx-cursor:hand;"/>
-        </VBox>
-    </left>
-    <center>
-        <VBox spacing="18">
-            <padding><Insets top="26" right="30" bottom="26" left="30"/></padding>
-            <HBox alignment="CENTER_LEFT" spacing="12">
-                <VBox HBox.hgrow="ALWAYS" spacing="4">
-                    <Label text="Panel de caja" style="-fx-text-fill:#3B1720; -fx-font-size:29px; -fx-font-weight:bold;"/>
-                    <Label fx:id="lblSaludo" wrapText="true" style="-fx-text-fill:#765F55; -fx-font-size:13px;"/>
+        <BorderPane prefWidth="245" styleClass="sidebar-shell">
+            <top>
+                <VBox spacing="8" styleClass="sidebar-header">
+                    <Label text="PÁGINA VIVA" styleClass="brand-light"/>
+                    <Label text="CAJA" styleClass="eyebrow-gold"/>
+                    <VBox spacing="4" styleClass="user-card-dark">
+                        <Label text="SESIÓN ACTIVA" styleClass="eyebrow-gold"/>
+                        <Label fx:id="lblNombreUsuario" wrapText="true" styleClass="user-name-light"/>
+                        <Label fx:id="lblRolUsuario" styleClass="muted-light"/>
+                    </VBox>
                 </VBox>
-            </HBox>
+            </top>
+            <center>
+                <VBox spacing="3" styleClass="sidebar-nav">
+                    <Label text="INICIO" styleClass="nav-section-label"/>
+                    <Button text="Resumen del turno" onAction="#actualizarVentas" styleClass="nav-active"/>
+
+                    <Label text="VENTAS" styleClass="nav-section-label"/>
+                    <Button text="Nueva venta" onAction="#irACaja" styleClass="nav-button"/>
+                    <Button text="Buscar libros" onAction="#irABuscarLibros" styleClass="nav-button"/>
+
+                    <Label text="POSTVENTA" styleClass="nav-section-label"/>
+                    <Button text="Anulaciones y devoluciones" onAction="#irADevolucion" styleClass="nav-button-important" wrapText="true"/>
+                </VBox>
+            </center>
+            <bottom>
+                <VBox spacing="7" styleClass="sidebar-footer">
+                    <Button text="Cambiar contraseña" onAction="#irACambiarContrasena" styleClass="account-button"/>
+                    <Button text="Cerrar sesión" onAction="#cerrarSesion" styleClass="logout-button"/>
+                </VBox>
+            </bottom>
+        </BorderPane>
+    </left>
+
+    <center>
+        <VBox spacing="18" styleClass="dashboard-content">
+            <VBox spacing="4">
+                <Label text="Panel de caja" styleClass="page-title"/>
+                <Label fx:id="lblSaludo" wrapText="true" styleClass="page-subtitle"/>
+            </VBox>
 
             <HBox spacing="12">
                 <VBox HBox.hgrow="ALWAYS" spacing="5" style="-fx-background-color:#3B1720; -fx-background-radius:14; -fx-padding:16;">
@@ -46,10 +54,10 @@
                     <Label fx:id="lblCantidadVentas" text="0" style="-fx-text-fill:#FFF8EF; -fx-font-size:28px; -fx-font-weight:bold;"/>
                     <Label text="registradas hoy" style="-fx-text-fill:#CDB7A5; -fx-font-size:11px;"/>
                 </VBox>
-                <VBox HBox.hgrow="ALWAYS" spacing="5" style="-fx-background-color:#FFFDF9; -fx-background-radius:14; -fx-border-color:#E5D8C8; -fx-border-radius:14; -fx-padding:16;">
-                    <Label text="TOTAL VENDIDO" style="-fx-text-fill:#765F55; -fx-font-size:10px; -fx-font-weight:bold;"/>
-                    <Label fx:id="lblTotalVendido" text="Q0.00" style="-fx-text-fill:#7A2938; -fx-font-size:28px; -fx-font-weight:bold;"/>
-                    <Label text="ventas completadas" style="-fx-text-fill:#9A857A; -fx-font-size:11px;"/>
+                <VBox HBox.hgrow="ALWAYS" spacing="5" styleClass="kpi-card">
+                    <Label text="TOTAL VENDIDO" styleClass="kpi-label"/>
+                    <Label fx:id="lblTotalVendido" text="Q0.00" styleClass="kpi-value"/>
+                    <Label text="ventas completadas" styleClass="hint-label"/>
                 </VBox>
                 <VBox HBox.hgrow="ALWAYS" spacing="5" style="-fx-background-color:#F0D9A6; -fx-background-radius:14; -fx-padding:16;">
                     <Label text="CAJERO" style="-fx-text-fill:#6B3A12; -fx-font-size:10px; -fx-font-weight:bold;"/>
@@ -58,37 +66,37 @@
                 </VBox>
             </HBox>
 
-            <HBox spacing="12">
-                <VBox HBox.hgrow="ALWAYS" spacing="7" style="-fx-background-color:#FFFDF9; -fx-background-radius:14; -fx-border-color:#E5D8C8; -fx-border-radius:14; -fx-padding:15;">
-                    <Label text="OPERACIÓN PRINCIPAL" style="-fx-text-fill:#9A857A; -fx-font-size:10px; -fx-font-weight:bold;"/>
-                    <Label text="Registrar una nueva venta" style="-fx-text-fill:#3B1720; -fx-font-size:16px; -fx-font-weight:bold;"/>
-                    <Label text="Buscar libros, agregar cantidades, aplicar descuentos autorizados y calcular el total." wrapText="true" style="-fx-text-fill:#765F55; -fx-font-size:11px;"/>
-                    <Button text="Registrar venta" maxWidth="Infinity" onAction="#irACaja"
-                            style="-fx-background-color:#7A2938; -fx-text-fill:#FFF8EF; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:11 14; -fx-cursor:hand;"/>
+            <GridPane hgap="12" vgap="12">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="50"/>
+                    <ColumnConstraints percentWidth="50"/>
+                </columnConstraints>
+                <VBox GridPane.columnIndex="0" spacing="7" styleClass="quick-card">
+                    <Label text="Operación principal" styleClass="kpi-label"/>
+                    <Label text="Registrar una nueva venta" styleClass="quick-card-title"/>
+                    <Label text="Busca libros, agrega cantidades, aplica descuentos autorizados y calcula el total." wrapText="true" styleClass="quick-card-caption"/>
+                    <Button text="Registrar venta" maxWidth="Infinity" onAction="#irACaja" styleClass="btn-primary"/>
                 </VBox>
-                <VBox HBox.hgrow="ALWAYS" spacing="7" style="-fx-background-color:#FFFDF9; -fx-background-radius:14; -fx-border-color:#E5D8C8; -fx-border-radius:14; -fx-padding:15;">
-                    <Label text="CONSULTA Y POSTVENTA" style="-fx-text-fill:#9A857A; -fx-font-size:10px; -fx-font-weight:bold;"/>
-                    <Label text="Buscar o gestionar ventas" style="-fx-text-fill:#3B1720; -fx-font-size:16px; -fx-font-weight:bold;"/>
-                    <Label text="Consulta libros disponibles o gestiona una anulación/devolución reciente." wrapText="true" style="-fx-text-fill:#765F55; -fx-font-size:11px;"/>
+                <VBox GridPane.columnIndex="1" spacing="7" styleClass="quick-card">
+                    <Label text="Consulta y postventa" styleClass="kpi-label"/>
+                    <Label text="Buscar o gestionar ventas" styleClass="quick-card-title"/>
+                    <Label text="Consulta libros disponibles o procesa una anulación/devolución reciente." wrapText="true" styleClass="quick-card-caption"/>
                     <HBox spacing="8">
-                        <Button text="Buscar libros" HBox.hgrow="ALWAYS" onAction="#irABuscarLibros"
-                                style="-fx-background-color:#D9A441; -fx-text-fill:#3B1720; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:10 12; -fx-cursor:hand;"/>
-                        <Button text="Devoluciones" HBox.hgrow="ALWAYS" onAction="#irADevolucion"
-                                style="-fx-background-color:#EFE4D6; -fx-text-fill:#5A3039; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:10 12; -fx-cursor:hand;"/>
+                        <Button text="Buscar libros" HBox.hgrow="ALWAYS" maxWidth="Infinity" onAction="#irABuscarLibros" styleClass="btn-accent"/>
+                        <Button text="Devoluciones" HBox.hgrow="ALWAYS" maxWidth="Infinity" onAction="#irADevolucion" styleClass="btn-secondary"/>
                     </HBox>
                 </VBox>
-            </HBox>
+            </GridPane>
 
-            <VBox VBox.vgrow="ALWAYS" spacing="9" style="-fx-background-color:#FFFDF9; -fx-background-radius:14; -fx-border-color:#E5D8C8; -fx-border-radius:14; -fx-padding:16;">
+            <VBox VBox.vgrow="ALWAYS" spacing="9" styleClass="content-panel">
                 <HBox alignment="CENTER_LEFT">
                     <VBox HBox.hgrow="ALWAYS" spacing="2">
-                        <Label text="Ventas realizadas hoy" style="-fx-text-fill:#3B1720; -fx-font-size:17px; -fx-font-weight:bold;"/>
-                        <Label fx:id="lblEstadoVentas" style="-fx-text-fill:#765F55; -fx-font-size:11px;"/>
+                        <Label text="Ventas realizadas hoy" styleClass="section-title"/>
+                        <Label fx:id="lblEstadoVentas" styleClass="hint-label"/>
                     </VBox>
-                    <Button text="Actualizar" onAction="#actualizarVentas"
-                            style="-fx-background-color:#EFE4D6; -fx-text-fill:#5A3039; -fx-font-weight:bold; -fx-background-radius:8; -fx-padding:8 12; -fx-cursor:hand;"/>
+                    <Button text="Actualizar" onAction="#actualizarVentas" styleClass="btn-secondary"/>
                 </HBox>
-                <TableView fx:id="tblVentas" VBox.vgrow="ALWAYS" style="-fx-background-color:#FFFDF9; -fx-border-color:#E5D8C8; -fx-border-radius:8;">
+                <TableView fx:id="tblVentas" VBox.vgrow="ALWAYS">
                     <columns>
                         <TableColumn fx:id="colVenta" text="# Venta" prefWidth="90"/>
                         <TableColumn fx:id="colEstado" text="Estado" prefWidth="130"/>

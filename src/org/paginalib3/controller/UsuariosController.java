@@ -22,7 +22,7 @@ import org.paginalib3.util.MensajesUI;
 import org.paginalib3.util.Permisos;
 import org.paginalib3.util.Sesion;
 
-public class UsuarioController {
+public class UsuariosController {
 
     private final UsuarioDAO usuarioDAO = new UsuarioDAOImpl();
 

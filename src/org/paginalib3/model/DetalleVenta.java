@@ -8,6 +8,7 @@ public class DetalleVenta {
     private String isbn;
     private double precioUnitario;
     private double subtotal;
+    private int numeroLinea;
 
     public DetalleVenta() {
     }
@@ -43,6 +44,9 @@ public class DetalleVenta {
     public void setIdVenta(int v) {
         idVenta = v;
     }
+
+    public int getNumeroLinea() { return numeroLinea; }
+    public void setNumeroLinea(int n) { numeroLinea = n; }
 
     public String getIsbn() {
         return isbn;

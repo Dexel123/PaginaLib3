@@ -23,7 +23,7 @@
                   style="-fx-background-color:#F6EFE5; -fx-background-radius:9; -fx-border-color:#E5D8C8; -fx-border-radius:9; -fx-pref-height:38;"/>
         <Label fx:id="lblEstado" style="-fx-text-fill:#D9534F; -fx-font-weight:bold;" wrapText="true"/>
         <HBox spacing="10">
-            <Button text="Guardar" onAction="#guardar"
+            <Button fx:id="btnGuardar" text="Guardar" onAction="#guardar"
                     style="-fx-background-color:#7A2938; -fx-text-fill:#FFF8EF; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:11 14; -fx-cursor:hand;"/>
             <Button text="Cancelar" onAction="#cancelar"
                     style="-fx-background-color:#EFE4D6; -fx-text-fill:#5A3039; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:10 12; -fx-cursor:hand;"/>

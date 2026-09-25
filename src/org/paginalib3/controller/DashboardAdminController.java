@@ -57,6 +57,7 @@ public class DashboardAdminController extends DashboardBaseController {
     @FXML private void irAStockCritico() { abrir("/org/paginalib3/view/stock_critico.fxml", "Stock crítico", 1050, 680); }
     @FXML private void irAReportesVentas() { abrir("/org/paginalib3/view/reportes_ventas.fxml", "Reportes de ventas", 1120, 700); }
     @FXML private void irAReportesInventario() { abrir("/org/paginalib3/view/reportes_inventario.fxml", "Reportes de inventario", 1160, 720); }
+    @FXML private void irAEditoriales() { abrir("/org/paginalib3/view/editoriales.fxml", "Editoriales", 900, 600); }
     @FXML private void irAGestionAdministrativa() { abrir("/org/paginalib3/view/gestion_administrativa.fxml", "Gestión administrativa", 1180, 720); }
 
     private void abrir(String ruta, String titulo, double ancho, double alto) {

@@ -63,57 +63,53 @@ public class LibroDAOImpl implements LibroDAO {
 
     @Override
     public boolean insertar(Libro libro) throws SQLException {
-        try (Connection c = Conexion.getInstancia().conectar()) {
-            c.setAutoCommit(false);
-            try (CallableStatement s = c.prepareCall("{CALL sp_insertarlibro(?,?,?,?,?,?)}")) {
-                cargarDatosLibro(s, libro);
-                s.executeUpdate();
-            }
-            try (CallableStatement s = c.prepareCall("{CALL sp_actualizarstocklibro(?,?,?)}")) {
-                s.setString(1, libro.getIsbn());
-                s.setInt(2, libro.getStockMinimo());
-                s.setBoolean(3, libro.isActivo());
-                s.executeUpdate();
-            }
-            c.commit();
+        try (Connection c = Conexion.getInstancia().conectar();
+             CallableStatement s = c.prepareCall("{CALL sp_insertarlibro(?,?,?,?,?,?)}")) {
+            cargarDatosLibro(s, libro);
+            s.executeUpdate();
+            return true;
+        }
+    }
+
+    @Override
+    public boolean insertarConStockInicial(Libro libro, int stockInicial, int idUsuario) throws SQLException {
+        if (stockInicial < 0) throw new IllegalArgumentException("El stock inicial no puede ser negativo.");
+        try (Connection c = Conexion.getInstancia().conectar();
+             CallableStatement s = c.prepareCall("{CALL sp_insertarlibro_stock_inicial(?,?,?,?,?,?,?,?,?)}")) {
+            s.setString(1, libro.getIsbn());
+            s.setString(2, libro.getTitulo());
+            if (libro.getFechaPublicacion() == null) s.setNull(3, Types.DATE);
+            else s.setDate(3, Date.valueOf(libro.getFechaPublicacion()));
+            s.setDouble(4, libro.getPrecio());
+            s.setInt(5, libro.getIdCategoria());
+            s.setString(6, libro.getNitEditorial());
+            s.setInt(7, libro.getStockMinimo());
+            s.setInt(8, stockInicial);
+            s.setInt(9, idUsuario);
+            s.executeUpdate();
             return true;
         }
     }
 
     @Override
     public boolean actualizar(Libro libro) throws SQLException {
-        try (Connection c = Conexion.getInstancia().conectar()) {
-            c.setAutoCommit(false);
-            try {
-                try (CallableStatement s = c.prepareCall("{CALL sp_actualizarlibro(?,?,?,?,?,?)}")) {
-                    cargarDatosLibro(s, libro);
-                    s.executeUpdate();
-                }
-                try (CallableStatement s = c.prepareCall("{CALL sp_actualizarstocklibro(?,?,?)}")) {
-                    s.setString(1, libro.getIsbn());
-                    s.setInt(2, libro.getStockMinimo());
-                    s.setBoolean(3, libro.isActivo());
-                    s.executeUpdate();
-                }
-                c.commit();
-                return true;
-            } catch (SQLException e) {
-                c.rollback();
-                throw e;
-            } finally {
-                c.setAutoCommit(true);
-            }
+        // El stock y el stock mínimo no se modifican desde la ficha. El stock cambia únicamente mediante movimientos.
+        try (Connection c = Conexion.getInstancia().conectar();
+             CallableStatement s = c.prepareCall("{CALL sp_actualizarlibro(?,?,?,?,?,?)}")) {
+            cargarDatosLibro(s, libro);
+            s.executeUpdate();
+            return true;
         }
     }
 
     @Override
-    public boolean cambiarEstado(String isbn, int stockMinimo, boolean activo) throws SQLException {
+    public boolean cambiarEstado(String isbn, boolean activo) throws SQLException {
         try (Connection c = Conexion.getInstancia().conectar();
-             CallableStatement s = c.prepareCall("{CALL sp_actualizarstocklibro(?,?,?)}")) {
+             CallableStatement s = c.prepareCall("{CALL sp_cambiar_estado_libro(?,?)}")) {
             s.setString(1, isbn);
-            s.setInt(2, stockMinimo);
-            s.setBoolean(3, activo);
-            return s.executeUpdate() >= 0;
+            s.setBoolean(2, activo);
+            s.execute();
+            return true;
         }
     }
 

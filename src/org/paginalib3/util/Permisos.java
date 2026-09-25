@@ -3,9 +3,7 @@ package org.paginalib3.util;
 import org.paginalib3.model.Usuario;
 import org.paginalib3.system.Main;
 
-/**
- * Reglas de acceso de la aplicación en un solo lugar.
- */
+/** Reglas de acceso de la aplicación en un solo lugar. */
 public final class Permisos {
 
     private Permisos() {
@@ -73,18 +71,15 @@ public final class Permisos {
         }
 
         switch (u.getRol().toLowerCase()) {
-            case "admin" ->
-                Main.cambiarVista(
-                        "/org/paginalib3/view/dashboard_admin.fxml",
-                        "Pagina-Libreria | Administración", 1180, 720);
-            case "bodega" ->
-                Main.cambiarVista(
-                        "/org/paginalib3/view/dashboard_bodega.fxml",
-                        "Pagina-Libreria | Bodega", 1180, 720);
-            case "cajero" ->
-                Main.cambiarVista(
-                        "/org/paginalib3/view/dashboard_cajero.fxml",
-                        "Pagina-Libreria | Caja", 1100, 680);
+            case "admin" -> Main.cambiarVista(
+                    "/org/paginalib3/view/dashboard_admin.fxml",
+                    "Pagina-Libreria | Administración", 1180, 720);
+            case "bodega" -> Main.cambiarVista(
+                    "/org/paginalib3/view/dashboard_bodega.fxml",
+                    "Pagina-Libreria | Bodega", 1180, 720);
+            case "cajero" -> Main.cambiarVista(
+                    "/org/paginalib3/view/dashboard_cajero.fxml",
+                    "Pagina-Libreria | Caja", 1100, 680);
             default -> {
                 Sesion.cerrar();
                 Main.cambiarVista("/org/paginalib3/view/login.fxml",

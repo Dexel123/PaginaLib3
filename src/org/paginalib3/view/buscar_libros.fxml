@@ -1,58 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-
-<BorderPane xmlns="http://javafx.com/javafx/21"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="org.paginalib3.controller.BuscarLibroController"
-            style="-fx-background-color:#F7F1E8; -fx-font-family:'Segoe UI';">
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.paginalib3.controller.BuscarLibroController" styleClass="app-root">
     <top>
-        <VBox spacing="10"
-              style="-fx-background-color:#FFFDF9; -fx-background-radius:14; -fx-border-color:#E5D8C8; -fx-border-radius:14; -fx-padding:18;">
-            <padding>
-                <Insets top="24" right="24" bottom="18" left="24"/>
-            </padding>
-            <Label text="Buscar libros" style="-fx-text-fill:#3B1720; -fx-font-size:26px; -fx-font-weight:bold;"/>
-            <HBox spacing="10">
-                <TextField fx:id="txtBuscar" promptText="ISBN, título o autor" HBox.hgrow="ALWAYS" onAction="#buscar"
-                           style="-fx-background-color:#F6EFE5; -fx-background-radius:9; -fx-border-color:#E5D8C8; -fx-border-radius:9; -fx-pref-height:38;"/>
-                <Button text="Buscar" onAction="#buscar"
-                        style="-fx-background-color:#7A2938; -fx-text-fill:#FFF8EF; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:11 14; -fx-cursor:hand;"/>
-                <Button text="Limpiar" onAction="#limpiar"
-                        style="-fx-background-color:#EFE4D6; -fx-text-fill:#5A3039; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:10 12; -fx-cursor:hand;"/>
+        <VBox spacing="12">
+            <HBox alignment="CENTER_LEFT" spacing="12" styleClass="page-header">
+                <VBox HBox.hgrow="ALWAYS" spacing="3">
+                    <Label text="Buscar libros" styleClass="page-title-light"/>
+                    <Label text="Consulta por ISBN, título o autor y revisa el stock disponible." styleClass="page-subtitle-light"/>
+                </VBox>
+                <Button text="← Volver" onAction="#volver" styleClass="btn-light"/>
             </HBox>
-            <Label fx:id="lblEstado" style="-fx-text-fill:#765F55; -fx-font-size:12px;"/>
+            <HBox spacing="9" alignment="CENTER_LEFT" styleClass="dashboard-toolbar">
+                <TextField fx:id="txtBuscar" promptText="ISBN, título o autor" HBox.hgrow="ALWAYS" onAction="#buscar"/>
+                <Button text="Buscar" onAction="#buscar" styleClass="btn-primary"/>
+                <Button text="Limpiar filtro" onAction="#limpiar" styleClass="btn-secondary"/>
+                <Button text="Ir a caja" onAction="#irACaja" styleClass="btn-accent"/>
+            </HBox>
         </VBox>
     </top>
     <center>
-        <TableView fx:id="tblLibros"
-                   style="-fx-background-color:#FFFDF9; -fx-border-color:#E5D8C8; -fx-border-radius:8;">
-            <columns>
-                <TableColumn fx:id="colIsbn" text="ISBN" prefWidth="150"/>
-                <TableColumn fx:id="colTitulo" text="Título" prefWidth="260"/>
-                <TableColumn fx:id="colAutores" text="Autor(es)" prefWidth="260"/>
-                <TableColumn fx:id="colPrecio" text="Precio" prefWidth="110"/>
-                <TableColumn fx:id="colStock" text="Stock" prefWidth="90"/>
-            </columns>
-        </TableView>
+        <VBox spacing="9" styleClass="content-panel">
+            <HBox alignment="CENTER_LEFT">
+                <Label text="Resultados" styleClass="section-title" HBox.hgrow="ALWAYS"/>
+                <Label fx:id="lblEstado" styleClass="hint-label"/>
+            </HBox>
+            <TableView fx:id="tblLibros" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colIsbn" text="ISBN" prefWidth="150"/>
+                    <TableColumn fx:id="colTitulo" text="Título" prefWidth="260"/>
+                    <TableColumn fx:id="colAutores" text="Autor(es)" prefWidth="260"/>
+                    <TableColumn fx:id="colPrecio" text="Precio" prefWidth="110"/>
+                    <TableColumn fx:id="colStock" text="Stock" prefWidth="90"/>
+                </columns>
+            </TableView>
+        </VBox>
     </center>
-    <bottom>
-        <HBox spacing="10" alignment="CENTER_RIGHT">
-            <padding>
-                <Insets top="14" right="20" bottom="20" left="20"/>
-            </padding>
-            <Button text="Registrar venta" onAction="#irACaja"
-                    style="-fx-background-color:#D9A441; -fx-text-fill:#3B1720; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:11 14; -fx-cursor:hand;"/>
-            <Button text="Volver" onAction="#volver"
-                    style="-fx-background-color:#EFE4D6; -fx-text-fill:#5A3039; -fx-font-weight:bold; -fx-background-radius:9; -fx-padding:10 12; -fx-cursor:hand;"/>
-        </HBox>
-    </bottom>
 </BorderPane>

@@ -29,9 +29,8 @@ public class GestionAdministrativaController {
 
     @FXML private TableView<Categoria> tablaCategorias;
     @FXML private TableColumn<Categoria, Integer> colCategoriaId;
-    @FXML private TableColumn<Categoria, String> colCategoriaNombre, colCategoriaEstado;
+    @FXML private TableColumn<Categoria, String> colCategoriaNombre;
     @FXML private TextField txtCategoria;
-    @FXML private javafx.scene.control.Button btnEstadoCategoria;
 
     @FXML private TableView<Proveedor> tablaProveedores;
     @FXML private TableColumn<Proveedor, String> colNit, colProveedor, colTelefono, colCorreo, colEstadoProveedor;
@@ -63,7 +62,6 @@ public class GestionAdministrativaController {
 
         colCategoriaId.setCellValueFactory(new PropertyValueFactory<>("idCategoria"));
         colCategoriaNombre.setCellValueFactory(new PropertyValueFactory<>("nombreCategoria"));
-        colCategoriaEstado.setCellValueFactory(new PropertyValueFactory<>("estadoTexto"));
         colNit.setCellValueFactory(new PropertyValueFactory<>("nit"));
         colProveedor.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         colTelefono.setCellValueFactory(new PropertyValueFactory<>("telefono"));
@@ -116,11 +114,6 @@ public class GestionAdministrativaController {
     private void seleccionarCategoria(Categoria categoria) {
         categoriaSeleccionada = categoria;
         txtCategoria.setText(categoria == null ? "" : categoria.getNombreCategoria());
-        if (btnEstadoCategoria != null) {
-            btnEstadoCategoria.setText(categoria != null && !categoria.isActivo()
-                    ? "Activar categoría"
-                    : "Desactivar categoría");
-        }
     }
 
     @FXML
@@ -128,7 +121,6 @@ public class GestionAdministrativaController {
         categoriaSeleccionada = null;
         tablaCategorias.getSelectionModel().clearSelection();
         txtCategoria.clear();
-        if (btnEstadoCategoria != null) btnEstadoCategoria.setText("Desactivar categoría");
         txtCategoria.requestFocus();
         estado("Formulario preparado para una categoría nueva.");
     }
@@ -151,28 +143,24 @@ public class GestionAdministrativaController {
     }
 
     @FXML
-    private void cambiarEstadoCategoria() {
+    private void eliminarCategoria() {
         if (categoriaSeleccionada == null) {
-            MensajesUI.advertencia("Categorías", "Selecciona una categoría antes de cambiar su estado.");
+            MensajesUI.advertencia("Categorías", "Selecciona una categoría antes de eliminar.");
             return;
         }
-
-        boolean nuevoEstado = !categoriaSeleccionada.isActivo();
-        String accion = nuevoEstado ? "activar" : "desactivar";
         if (!MensajesUI.confirmar(
-                (nuevoEstado ? "Activar" : "Desactivar") + " categoría",
-                "¿Deseas " + accion + " la categoría '"
-                + categoriaSeleccionada.getNombreCategoria() + "'?\n"
-                + "Los libros ya asociados conservarán su categoría; una categoría inactiva no podrá asignarse a libros nuevos.")) {
+                "Eliminar categoría",
+                "¿Deseas eliminar la categoría '" + categoriaSeleccionada.getNombreCategoria() + "'?\n"
+                + "Si está asignada a libros, MySQL impedirá la eliminación.")) {
             return;
         }
         try {
-            categoriaDAO.cambiarEstado(categoriaSeleccionada.getIdCategoria(), nuevoEstado);
-            estado("Categoría " + (nuevoEstado ? "activada" : "desactivada") + " correctamente.");
+            categoriaDAO.eliminar(categoriaSeleccionada.getIdCategoria());
+            estado("Categoría eliminada correctamente.");
             nuevaCategoria();
             cargarCategorias();
         } catch (Exception e) {
-            error("No se pudo cambiar el estado de la categoría.", e);
+            error("No se pudo eliminar la categoría. Puede estar asignada a uno o más libros.", e);
         }
     }
 

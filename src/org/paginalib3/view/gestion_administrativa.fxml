@@ -70,16 +70,11 @@
                                 <content>
                                     <VBox spacing="8" styleClass="form-panel">
                                         <Label text="Ficha de proveedor" styleClass="section-title"/>
-                                        <Label text="NIT"/>
-                                        <TextField fx:id="txtNit" promptText="NIT del proveedor"/>
-                                        <Label text="Nombre"/>
-                                        <TextField fx:id="txtProveedor" promptText="Razón social o nombre"/>
-                                        <Label text="Teléfono"/>
-                                        <TextField fx:id="txtTelefono" promptText="Teléfono"/>
-                                        <Label text="Correo"/>
-                                        <TextField fx:id="txtCorreo" promptText="correo@ejemplo.com"/>
-                                        <Label text="Dirección"/>
-                                        <TextArea fx:id="txtDireccion" prefRowCount="3" wrapText="true"/>
+                                        <Label text="NIT"/><TextField fx:id="txtNit" promptText="NIT del proveedor"/>
+                                        <Label text="Nombre"/><TextField fx:id="txtProveedor" promptText="Razón social o nombre"/>
+                                        <Label text="Teléfono"/><TextField fx:id="txtTelefono" promptText="Teléfono"/>
+                                        <Label text="Correo"/><TextField fx:id="txtCorreo" promptText="correo@ejemplo.com"/>
+                                        <Label text="Dirección"/><TextArea fx:id="txtDireccion" prefRowCount="3" wrapText="true"/>
                                         <HBox spacing="8">
                                             <Button text="Nuevo" onAction="#nuevoProveedor" HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="btn-secondary"/>
                                             <Button text="Guardar" onAction="#guardarProveedor" HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="btn-primary"/>

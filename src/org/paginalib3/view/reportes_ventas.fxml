@@ -10,7 +10,7 @@
             <Button text="← Volver" onAction="#volver" styleClass="btn-light"/>
             <VBox HBox.hgrow="ALWAYS">
                 <Label text="Reportes de ventas" styleClass="page-title-light"/>
-                <Label text="Consulta resultados por día, semana, mes o rango personalizado." styleClass="page-subtitle-light"/>
+                <Label text="Consulta cada venta realizada con cliente, estado, productos y totales por período." styleClass="page-subtitle-light"/>
             </VBox>
             <Button text="Exportar para Excel" onAction="#exportarExcel" styleClass="btn-accent"/>
         </HBox>
@@ -45,14 +45,19 @@
             </HBox>
 
             <VBox spacing="7" VBox.vgrow="ALWAYS">
-                <Label text="Detalle por fecha" styleClass="section-title"/>
+                <Label text="Ventas realizadas" styleClass="section-title"/>
                 <TableView fx:id="tablaVentas" VBox.vgrow="ALWAYS">
                     <columns>
-                        <TableColumn fx:id="colFecha" text="Fecha"/>
-                        <TableColumn fx:id="colCantidad" text="Ventas"/>
-                        <TableColumn fx:id="colSubtotal" text="Subtotal"/>
-                        <TableColumn fx:id="colDescuento" text="Descuentos"/>
-                        <TableColumn fx:id="colTotal" text="Total"/>
+                        <TableColumn fx:id="colFecha" text="Fecha" prefWidth="90"/>
+                        <TableColumn fx:id="colIdVenta" text="# Venta" prefWidth="70"/>
+                        <TableColumn fx:id="colComprobante" text="Comprobante" prefWidth="145"/>
+                        <TableColumn fx:id="colCliente" text="Cliente" prefWidth="165"/>
+                        <TableColumn fx:id="colCajero" text="Cajero" prefWidth="90"/>
+                        <TableColumn fx:id="colEstado" text="Estado" prefWidth="115"/>
+                        <TableColumn fx:id="colCantidad" text="Productos" prefWidth="85"/>
+                        <TableColumn fx:id="colSubtotal" text="Subtotal" prefWidth="105"/>
+                        <TableColumn fx:id="colDescuento" text="Descuentos" prefWidth="105"/>
+                        <TableColumn fx:id="colTotal" text="Total" prefWidth="105"/>
                     </columns>
                 </TableView>
             </VBox>

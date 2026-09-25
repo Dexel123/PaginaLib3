@@ -29,6 +29,8 @@ public class ReportesVentasController {
     @FXML private DatePicker dpDesde, dpHasta;
     @FXML private TableView<ReporteVenta> tablaVentas;
     @FXML private TableColumn<ReporteVenta, LocalDate> colFecha;
+    @FXML private TableColumn<ReporteVenta, Integer> colIdVenta;
+    @FXML private TableColumn<ReporteVenta, String> colCliente, colCajero, colEstado, colComprobante;
     @FXML private TableColumn<ReporteVenta, Integer> colCantidad;
     @FXML private TableColumn<ReporteVenta, Double> colSubtotal, colDescuento, colTotal;
     @FXML private Label lblTotalVentas, lblCantidadVentas, lblEstado;
@@ -41,13 +43,19 @@ public class ReportesVentasController {
         if (!Permisos.requerirAdmin("Reportes de ventas")) return;
         tablaVentas.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
         colFecha.setCellValueFactory(new PropertyValueFactory<>("fecha"));
-        colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidadVentas"));
+        colIdVenta.setCellValueFactory(new PropertyValueFactory<>("idVenta"));
+        colCliente.setCellValueFactory(new PropertyValueFactory<>("cliente"));
+         colComprobante.setCellValueFactory(new PropertyValueFactory<>("numeroComprobante"));
+         colCajero.setCellValueFactory(new PropertyValueFactory<>("cajero"));
+        colEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
+        colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidadProductos"));
         colSubtotal.setCellValueFactory(new PropertyValueFactory<>("subtotal"));
         colDescuento.setCellValueFactory(new PropertyValueFactory<>("descuentos"));
         colTotal.setCellValueFactory(new PropertyValueFactory<>("total"));
         cmbPeriodo.setItems(FXCollections.observableArrayList("Hoy", "Esta semana", "Este mes", "Personalizado"));
         cmbPeriodo.getSelectionModel().select("Este mes");
         aplicarPeriodo();
+        consultar();
     }
 
     @FXML private void aplicarPeriodo() {
@@ -61,11 +69,7 @@ public class ReportesVentasController {
             dpDesde.setValue(hoy.withDayOfMonth(1)); dpHasta.setValue(hoy.withDayOfMonth(hoy.lengthOfMonth()));
         }
         boolean personal = "Personalizado".equals(p);
-        dpDesde.setDisable(!personal);
-        dpHasta.setDisable(!personal);
-        if (dpDesde.getValue() != null && dpHasta.getValue() != null) {
-            consultar();
-        }
+        dpDesde.setDisable(!personal); dpHasta.setDisable(!personal);
     }
 
     @FXML private void consultar() {
@@ -73,7 +77,7 @@ public class ReportesVentasController {
             datosActuales = reporteDAO.ventasPorPeriodo(dpDesde.getValue(), dpHasta.getValue());
             tablaVentas.setItems(FXCollections.observableArrayList(datosActuales));
             double total = datosActuales.stream().mapToDouble(ReporteVenta::getTotal).sum();
-            int cantidad = datosActuales.stream().mapToInt(ReporteVenta::getCantidadVentas).sum();
+            int cantidad = datosActuales.size();
             lblTotalVentas.setText(moneda(total)); lblCantidadVentas.setText(String.valueOf(cantidad));
             lblEstado.setText(datosActuales.isEmpty() ? "No hay ventas en el período seleccionado." : "Reporte actualizado.");
         } catch (SQLException | IllegalArgumentException e) {
@@ -83,7 +87,7 @@ public class ReportesVentasController {
     }
 
     @FXML private void exportarExcel() {
-        if (datosActuales.isEmpty()) { lblEstado.setText("No hay datos del período actual para exportar."); return; }
+        if (datosActuales.isEmpty()) { lblEstado.setText("Primero genera un reporte con datos."); return; }
         FileChooser fc = new FileChooser();
         fc.setTitle("Exportar reporte de ventas");
         fc.setInitialFileName("reporte_ventas_" + dpDesde.getValue() + "_" + dpHasta.getValue() + ".csv");
@@ -91,9 +95,21 @@ public class ReportesVentasController {
         File f = fc.showSaveDialog(Main.getStagePrincipal()); if (f == null) return;
         try {
             List<String[]> filas = new ArrayList<>();
-            filas.add(new String[]{"Fecha","Cantidad de ventas","Subtotal","Descuentos","Total"});
-            for (ReporteVenta r : datosActuales) filas.add(new String[]{r.getFecha().toString(), String.valueOf(r.getCantidadVentas()),
-                    num(r.getSubtotal()), num(r.getDescuentos()), num(r.getTotal())});
+            filas.add(new String[]{"# Venta","Comprobante","Fecha","Cliente","Cajero","Estado","Productos","Subtotal","Descuentos","Total"});
+            for (ReporteVenta r : datosActuales) {
+                filas.add(new String[]{
+                    String.valueOf(r.getIdVenta()),
+                    r.getNumeroComprobante(),
+                    r.getFecha().toString(),
+                    r.getCliente(),
+                    r.getCajero(),
+                    r.getEstado(),
+                    String.valueOf(r.getCantidadProductos()),
+                    num(r.getSubtotal()),
+                    num(r.getDescuentos()),
+                    num(r.getTotal())
+                });
+            }
             ExportadorCSV.guardar(f, filas); lblEstado.setText("Reporte exportado: " + f.getName());
         } catch (Exception e) {
             lblEstado.setText("No se pudo exportar: " + MensajesUI.mensajeTecnico(e));

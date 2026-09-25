@@ -40,11 +40,7 @@ public class Main extends Application {
         });
     }
 
-    /**
-     * Cambia la vista principal. Si una pantalla contiene un error de FXML,
-     * conserva la vista anterior y muestra un mensaje en lugar de cerrar la
-     * app.
-     */
+   
     public static void cambiarVista(String rutaFxml, String titulo, double ancho, double alto) {
         try {
             URL url = Main.class.getResource(rutaFxml);
@@ -52,8 +48,6 @@ public class Main extends Application {
                 throw new IllegalStateException("No se encontró el recurso FXML: " + rutaFxml);
             }
 
-            // Limpia manejadores de la vista anterior antes de inicializar la nueva.
-            // Si la nueva vista instala su propio manejador (por ejemplo Venta), se conserva.
             if (stagePrincipal != null) {
                 stagePrincipal.setOnCloseRequest(null);
             }

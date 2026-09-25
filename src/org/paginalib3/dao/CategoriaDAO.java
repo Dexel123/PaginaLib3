@@ -5,14 +5,8 @@ import java.util.List;
 import org.paginalib3.model.Categoria;
 
 public interface CategoriaDAO {
-
     List<Categoria> listar() throws SQLException;
-
     boolean insertar(String nombre) throws SQLException;
-
     boolean actualizar(int id, String nombre) throws SQLException;
-
     boolean eliminar(int id) throws SQLException;
-
-    boolean cambiarEstado(int id, boolean activo) throws SQLException;
 }

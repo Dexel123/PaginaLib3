@@ -2,6 +2,7 @@ package org.paginalib3.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -42,6 +43,7 @@ public class VentaController {
     @FXML private TableColumn<Libro, Double> colLibroPrecio;
     @FXML private TableColumn<Libro, Integer> colLibroStock;
     @FXML private TableView<DetalleVenta> tblCarrito;
+    @FXML private TableColumn<DetalleVenta, Integer> colCarritoNumero;
     @FXML private TableColumn<DetalleVenta, String> colCarritoIsbn;
     @FXML private TableColumn<DetalleVenta, Integer> colCarritoCantidad;
     @FXML private TableColumn<DetalleVenta, Double> colCarritoPrecio, colCarritoSubtotal;
@@ -65,6 +67,10 @@ public class VentaController {
         colLibroTitulo.setCellValueFactory(new PropertyValueFactory<>("titulo"));
         colLibroPrecio.setCellValueFactory(new PropertyValueFactory<>("precio"));
         colLibroStock.setCellValueFactory(new PropertyValueFactory<>("stockActual"));
+        // El número se calcula desde la posición real del carrito para que
+        // cada libro agregado quede numerado 1, 2, 3, 4...
+        colCarritoNumero.setCellValueFactory(data ->
+                new SimpleIntegerProperty(tblCarrito.getItems().indexOf(data.getValue()) + 1).asObject());
         colCarritoIsbn.setCellValueFactory(new PropertyValueFactory<>("isbn"));
         colCarritoCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
         colCarritoPrecio.setCellValueFactory(new PropertyValueFactory<>("precioUnitario"));
@@ -130,6 +136,11 @@ public class VentaController {
     }
 
     @FXML private void agregar() {
+        if (cmbCliente.getValue() == null) {
+            alert(Alert.AlertType.WARNING, "Selecciona un cliente antes de agregar libros a la venta.");
+            return;
+        }
+
         Libro l = tblLibros.getSelectionModel().getSelectedItem();
         if (l == null) {
             alert(Alert.AlertType.WARNING, "Selecciona un libro.");
@@ -142,15 +153,12 @@ public class VentaController {
             return;
         }
 
-        String cui = textoCuiActual();
-        if (!cui.isEmpty()) {
-            try {
-                Long.parseLong(cui);
-            } catch (NumberFormatException e) {
-                alert(Alert.AlertType.WARNING, "El CUI debe ser numérico.");
-                return;
-            }
+        Cliente clienteSeleccionado = cmbCliente.getValue();
+        if (clienteSeleccionado == null) {
+            alert(Alert.AlertType.WARNING, "Selecciona un cliente antes de agregar libros a la venta.");
+            return;
         }
+        txtCuiCliente.setText(clienteSeleccionado.getCuiCliente());
 
         try {
             int c = Integer.parseInt(txtCantidad.getText().trim());
@@ -172,9 +180,11 @@ public class VentaController {
 
             if (d == null) {
                 carrito.add(new DetalleVenta(l.getIsbn(), c, l.getPrecio(), c * l.getPrecio()));
+                actualizarNumerosCarrito();
             } else {
                 d.setCantidad(total);
                 d.setSubtotal(total * d.getPrecioUnitario());
+                actualizarNumerosCarrito();
             }
 
             // Reserva visualmente esas unidades sin tocar todavía MySQL.
@@ -263,7 +273,9 @@ public class VentaController {
         catch (Exception e) { lblEstado.setText(e.getMessage()); }
     }
 
-    private void refrescarCarrito() { tblCarrito.setItems(FXCollections.observableArrayList(carrito)); refrescarTotales(); }
+    private void refrescarCarrito() { actualizarNumerosCarrito(); tblCarrito.setItems(FXCollections.observableArrayList(carrito)); refrescarTotales(); }
+
+    private void actualizarNumerosCarrito() { int n=1; for (DetalleVenta d: carrito) d.setNumeroLinea(n++); }
 
     private void refrescarTotales() {
         double subtotal = calcularSubtotal();
@@ -275,11 +287,28 @@ public class VentaController {
     }
 
     @FXML private void registrar() {
-        if (carrito.isEmpty()) { alert(Alert.AlertType.WARNING, "El carrito está vacío."); return; }
+        if (cmbCliente.getValue() == null) {
+            alert(Alert.AlertType.WARNING, "Debe seleccionar un cliente antes de realizar la venta.");
+            return;
+        }
+        if (carrito.isEmpty()) {
+            alert(Alert.AlertType.WARNING, "El carrito está vacío.");
+            return;
+        }
         Usuario u = Sesion.getUsuarioActual();
         if (!Permisos.puedeCaja()) { alert(Alert.AlertType.ERROR, "Se requiere una sesión activa de caja o administración."); return; }
-        String cui = ventaEnCurso ? cuiVenta : textoCuiActual();
-        if (!cui.isEmpty()) try { Long.parseLong(cui); } catch (NumberFormatException e) { alert(Alert.AlertType.WARNING, "El CUI debe ser numérico."); return; }
+        Cliente clienteSeleccionado = cmbCliente.getValue();
+        String cui = clienteSeleccionado.getCuiCliente();
+        if (cui == null || cui.isBlank()) {
+            alert(Alert.AlertType.ERROR, "El cliente seleccionado no tiene un CUI válido.");
+            return;
+        }
+        try {
+            Long.parseLong(cui);
+        } catch (NumberFormatException e) {
+            alert(Alert.AlertType.WARNING, "El CUI del cliente seleccionado no es válido.");
+            return;
+        }
 
         try {
             double subtotal = calcularSubtotal();

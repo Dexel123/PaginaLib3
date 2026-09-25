@@ -12,9 +12,8 @@ public class DetalleVentaDAOImpl implements DetalleVentaDAO {
     public List<DetalleVenta> listarPorVenta(int idVenta) throws SQLException {
         List<DetalleVenta> l = new ArrayList<>();
         String sql = "SELECT id_detalle, id_venta, isbn, cantidad, precio_unitario, subtotal FROM detalle_venta WHERE id_venta = ? ORDER BY id_detalle";
-        
-        try (Connection c = Conexion.getInstancia().conectar();
-             PreparedStatement s = c.prepareStatement(sql)) {
+
+        try (Connection c = Conexion.getInstancia().conectar(); PreparedStatement s = c.prepareStatement(sql)) {
             s.setInt(1, idVenta);
             try (ResultSet r = s.executeQuery()) {
                 while (r.next()) {

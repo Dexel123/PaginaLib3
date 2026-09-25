@@ -167,4 +167,3 @@ public class VentaDAOImpl implements VentaDAO {
         return s.replace("\\", "\\\\").replace("\"", "\\\"");
     }
 }
-

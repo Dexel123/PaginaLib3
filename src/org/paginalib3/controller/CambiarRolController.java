@@ -3,6 +3,7 @@ package org.paginalib3.controller;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import org.paginalib3.dao.UsuarioDAO;
@@ -22,16 +23,24 @@ public class CambiarRolController {
     private ComboBox<String> cmbRol;
     @FXML
     private Label lblEstado;
+    @FXML
+    private Button btnGuardar;
 
     @FXML
     private void initialize() {
-        cmbRol.setItems(FXCollections.observableArrayList("admin", "bodega", "cajero"));
+        cmbRol.setItems(FXCollections.observableArrayList("bodega", "cajero"));
     }
 
     public void init(Usuario usuario) {
         this.usuario = usuario;
         lblUsuario.setText("Usuario: " + usuario.getUsername());
         cmbRol.setValue(usuario.getRol());
+        boolean esAdmin = "admin".equalsIgnoreCase(usuario.getRol());
+        cmbRol.setDisable(esAdmin);
+        btnGuardar.setDisable(esAdmin);
+        if (esAdmin) {
+            lblEstado.setText("Los usuarios con rol admin no pueden cambiar de rol.");
+        }
     }
 
     public void setOnGuardadoExitoso(Runnable onGuardadoExitoso) {
@@ -43,7 +52,10 @@ public class CambiarRolController {
         lblEstado.setText("");
         try {
             String rolSeleccionado = cmbRol.getValue();
-            if (rolSeleccionado == null) {
+            if ("admin".equalsIgnoreCase(usuario.getRol())) {
+                throw new IllegalArgumentException("El rol administrador no puede modificarse.");
+            }
+            if (rolSeleccionado == null || "admin".equalsIgnoreCase(rolSeleccionado)) {
                 throw new IllegalArgumentException("Selecciona un rol.");
             }
             usuarioDAO.cambiarRol(usuario.getId(), rolSeleccionado);
