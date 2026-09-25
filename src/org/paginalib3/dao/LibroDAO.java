@@ -16,11 +16,18 @@ public interface LibroDAO {
 
     boolean insertar(Libro libro) throws SQLException;
 
-    boolean insertarConStockInicial(Libro libro, int stockInicial, int idUsuario) throws SQLException;
+    boolean insertarConStockInicial(
+            Libro libro,
+            int stockInicial,
+            int idUsuario
+    ) throws SQLException;
 
     boolean actualizar(Libro libro) throws SQLException;
 
-    boolean cambiarEstado(String isbn, boolean activo) throws SQLException;
+    boolean cambiarEstado(
+            String isbn,
+            boolean activo
+    ) throws SQLException;
 
     List<Libro> listarStockCritico() throws SQLException;
 }

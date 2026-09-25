@@ -1,65 +1,208 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.geometry.Insets?>
+
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="org.paginalib3.controller.LibroController" styleClass="app-root">
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.paginalib3.controller.LibroController"
+            styleClass="app-root">
+
     <top>
-        <VBox spacing="10" styleClass="page-header">
-            <HBox spacing="12" alignment="CENTER_LEFT">
-                <Button text="← Volver" onAction="#volver" styleClass="btn-light"/>
+        <VBox spacing="10"
+              styleClass="page-header">
+
+            <HBox spacing="12"
+                  alignment="CENTER_LEFT">
+
+                <Button text="← Volver"
+                        onAction="#volver"
+                        styleClass="btn-light" />
+
                 <VBox>
-                    <Label text="Catálogo de libros" styleClass="page-title-light"/>
-                    <Label text="Ficha, categoría, precio, disponibilidad inicial y estado" styleClass="page-subtitle-light"/>
+                    <Label text="Catálogo de libros"
+                           styleClass="page-title-light" />
+
+                    <Label text="Ficha, categoría, precio, disponibilidad inicial y estado"
+                           styleClass="page-subtitle-light" />
                 </VBox>
             </HBox>
+
             <HBox spacing="8">
-                <TextField fx:id="txtBuscar" promptText="Buscar por ISBN, título, autor o categoría" HBox.hgrow="ALWAYS"/>
-                <Button text="Buscar" onAction="#buscar" styleClass="btn-accent"/>
-                <Button text="Nuevo" onAction="#nuevo" styleClass="btn-light"/>
+                <TextField fx:id="txtBuscar"
+                           promptText="Buscar por ISBN, título, autor o categoría"
+                           HBox.hgrow="ALWAYS" />
+
+                <Button text="Buscar"
+                        onAction="#buscar"
+                        styleClass="btn-accent" />
+
+                <Button text="Nuevo"
+                        onAction="#nuevo"
+                        styleClass="btn-light" />
             </HBox>
         </VBox>
     </top>
+
     <center>
         <SplitPane dividerPositions="0.38">
-            <ScrollPane fitToWidth="true" hbarPolicy="NEVER">
+
+            <ScrollPane fitToWidth="true"
+                        hbarPolicy="NEVER">
                 <content>
-                    <VBox spacing="9" styleClass="form-panel">
-                        <Label text="Ficha del libro" styleClass="section-title"/>
-                        <Label text="ISBN"/><TextField fx:id="txtIsbn" promptText="978-..."/>
-                        <Label text="Título"/><TextField fx:id="txtTitulo"/>
-                        <Label text="Fecha de publicación"/><DatePicker fx:id="dpFechaPublicacion" maxWidth="Infinity"/>
-                        <Label text="Precio de venta"/><TextField fx:id="txtPrecio" promptText="0.00"/>
-                        <Label text="Categoría"/>
-                        <HBox spacing="7"><ComboBox fx:id="cmbCategoria" HBox.hgrow="ALWAYS" maxWidth="Infinity" promptText="Seleccionar categoría"/><Button text="+ Nueva" onAction="#crearCategoria" styleClass="btn-secondary"/></HBox>
-                        <Label text="NIT editorial"/><TextField fx:id="txtNitEditorial"/>
-                        <HBox spacing="8">
-                            <VBox HBox.hgrow="ALWAYS"><Label text="Stock mínimo (bloqueado)"/><TextField fx:id="txtStockMinimo"/></VBox>
-                            <VBox HBox.hgrow="ALWAYS"><Label text="Stock actual"/><Label fx:id="lblStockActual" text="0" styleClass="big-number"/></VBox>
+                    <VBox spacing="9"
+                          styleClass="form-panel">
+
+                        <Label text="Ficha del libro"
+                               styleClass="section-title" />
+
+                        <Label text="ISBN" />
+
+                        <TextField fx:id="txtIsbn"
+                                   promptText="978-..." />
+
+                        <Label text="Título" />
+
+                        <TextField fx:id="txtTitulo" />
+
+                        <Label text="Fecha de publicación" />
+
+                        <DatePicker fx:id="dpFechaPublicacion"
+                                    maxWidth="Infinity" />
+
+                        <Label text="Precio de venta" />
+
+                        <TextField fx:id="txtPrecio"
+                                   promptText="0.00" />
+
+                        <Label text="Categoría" />
+
+                        <HBox spacing="7">
+                            <ComboBox fx:id="cmbCategoria"
+                                      HBox.hgrow="ALWAYS"
+                                      maxWidth="Infinity"
+                                      promptText="Seleccionar categoría" />
+
+                            <Button text="+ Nueva"
+                                    onAction="#crearCategoria"
+                                    styleClass="btn-secondary" />
                         </HBox>
-                        <Label text="Unidades iniciales que saldrán a venta"/><TextField fx:id="txtStockInicial" promptText="0"/>
-                        <Label text="Después de crear el libro, el stock solo cambia mediante ingresos, salidas o ventas." wrapText="true" styleClass="hint-label"/>
-                        <CheckBox fx:id="chkActivo" text="Libro activo" selected="true"/>
-                        <HBox spacing="8"><Button fx:id="btnGuardar" text="Guardar libro" onAction="#guardar" HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="btn-primary"/><Button text="Limpiar" onAction="#nuevo" HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="btn-secondary"/></HBox>
-                        <Button fx:id="btnEstado" text="Activar / Desactivar" onAction="#cambiarEstado" maxWidth="Infinity" styleClass="btn-accent"/>
-                        <Label fx:id="lblEstado" wrapText="true" styleClass="hint-label"/>
+
+                        <Label text="Editorial" />
+
+                        <ComboBox fx:id="cmbEditorial"
+                                  maxWidth="Infinity"
+                                  promptText="Seleccionar editorial" />
+
+                        <Label text="NIT editorial (automático)" />
+
+                        <TextField fx:id="txtNitEditorial"
+                                   promptText="Se asigna automáticamente"
+                                   editable="false" />
+
+                        <HBox spacing="8">
+                            <VBox HBox.hgrow="ALWAYS">
+                                <Label text="Stock mínimo (bloqueado)" />
+
+                                <TextField fx:id="txtStockMinimo" />
+                            </VBox>
+
+                            <VBox HBox.hgrow="ALWAYS">
+                                <Label text="Stock actual" />
+
+                                <Label fx:id="lblStockActual"
+                                       text="0"
+                                       styleClass="big-number" />
+                            </VBox>
+                        </HBox>
+
+                        <Label text="Unidades iniciales que saldrán a venta" />
+
+                        <TextField fx:id="txtStockInicial"
+                                   promptText="0" />
+
+                        <Label text="Después de crear el libro, el stock solo cambia mediante ingresos, salidas o ventas."
+                               wrapText="true"
+                               styleClass="hint-label" />
+
+                        <CheckBox fx:id="chkActivo"
+                                  text="Libro activo"
+                                  selected="true" />
+
+                        <HBox spacing="8">
+                            <Button fx:id="btnGuardar"
+                                    text="Guardar libro"
+                                    onAction="#guardar"
+                                    HBox.hgrow="ALWAYS"
+                                    maxWidth="Infinity"
+                                    styleClass="btn-primary" />
+
+                            <Button text="Limpiar"
+                                    onAction="#nuevo"
+                                    HBox.hgrow="ALWAYS"
+                                    maxWidth="Infinity"
+                                    styleClass="btn-secondary" />
+                        </HBox>
+
+                        <Button fx:id="btnEstado"
+                                text="Activar / Desactivar"
+                                onAction="#cambiarEstado"
+                                maxWidth="Infinity"
+                                styleClass="btn-accent" />
+
+                        <Label fx:id="lblEstado"
+                               wrapText="true"
+                               styleClass="hint-label" />
+
                     </VBox>
                 </content>
             </ScrollPane>
-            <VBox spacing="10" styleClass="content-panel">
-                <Label text="Catálogo" styleClass="section-title"/>
-                <TableView fx:id="tblLibros" onMouseClicked="#seleccionarLibro" VBox.vgrow="ALWAYS">
+
+            <VBox spacing="10"
+                  styleClass="content-panel">
+
+                <Label text="Catálogo"
+                       styleClass="section-title" />
+
+                <TableView fx:id="tblLibros"
+                           onMouseClicked="#seleccionarLibro"
+                           VBox.vgrow="ALWAYS">
+
                     <columns>
-                        <TableColumn fx:id="colIsbn" text="ISBN" prefWidth="125"/>
-                        <TableColumn fx:id="colTitulo" text="Título" prefWidth="210"/>
-                        <TableColumn fx:id="colCategoria" text="Categoría" prefWidth="125"/>
-                        <TableColumn fx:id="colPrecio" text="Precio" prefWidth="80"/>
-                        <TableColumn fx:id="colStockActual" text="Stock" prefWidth="70"/>
-                        <TableColumn fx:id="colStockMinimo" text="Mín." prefWidth="65"/>
-                        <TableColumn fx:id="colEstado" text="Estado" prefWidth="85"/>
+                        <TableColumn fx:id="colIsbn"
+                                     text="ISBN"
+                                     prefWidth="125" />
+
+                        <TableColumn fx:id="colTitulo"
+                                     text="Título"
+                                     prefWidth="210" />
+
+                        <TableColumn fx:id="colCategoria"
+                                     text="Categoría"
+                                     prefWidth="125" />
+
+                        <TableColumn fx:id="colPrecio"
+                                     text="Precio"
+                                     prefWidth="80" />
+
+                        <TableColumn fx:id="colStockActual"
+                                     text="Stock"
+                                     prefWidth="70" />
+
+                        <TableColumn fx:id="colStockMinimo"
+                                     text="Mín."
+                                     prefWidth="65" />
+
+                        <TableColumn fx:id="colEstado"
+                                     text="Estado"
+                                     prefWidth="85" />
                     </columns>
+
                 </TableView>
+
             </VBox>
+
         </SplitPane>
     </center>
+
 </BorderPane>

@@ -8,4 +8,5 @@ public interface EditorialDAO {
 
     List<Editorial> listar() throws SQLException;
 
+    boolean existe(String nit) throws SQLException;
 }
