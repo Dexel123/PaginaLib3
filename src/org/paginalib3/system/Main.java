@@ -1,20 +1,104 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
- */
 package org.paginalib3.system;
 
-/**
- *
- * @author joaqu
- */
-public class Main {
+import java.net.URL;
+import java.util.List;
+import java.util.function.Consumer;
+import javafx.application.Application;
+import javafx.application.Platform;
+import static javafx.application.Application.launch;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
+import org.paginalib3.util.MensajesUI;
+import org.paginalib3.util.VerificadorProyecto;
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        // TODO code application logic here
+public class Main extends Application {
+
+    private static Stage stagePrincipal;
+    private static Object controladorVistaActual;
+
+    @Override
+    public void start(Stage stage) {
+        stagePrincipal = stage;
+        stage.setResizable(true);
+
+        cambiarVista("/org/paginalib3/view/login.fxml",
+                "Pagina-Libreria | Iniciar sesión", 760, 560);
+
+        // Revisión no destructiva de recursos después de cargar la primera escena.
+        Platform.runLater(() -> {
+            List<String> problemas = VerificadorProyecto.validarRecursos();
+            if (!problemas.isEmpty()) {
+                MensajesUI.error(
+                        "Configuración incompleta",
+                        "Se detectaron recursos faltantes:\n\n" + String.join("\n", problemas)
+                        + "\n\nRevisa las librerías del proyecto antes de continuar.");
+            }
+        });
     }
-    
+
+   
+    public static void cambiarVista(String rutaFxml, String titulo, double ancho, double alto) {
+        try {
+            URL url = Main.class.getResource(rutaFxml);
+            if (url == null) {
+                throw new IllegalStateException("No se encontró el recurso FXML: " + rutaFxml);
+            }
+
+            if (stagePrincipal != null) {
+                stagePrincipal.setOnCloseRequest(null);
+            }
+
+            FXMLLoader loader = new FXMLLoader(url);
+            Parent root = loader.load();
+            Object nuevoControlador = loader.getController();
+
+            Rectangle2D area = Screen.getPrimary().getVisualBounds();
+            double anchoReal = Math.max(640, Math.min(ancho, area.getWidth() - 36));
+            double altoReal = Math.max(520, Math.min(alto, area.getHeight() - 42));
+
+            Scene scene = new Scene(root, anchoReal, altoReal);
+            URL css = Main.class.getResource("/org/paginalib3/view/style/styles.css");
+            if (css != null) {
+                scene.getStylesheets().add(css.toExternalForm());
+            }
+
+            stagePrincipal.setTitle(titulo);
+            stagePrincipal.setScene(scene);
+            stagePrincipal.setMinWidth(Math.min(680, area.getWidth() - 20));
+            stagePrincipal.setMinHeight(Math.min(520, area.getHeight() - 20));
+            stagePrincipal.setMaxWidth(area.getWidth());
+            stagePrincipal.setMaxHeight(area.getHeight());
+            stagePrincipal.setWidth(anchoReal);
+            stagePrincipal.setHeight(altoReal);
+            stagePrincipal.centerOnScreen();
+            stagePrincipal.show();
+
+            controladorVistaActual = nuevoControlador;
+        } catch (Exception e) {
+            MensajesUI.error(
+                    "No se pudo abrir la pantalla",
+                    "La vista solicitada no pudo cargarse.\n\n"
+                    + "Vista: " + rutaFxml + "\n"
+                    + "Detalle: " + MensajesUI.mensajeTecnico(e),
+                    e);
+        }
+    }
+
+    public static void configurarVistaActual(Consumer<Object> configurador) {
+        if (controladorVistaActual != null && configurador != null) {
+            configurador.accept(controladorVistaActual);
+        }
+    }
+
+    public static Stage getStagePrincipal() {
+        return stagePrincipal;
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
 }

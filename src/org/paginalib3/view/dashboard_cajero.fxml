@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.paginalib3.controller.DashboardCajeroController"
+            styleClass="app-root">
+    <left>
+        <BorderPane prefWidth="245" styleClass="sidebar-shell">
+            <top>
+                <VBox spacing="8" styleClass="sidebar-header">
+                    <Label text="PÁGINA VIVA" styleClass="brand-light"/>
+                    <Label text="CAJA" styleClass="eyebrow-gold"/>
+                    <VBox spacing="4" styleClass="user-card-dark">
+                        <Label text="SESIÓN ACTIVA" styleClass="eyebrow-gold"/>
+                        <Label fx:id="lblNombreUsuario" wrapText="true" styleClass="user-name-light"/>
+                        <Label fx:id="lblRolUsuario" styleClass="muted-light"/>
+                    </VBox>
+                </VBox>
+            </top>
+            <center>
+                <VBox spacing="3" styleClass="sidebar-nav">
+                    <Label text="INICIO" styleClass="nav-section-label"/>
+                    <Button text="Resumen del turno" onAction="#actualizarVentas" styleClass="nav-active"/>
+
+                    <Label text="VENTAS" styleClass="nav-section-label"/>
+                    <Button text="Nueva venta" onAction="#irACaja" styleClass="nav-button"/>
+                    <Button text="Buscar libros" onAction="#irABuscarLibros" styleClass="nav-button"/>
+
+                    <Label text="POSTVENTA" styleClass="nav-section-label"/>
+                    <Button text="Anulaciones y devoluciones" onAction="#irADevolucion" styleClass="nav-button-important" wrapText="true"/>
+                </VBox>
+            </center>
+            <bottom>
+                <VBox spacing="7" styleClass="sidebar-footer">
+                    <Button text="Cambiar contraseña" onAction="#irACambiarContrasena" styleClass="account-button"/>
+                    <Button text="Cerrar sesión" onAction="#cerrarSesion" styleClass="logout-button"/>
+                </VBox>
+            </bottom>
+        </BorderPane>
+    </left>
+
+    <center>
+        <VBox spacing="18" styleClass="dashboard-content">
+            <VBox spacing="4">
+                <Label text="Panel de caja" styleClass="page-title"/>
+                <Label fx:id="lblSaludo" wrapText="true" styleClass="page-subtitle"/>
+            </VBox>
+
+            <HBox spacing="12">
+                <VBox HBox.hgrow="ALWAYS" spacing="5" style="-fx-background-color:#3B1720; -fx-background-radius:14; -fx-padding:16;">
+                    <Label text="VENTAS COMPLETADAS" style="-fx-text-fill:#E9D9C4; -fx-font-size:10px; -fx-font-weight:bold;"/>
+                    <Label fx:id="lblCantidadVentas" text="0" style="-fx-text-fill:#FFF8EF; -fx-font-size:28px; -fx-font-weight:bold;"/>
+                    <Label text="registradas hoy" style="-fx-text-fill:#CDB7A5; -fx-font-size:11px;"/>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS" spacing="5" styleClass="kpi-card">
+                    <Label text="TOTAL VENDIDO" styleClass="kpi-label"/>
+                    <Label fx:id="lblTotalVendido" text="Q0.00" styleClass="kpi-value"/>
+                    <Label text="ventas completadas" styleClass="hint-label"/>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS" spacing="5" style="-fx-background-color:#F0D9A6; -fx-background-radius:14; -fx-padding:16;">
+                    <Label text="CAJERO" style="-fx-text-fill:#6B3A12; -fx-font-size:10px; -fx-font-weight:bold;"/>
+                    <Label fx:id="lblUsuarioMetric" style="-fx-text-fill:#3B1720; -fx-font-size:21px; -fx-font-weight:bold;"/>
+                    <Label text="sesión autorizada" style="-fx-text-fill:#765F55; -fx-font-size:11px;"/>
+                </VBox>
+            </HBox>
+
+            <GridPane hgap="12" vgap="12">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="50"/>
+                    <ColumnConstraints percentWidth="50"/>
+                </columnConstraints>
+                <VBox GridPane.columnIndex="0" spacing="7" styleClass="quick-card">
+                    <Label text="Operación principal" styleClass="kpi-label"/>
+                    <Label text="Registrar una nueva venta" styleClass="quick-card-title"/>
+                    <Label text="Busca libros, agrega cantidades, aplica descuentos autorizados y calcula el total." wrapText="true" styleClass="quick-card-caption"/>
+                    <Button text="Registrar venta" maxWidth="Infinity" onAction="#irACaja" styleClass="btn-primary"/>
+                </VBox>
+                <VBox GridPane.columnIndex="1" spacing="7" styleClass="quick-card">
+                    <Label text="Consulta y postventa" styleClass="kpi-label"/>
+                    <Label text="Buscar o gestionar ventas" styleClass="quick-card-title"/>
+                    <Label text="Consulta libros disponibles o procesa una anulación/devolución reciente." wrapText="true" styleClass="quick-card-caption"/>
+                    <HBox spacing="8">
+                        <Button text="Buscar libros" HBox.hgrow="ALWAYS" maxWidth="Infinity" onAction="#irABuscarLibros" styleClass="btn-accent"/>
+                        <Button text="Devoluciones" HBox.hgrow="ALWAYS" maxWidth="Infinity" onAction="#irADevolucion" styleClass="btn-secondary"/>
+                    </HBox>
+                </VBox>
+            </GridPane>
+
+            <VBox VBox.vgrow="ALWAYS" spacing="9" styleClass="content-panel">
+                <HBox alignment="CENTER_LEFT">
+                    <VBox HBox.hgrow="ALWAYS" spacing="2">
+                        <Label text="Ventas realizadas hoy" styleClass="section-title"/>
+                        <Label fx:id="lblEstadoVentas" styleClass="hint-label"/>
+                    </VBox>
+                    <Button text="Actualizar" onAction="#actualizarVentas" styleClass="btn-secondary"/>
+                </HBox>
+                <TableView fx:id="tblVentas" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colVenta" text="# Venta" prefWidth="90"/>
+                        <TableColumn fx:id="colEstado" text="Estado" prefWidth="130"/>
+                        <TableColumn fx:id="colSubtotal" text="Subtotal" prefWidth="130"/>
+                        <TableColumn fx:id="colTotal" text="Total" prefWidth="130"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </VBox>
+    </center>
+</BorderPane>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.paginalib3.controller.VentaController" styleClass="app-root">
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="12" styleClass="page-header">
+            <VBox HBox.hgrow="ALWAYS" spacing="3">
+                <Label text="Registrar venta" styleClass="page-title-light"/>
+                <Label text="Busca libros, fija el cliente y confirma la venta desde un mismo flujo." styleClass="page-subtitle-light"/>
+            </VBox>
+            <Button text="← Volver" onAction="#volver" styleClass="btn-light"/>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="12">
+            <VBox spacing="10" styleClass="form-panel">
+                <Label text="1. Buscar y agregar productos" styleClass="section-title"/>
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <TextField fx:id="txtFiltroLibro" promptText="ISBN, título o autor" HBox.hgrow="ALWAYS" onAction="#buscarLibro"/>
+                    <Button text="Buscar" onAction="#buscarLibro" styleClass="btn-primary"/>
+                    <VBox prefWidth="95" spacing="3">
+                        <Label text="Cantidad" styleClass="hint-label"/>
+                        <TextField fx:id="txtCantidad" promptText="1"/>
+                    </VBox>
+                    <Button fx:id="btnAgregar" text="Agregar seleccionado" onAction="#agregar" styleClass="btn-accent"/>
+                </HBox>
+
+                <Label text="2. Cliente y descuento" styleClass="section-title"/>
+                <HBox spacing="8" alignment="BOTTOM_LEFT">
+                    <VBox HBox.hgrow="ALWAYS" spacing="3">
+                        <Label text="Cliente" styleClass="hint-label"/>
+                        <ComboBox fx:id="cmbCliente" promptText="Seleccionar cliente" maxWidth="Infinity" onAction="#seleccionarCliente"/>
+                    </VBox>
+                    <VBox prefWidth="160" spacing="3">
+                        <Label text="CUI" styleClass="hint-label"/>
+                        <TextField fx:id="txtCuiCliente" promptText="CUI"/>
+                    </VBox>
+                    <VBox prefWidth="140" spacing="3">
+                        <Label text="Tipo descuento" styleClass="hint-label"/>
+                        <ComboBox fx:id="cmbTipoDescuento" maxWidth="Infinity" onAction="#actualizarDescuento"/>
+                    </VBox>
+                    <VBox prefWidth="105" spacing="3">
+                        <Label text="Valor" styleClass="hint-label"/>
+                        <TextField fx:id="txtDescuento" promptText="0.00" onKeyReleased="#actualizarDescuento"/>
+                    </VBox>
+                </HBox>
+
+                <HBox spacing="8" alignment="BOTTOM_LEFT" styleClass="authorization-strip">
+                    <VBox HBox.hgrow="ALWAYS" spacing="2">
+                        <Label text="Autorización de descuento" styleClass="mini-title"/>
+                        <Label text="Solo se solicita cuando el descuento es mayor que 0. Si la sesión es Admin, se autoriza automáticamente." wrapText="true" styleClass="hint-label"/>
+                    </VBox>
+                    <VBox prefWidth="145" spacing="3">
+                        <Label text="Usuario Admin" styleClass="hint-label"/>
+                        <TextField fx:id="txtUsuarioAutoriza" promptText="usuario"/>
+                    </VBox>
+                    <VBox prefWidth="145" spacing="3">
+                        <Label text="Contraseña" styleClass="hint-label"/>
+                        <PasswordField fx:id="txtClaveAutoriza" promptText="contraseña"/>
+                    </VBox>
+                </HBox>
+                <Label fx:id="lblEstado" text="" styleClass="status-strip" maxWidth="Infinity"/>
+            </VBox>
+
+            <SplitPane orientation="VERTICAL" VBox.vgrow="ALWAYS">
+                <VBox spacing="6" styleClass="content-panel">
+                    <Label text="Catálogo disponible" styleClass="section-title"/>
+                    <TableView fx:id="tblLibros" prefHeight="250" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colLibroIsbn" text="ISBN" prefWidth="150"/>
+                            <TableColumn fx:id="colLibroTitulo" text="Título" prefWidth="320"/>
+                            <TableColumn fx:id="colLibroPrecio" text="Precio" prefWidth="110"/>
+                            <TableColumn fx:id="colLibroStock" text="Stock" prefWidth="90"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+                <VBox spacing="6" styleClass="content-panel">
+                    <HBox alignment="CENTER_LEFT">
+                        <Label text="Carrito de venta" styleClass="section-title" HBox.hgrow="ALWAYS"/>
+                        <Button text="Eliminar seleccionado" onAction="#eliminar" styleClass="btn-secondary"/>
+                    </HBox>
+                    <TableView fx:id="tblCarrito" prefHeight="220" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colCarritoNumero" text="No." prefWidth="60"/>
+                            <TableColumn fx:id="colCarritoIsbn" text="ISBN" prefWidth="150"/>
+                            <TableColumn fx:id="colCarritoCantidad" text="Cantidad" prefWidth="100"/>
+                            <TableColumn fx:id="colCarritoPrecio" text="Precio" prefWidth="120"/>
+                            <TableColumn fx:id="colCarritoSubtotal" text="Subtotal" prefWidth="130"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+            </SplitPane>
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox spacing="16" alignment="CENTER_RIGHT" styleClass="totals-bar">
+            <HBox spacing="18" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                <VBox spacing="1"><Label text="SUBTOTAL" styleClass="totals-label"/><Label fx:id="lblSubtotal" text="Q0.00" styleClass="totals-value"/></VBox>
+                <VBox spacing="1"><Label text="DESCUENTO" styleClass="totals-label"/><Label fx:id="lblDescuento" text="Q0.00" styleClass="totals-value"/></VBox>
+                <VBox spacing="1"><Label text="TOTAL" styleClass="totals-label"/><Label fx:id="lblTotal" text="Q0.00" styleClass="totals-value-main"/></VBox>
+            </HBox>
+            <Button fx:id="btnLimpiar" text="Limpiar" onAction="#limpiar" styleClass="btn-light"/>
+            <Button text="Registrar venta" onAction="#registrar" styleClass="btn-accent"/>
+        </HBox>
+    </bottom>
+</BorderPane>

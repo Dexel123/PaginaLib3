@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.paginalib3.controller.IngresoInventarioController" styleClass="app-root">
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="12" styleClass="page-header">
+            <VBox HBox.hgrow="ALWAYS" spacing="3">
+                <Label text="Ingreso de inventario" styleClass="page-title-light"/>
+                <Label text="Registra entradas y conserva la trazabilidad del movimiento." styleClass="page-subtitle-light"/>
+            </VBox>
+            <Button text="← Volver" onAction="#volver" styleClass="btn-light"/>
+        </HBox>
+    </top>
+    <center>
+        <VBox spacing="12">
+            <VBox spacing="12" styleClass="form-panel">
+                <Label text="Datos del ingreso" styleClass="section-title"/>
+                <HBox spacing="12" alignment="BOTTOM_LEFT">
+                    <VBox HBox.hgrow="ALWAYS" spacing="5">
+                        <Label text="Libro"/>
+                        <ComboBox fx:id="cmbLibro" onAction="#actualizarStockSeleccionado" maxWidth="Infinity"/>
+                    </VBox>
+                    <VBox prefWidth="130" spacing="5">
+                        <Label text="Stock actual"/>
+                        <Label fx:id="lblStockActual" text="-" styleClass="stock-number"/>
+                    </VBox>
+                    <VBox prefWidth="130" spacing="5">
+                        <Label text="Cantidad"/>
+                        <TextField fx:id="txtCantidad" promptText="1"/>
+                    </VBox>
+                </HBox>
+                <VBox spacing="5">
+                    <Label text="Observación"/>
+                    <TextArea fx:id="txtObservacion" prefRowCount="2" wrapText="true" promptText="Ej. recepción de proveedor, reposición o compra..."/>
+                </VBox>
+                <HBox alignment="CENTER_RIGHT" spacing="8">
+                    <Button text="Registrar ingreso" onAction="#registrarIngreso" styleClass="btn-success"/>
+                </HBox>
+            </VBox>
+
+            <Label fx:id="lblEstado" text="" styleClass="status-strip" maxWidth="Infinity"/>
+
+            <VBox spacing="8" styleClass="content-panel" VBox.vgrow="ALWAYS">
+                <Label text="Movimientos recientes" styleClass="section-title"/>
+                <TableView fx:id="tblMovimientos" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colIsbn" text="ISBN" prefWidth="130"/>
+                        <TableColumn fx:id="colLibro" text="Libro" prefWidth="300"/>
+                        <TableColumn fx:id="colTipo" text="Tipo" prefWidth="130"/>
+                        <TableColumn fx:id="colCantidad" text="Cantidad" prefWidth="90"/>
+                        <TableColumn fx:id="colFecha" text="Fecha" prefWidth="190"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </VBox>
+    </center>
+</BorderPane>

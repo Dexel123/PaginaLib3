@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.paginalib3.controller.ReportesVentasController"
+      spacing="16" styleClass="app-root">
+    <children>
+        <HBox spacing="12" alignment="CENTER_LEFT" styleClass="page-header">
+            <Button text="← Volver" onAction="#volver" styleClass="btn-light"/>
+            <VBox HBox.hgrow="ALWAYS">
+                <Label text="Reportes de ventas" styleClass="page-title-light"/>
+                <Label text="Consulta cada venta realizada con cliente, estado, productos y totales por período." styleClass="page-subtitle-light"/>
+            </VBox>
+            <Button text="Exportar para Excel" onAction="#exportarExcel" styleClass="btn-accent"/>
+        </HBox>
+
+        <VBox spacing="14" styleClass="content-panel" VBox.vgrow="ALWAYS">
+            <HBox spacing="12" alignment="CENTER_LEFT" styleClass="dashboard-toolbar">
+                <VBox spacing="3">
+                    <Label text="Período" styleClass="kpi-label"/>
+                    <ComboBox fx:id="cmbPeriodo" onAction="#aplicarPeriodo" prefWidth="165"/>
+                </VBox>
+                <VBox spacing="3">
+                    <Label text="Desde" styleClass="kpi-label"/>
+                    <DatePicker fx:id="dpDesde"/>
+                </VBox>
+                <VBox spacing="3">
+                    <Label text="Hasta" styleClass="kpi-label"/>
+                    <DatePicker fx:id="dpHasta"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="Generar reporte" onAction="#consultar" styleClass="btn-primary"/>
+            </HBox>
+
+            <HBox spacing="14">
+                <VBox styleClass="kpi-card" HBox.hgrow="ALWAYS">
+                    <Label text="VENTAS DEL PERÍODO" styleClass="kpi-label"/>
+                    <Label fx:id="lblTotalVentas" text="Q0.00" styleClass="kpi-value"/>
+                </VBox>
+                <VBox styleClass="kpi-card" HBox.hgrow="ALWAYS">
+                    <Label text="TRANSACCIONES" styleClass="kpi-label"/>
+                    <Label fx:id="lblCantidadVentas" text="0" styleClass="kpi-value"/>
+                </VBox>
+            </HBox>
+
+            <VBox spacing="7" VBox.vgrow="ALWAYS">
+                <Label text="Ventas realizadas" styleClass="section-title"/>
+                <TableView fx:id="tablaVentas" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colFecha" text="Fecha" prefWidth="90"/>
+                        <TableColumn fx:id="colIdVenta" text="# Venta" prefWidth="70"/>
+                        <TableColumn fx:id="colComprobante" text="Comprobante" prefWidth="145"/>
+                        <TableColumn fx:id="colCliente" text="Cliente" prefWidth="165"/>
+                        <TableColumn fx:id="colCajero" text="Cajero" prefWidth="90"/>
+                        <TableColumn fx:id="colEstado" text="Estado" prefWidth="115"/>
+                        <TableColumn fx:id="colCantidad" text="Productos" prefWidth="85"/>
+                        <TableColumn fx:id="colSubtotal" text="Subtotal" prefWidth="105"/>
+                        <TableColumn fx:id="colDescuento" text="Descuentos" prefWidth="105"/>
+                        <TableColumn fx:id="colTotal" text="Total" prefWidth="105"/>
+                    </columns>
+                </TableView>
+            </VBox>
+            <Label fx:id="lblEstado" text="Listo." styleClass="status-strip" maxWidth="Infinity"/>
+        </VBox>
+    </children>
+</VBox>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.paginalib3.controller.StockCriticoController" styleClass="app-root">
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="14" styleClass="page-header">
+            <VBox HBox.hgrow="ALWAYS" spacing="3">
+                <Label text="Stock crítico" styleClass="page-title-light"/>
+                <Label text="Productos que alcanzaron o bajaron de su stock mínimo." styleClass="page-subtitle-light"/>
+            </VBox>
+            <VBox alignment="CENTER_RIGHT" spacing="1">
+                <Label text="PRODUCTOS CRÍTICOS" styleClass="eyebrow-gold"/>
+                <Label fx:id="lblCantidad" text="0" styleClass="header-count"/>
+            </VBox>
+            <Button text="← Volver" onAction="#volver" styleClass="btn-light"/>
+        </HBox>
+    </top>
+    <center>
+        <VBox spacing="12">
+            <HBox alignment="CENTER_LEFT" spacing="8" styleClass="dashboard-toolbar">
+                <Label text="Control de existencias" styleClass="section-title" HBox.hgrow="ALWAYS"/>
+                <Button text="Actualizar" onAction="#actualizar" styleClass="btn-accent"/>
+                <Button text="Abrir catálogo de libros" onAction="#abrirFicha" styleClass="btn-primary"/>
+            </HBox>
+            <Label fx:id="lblEstado" text="" styleClass="status-strip" maxWidth="Infinity"/>
+            <VBox spacing="8" styleClass="content-panel" VBox.vgrow="ALWAYS">
+                <TableView fx:id="tblCriticos" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colIsbn" text="ISBN" prefWidth="150"/>
+                        <TableColumn fx:id="colTitulo" text="Título" prefWidth="350"/>
+                        <TableColumn fx:id="colCategoria" text="Categoría" prefWidth="180"/>
+                        <TableColumn fx:id="colStockActual" text="Stock actual" prefWidth="120"/>
+                        <TableColumn fx:id="colStockMinimo" text="Stock mínimo" prefWidth="120"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </VBox>
+    </center>
+</BorderPane>

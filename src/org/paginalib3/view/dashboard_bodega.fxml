@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.paginalib3.controller.DashboardBodegaController"
+            styleClass="app-root">
+    <left>
+        <BorderPane prefWidth="245" styleClass="sidebar-shell">
+            <top>
+                <VBox spacing="8" styleClass="sidebar-header">
+                    <Label text="PÁGINA VIVA" styleClass="brand-light"/>
+                    <Label text="BODEGA" styleClass="eyebrow-gold"/>
+                    <VBox spacing="4" styleClass="user-card-dark">
+                        <Label text="SESIÓN ACTIVA" styleClass="eyebrow-gold"/>
+                        <Label fx:id="lblNombreUsuario" wrapText="true" styleClass="user-name-light"/>
+                        <Label fx:id="lblRolUsuario" styleClass="muted-light"/>
+                    </VBox>
+                </VBox>
+            </top>
+            <center>
+                <VBox spacing="3" styleClass="sidebar-nav">
+                    <Label text="INICIO" styleClass="nav-section-label"/>
+                    <Button text="Resumen de inventario" onAction="#actualizarStockCritico" styleClass="nav-active"/>
+
+                    <Label text="CATÁLOGO" styleClass="nav-section-label"/>
+                    <Button text="Gestión de libros" onAction="#irALibros" styleClass="nav-button"/>
+
+                    <Label text="MOVIMIENTOS" styleClass="nav-section-label"/>
+                    <Button text="Registrar ingreso" onAction="#irAIngreso" styleClass="nav-button"/>
+                    <Button text="Registrar salida" onAction="#irASalida" styleClass="nav-button"/>
+
+                    <Label text="CONTROL" styleClass="nav-section-label"/>
+                    <Button text="Stock crítico" onAction="#irAStockCritico" styleClass="nav-button-important"/>
+                </VBox>
+            </center>
+            <bottom>
+                <VBox spacing="7" styleClass="sidebar-footer">
+                    <Button text="Cambiar contraseña" onAction="#irACambiarContrasena" styleClass="account-button"/>
+                    <Button text="Cerrar sesión" onAction="#cerrarSesion" styleClass="logout-button"/>
+                </VBox>
+            </bottom>
+        </BorderPane>
+    </left>
+
+    <center>
+        <VBox spacing="16" styleClass="dashboard-content">
+            <VBox spacing="3">
+                <Label text="Panel de bodega" styleClass="page-title"/>
+                <Label fx:id="lblSaludo" wrapText="true" styleClass="page-subtitle"/>
+            </VBox>
+
+            <HBox spacing="12">
+                <VBox HBox.hgrow="ALWAYS" spacing="5" style="-fx-background-color:#3B1720; -fx-background-radius:14; -fx-padding:16;">
+                    <Label text="USUARIO" style="-fx-text-fill:#E9D9C4; -fx-font-size:10px; -fx-font-weight:bold;"/>
+                    <Label fx:id="lblUsuarioMetric" style="-fx-text-fill:#FFF8EF; -fx-font-size:20px; -fx-font-weight:bold;"/>
+                    <Label text="sesión activa" style="-fx-text-fill:#CDB7A5;"/>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS" spacing="5" style="-fx-background-color:#F0D9A6; -fx-background-radius:14; -fx-padding:16;">
+                    <Label text="STOCK CRÍTICO" style="-fx-text-fill:#6B3A12; -fx-font-size:10px; -fx-font-weight:bold;"/>
+                    <Label fx:id="lblCriticos" text="0" style="-fx-text-fill:#3B1720; -fx-font-size:25px; -fx-font-weight:bold;"/>
+                    <Label text="libros por revisar" style="-fx-text-fill:#765F55;"/>
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS" spacing="5" styleClass="kpi-card">
+                    <Label text="ÁREA" styleClass="kpi-label"/>
+                    <Label text="Inventario" styleClass="kpi-value-small"/>
+                    <Label fx:id="lblEstadoInventario" text="Consultando..." wrapText="true" styleClass="hint-label"/>
+                </VBox>
+            </HBox>
+
+            <HBox spacing="10" styleClass="dashboard-toolbar">
+                <Button text="Gestionar libros" onAction="#irALibros" HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="btn-primary"/>
+                <Button text="Registrar ingreso" onAction="#irAIngreso" HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="btn-secondary"/>
+                <Button text="Registrar salida" onAction="#irASalida" HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="btn-secondary"/>
+                <Button text="Ver alertas" onAction="#irAStockCritico" HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="btn-accent"/>
+                <Button text="Actualizar" onAction="#actualizarStockCritico" styleClass="btn-light"/>
+            </HBox>
+
+            <VBox VBox.vgrow="ALWAYS" spacing="9" styleClass="content-panel">
+                <Label text="Libros con stock crítico" styleClass="section-title"/>
+                <TableView fx:id="tblCriticos" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colIsbn" text="ISBN" prefWidth="150"/>
+                        <TableColumn fx:id="colTitulo" text="Título" prefWidth="360"/>
+                        <TableColumn fx:id="colStockActual" text="Stock actual" prefWidth="120"/>
+                        <TableColumn fx:id="colStockMinimo" text="Stock mínimo" prefWidth="120"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </VBox>
+    </center>
+</BorderPane>

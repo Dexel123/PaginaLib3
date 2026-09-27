@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.paginalib3.controller.UsuariosController"
+      spacing="16" styleClass="app-root">
+    <children>
+        <HBox spacing="12" alignment="CENTER_LEFT" styleClass="page-header">
+            <Button text="← Volver" onAction="#volver" styleClass="btn-light"/>
+            <VBox HBox.hgrow="ALWAYS">
+                <Label text="Gestión de usuarios" styleClass="page-title-light"/>
+                <Label text="Crea, edita y administra las cuentas y permisos del personal." styleClass="page-subtitle-light"/>
+            </VBox>
+            <Button text="+ Registrar usuario" onAction="#registrar" styleClass="btn-accent"/>
+        </HBox>
+
+        <VBox spacing="10" VBox.vgrow="ALWAYS" styleClass="content-panel">
+            <HBox alignment="CENTER_LEFT">
+                <VBox HBox.hgrow="ALWAYS" spacing="2">
+                    <Label text="Personal con acceso al sistema" styleClass="section-title"/>
+                    <Label text="Selecciona una cuenta para editar sus datos, rol o estado." styleClass="hint-label"/>
+                </VBox>
+                <HBox spacing="8">
+                    <Button text="Editar datos" onAction="#editar" styleClass="btn-secondary"/>
+                    <Button text="Cambiar rol" onAction="#cambiarRol" styleClass="btn-secondary"/>
+                    <Button text="Activar / desactivar" onAction="#cambiarEstado" styleClass="btn-primary"/>
+                </HBox>
+            </HBox>
+
+            <TableView fx:id="tablaUsuarios" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colUsername" text="Usuario" prefWidth="150"/>
+                    <TableColumn fx:id="colNombre" text="Nombre" prefWidth="280"/>
+                    <TableColumn fx:id="colRol" text="Rol" prefWidth="130"/>
+                    <TableColumn fx:id="colEstado" text="Estado" prefWidth="130"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </children>
+</VBox>

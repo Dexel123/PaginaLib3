@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.paginalib3.controller.BuscarLibroController" styleClass="app-root">
+    <top>
+        <VBox spacing="12">
+            <HBox alignment="CENTER_LEFT" spacing="12" styleClass="page-header">
+                <VBox HBox.hgrow="ALWAYS" spacing="3">
+                    <Label text="Buscar libros" styleClass="page-title-light"/>
+                    <Label text="Consulta por ISBN, título o autor y revisa el stock disponible." styleClass="page-subtitle-light"/>
+                </VBox>
+                <Button text="← Volver" onAction="#volver" styleClass="btn-light"/>
+            </HBox>
+            <HBox spacing="9" alignment="CENTER_LEFT" styleClass="dashboard-toolbar">
+                <TextField fx:id="txtBuscar" promptText="ISBN, título o autor" HBox.hgrow="ALWAYS" onAction="#buscar"/>
+                <Button text="Buscar" onAction="#buscar" styleClass="btn-primary"/>
+                <Button text="Limpiar filtro" onAction="#limpiar" styleClass="btn-secondary"/>
+                <Button text="Ir a caja" onAction="#irACaja" styleClass="btn-accent"/>
+            </HBox>
+        </VBox>
+    </top>
+    <center>
+        <VBox spacing="9" styleClass="content-panel">
+            <HBox alignment="CENTER_LEFT">
+                <Label text="Resultados" styleClass="section-title" HBox.hgrow="ALWAYS"/>
+                <Label fx:id="lblEstado" styleClass="hint-label"/>
+            </HBox>
+            <TableView fx:id="tblLibros" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colIsbn" text="ISBN" prefWidth="150"/>
+                    <TableColumn fx:id="colTitulo" text="Título" prefWidth="260"/>
+                    <TableColumn fx:id="colAutores" text="Autor(es)" prefWidth="260"/>
+                    <TableColumn fx:id="colPrecio" text="Precio" prefWidth="110"/>
+                    <TableColumn fx:id="colStock" text="Stock" prefWidth="90"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </center>
+</BorderPane>

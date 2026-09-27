@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.paginalib3.controller.DashboardAdminController" styleClass="app-root">
+    <left>
+        <BorderPane prefWidth="252" styleClass="sidebar-shell">
+            <top>
+                <VBox spacing="8" styleClass="sidebar-header">
+                    <Label text="PÁGINA VIVA" styleClass="brand-light"/>
+                    <Label text="ADMINISTRACIÓN" styleClass="eyebrow-gold"/>
+                    <VBox spacing="3" styleClass="user-card-dark">
+                        <Label text="SESIÓN ACTIVA" styleClass="eyebrow-gold"/>
+                        <Label fx:id="lblNombreUsuario" wrapText="true" styleClass="user-name-light"/>
+                        <Label fx:id="lblRolUsuario" styleClass="muted-light"/>
+                    </VBox>
+                </VBox>
+            </top>
+            <center>
+                <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="sidebar-scroll">
+                    <content>
+                        <VBox spacing="3" styleClass="sidebar-nav">
+                            <Label text="INICIO" styleClass="nav-section-label"/>
+                            <Button text="Resumen ejecutivo" onAction="#actualizarIndicadores" styleClass="nav-active"/>
+
+                            <Label text="OPERACIÓN" styleClass="nav-section-label"/>
+                            <Button text="Caja y ventas" onAction="#irAVentas" styleClass="nav-button"/>
+                            <Button text="Anulaciones y devoluciones" onAction="#irADevoluciones" styleClass="nav-button"/>
+
+                            <Label text="CATÁLOGO E INVENTARIO" styleClass="nav-section-label"/>
+                            <Button text="Catálogo de libros" onAction="#irALibros" styleClass="nav-button"/>
+                            <Button text="Ingreso de inventario" onAction="#irAIngreso" styleClass="nav-button"/>
+                            <Button text="Salida de inventario" onAction="#irASalida" styleClass="nav-button"/>
+                            <Button text="Stock crítico" onAction="#irAStockCritico" styleClass="nav-button-important"/>
+
+                            <Label text="ADMINISTRACIÓN" styleClass="nav-section-label"/>
+                            <Button text="Usuarios" onAction="#irAUsuarios" styleClass="nav-button"/>
+                            <Button text="Editoriales" onAction="#irAEditoriales" styleClass="nav-button"/>
+                            <Button text="Categorías, proveedores y precios" onAction="#irAGestionAdministrativa" styleClass="nav-button" wrapText="true"/>
+
+                            <Label text="ANÁLISIS Y REPORTES" styleClass="nav-section-label"/>
+                            <Button text="Reporte de ventas" onAction="#irAReportesVentas" styleClass="nav-button"/>
+                            <Button text="Reporte de inventario" onAction="#irAReportesInventario" styleClass="nav-button"/>
+                        </VBox>
+                    </content>
+                </ScrollPane>
+            </center>
+            <bottom>
+                <VBox spacing="7" styleClass="sidebar-footer">
+                    <Button text="Cambiar contraseña" maxWidth="Infinity" onAction="#irACambiarContrasena" styleClass="account-button"/>
+                    <Button text="Cerrar sesión" maxWidth="Infinity" onAction="#cerrarSesion" styleClass="logout-button"/>
+                </VBox>
+            </bottom>
+        </BorderPane>
+    </left>
+
+    <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true" hbarPolicy="NEVER" styleClass="transparent-scroll">
+            <content>
+                <VBox spacing="16" styleClass="dashboard-content">
+                    <HBox alignment="CENTER_LEFT" spacing="12">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label text="Panel de administración" styleClass="page-title"/>
+                            <Label fx:id="lblSaludo" wrapText="true" styleClass="page-subtitle"/>
+                        </VBox>
+                        <Button text="Actualizar indicadores" onAction="#actualizarIndicadores" styleClass="btn-secondary"/>
+                    </HBox>
+
+                    <GridPane hgap="12" vgap="12">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                        </columnConstraints>
+                        <VBox GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="kpi-card">
+                            <Label text="VENTAS HOY" styleClass="kpi-label"/>
+                            <Label fx:id="lblVentasHoy" text="Q0.00" styleClass="kpi-value"/>
+                            <Label text="ingresos del día" styleClass="hint-label"/>
+                        </VBox>
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="kpi-card">
+                            <Label text="TRANSACCIONES HOY" styleClass="kpi-label"/>
+                            <Label fx:id="lblTransaccionesHoy" text="0" styleClass="kpi-value"/>
+                            <Label text="ventas completadas" styleClass="hint-label"/>
+                        </VBox>
+                        <VBox GridPane.columnIndex="2" GridPane.rowIndex="0" styleClass="kpi-card">
+                            <Label text="USUARIOS ACTIVOS" styleClass="kpi-label"/>
+                            <Label fx:id="lblUsuariosActivos" text="0" styleClass="kpi-value"/>
+                            <Label text="personal con acceso" styleClass="hint-label"/>
+                        </VBox>
+                        <VBox GridPane.columnIndex="3" GridPane.rowIndex="0" styleClass="kpi-card-warning">
+                            <Label text="STOCK CRÍTICO" styleClass="kpi-label"/>
+                            <Label fx:id="lblStockCritico" text="0" styleClass="kpi-value"/>
+                            <Label text="libros por atender" styleClass="hint-label"/>
+                        </VBox>
+
+                        <VBox GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="kpi-card">
+                            <Label text="VENTAS HISTÓRICAS" styleClass="kpi-label"/>
+                            <Label fx:id="lblVentasTotales" text="Q0.00" styleClass="kpi-value-small"/>
+                        </VBox>
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="kpi-card">
+                            <Label text="LIBROS ACTIVOS" styleClass="kpi-label"/>
+                            <Label fx:id="lblLibrosActivos" text="0" styleClass="kpi-value-small"/>
+                        </VBox>
+                        <VBox GridPane.columnIndex="2" GridPane.rowIndex="1" styleClass="kpi-card">
+                            <Label text="UNIDADES EN STOCK" styleClass="kpi-label"/>
+                            <Label fx:id="lblUnidadesStock" text="0" styleClass="kpi-value-small"/>
+                        </VBox>
+                        <VBox GridPane.columnIndex="3" GridPane.rowIndex="1" styleClass="kpi-card">
+                            <Label text="VALOR INVENTARIO (COSTO)" styleClass="kpi-label"/>
+                            <Label fx:id="lblValorInventario" text="Q0.00" styleClass="kpi-value-small"/>
+                        </VBox>
+                    </GridPane>
+
+                    <Label text="Accesos rápidos" styleClass="section-title"/>
+                    <GridPane styleClass="quick-grid">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50"/>
+                            <ColumnConstraints percentWidth="50"/>
+                        </columnConstraints>
+
+                        <VBox GridPane.columnIndex="0" GridPane.rowIndex="0" spacing="8" styleClass="quick-card">
+                            <Label text="Operación de caja" styleClass="quick-card-title"/>
+                            <Label text="Supervisa ventas, descuentos y postventa desde una sola sección." wrapText="true" styleClass="quick-card-caption"/>
+                            <HBox spacing="8">
+                                <Button text="Abrir caja" onAction="#irAVentas" HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="btn-primary"/>
+                                <Button text="Devoluciones" onAction="#irADevoluciones" HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="btn-secondary"/>
+                            </HBox>
+                        </VBox>
+
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="0" spacing="8" styleClass="quick-card">
+                            <Label text="Inventario" styleClass="quick-card-title"/>
+                            <Label text="Gestiona catálogo, entradas, salidas y alertas de existencias." wrapText="true" styleClass="quick-card-caption"/>
+                            <HBox spacing="8">
+                                <Button text="Libros" onAction="#irALibros" HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="btn-primary"/>
+                                <Button text="Movimientos" onAction="#irAIngreso" HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="btn-secondary"/>
+                                <Button text="Alertas" onAction="#irAStockCritico" HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="btn-accent"/>
+                            </HBox>
+                        </VBox>
+
+                        <VBox GridPane.columnIndex="0" GridPane.rowIndex="1" spacing="8" styleClass="quick-card">
+                            <Label text="Administración" styleClass="quick-card-title"/>
+                            <Label text="Controla usuarios, categorías, proveedores y precios." wrapText="true" styleClass="quick-card-caption"/>
+                            <HBox spacing="8">
+                                <Button text="Usuarios" onAction="#irAUsuarios" HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="btn-primary"/>
+                                <Button text="Catálogo administrativo" onAction="#irAGestionAdministrativa" HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="btn-secondary"/>
+                            </HBox>
+                        </VBox>
+
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="1" spacing="8" styleClass="quick-card">
+                            <Label text="Información gerencial" styleClass="quick-card-title"/>
+                            <Label text="Consulta ventas por período y valorización del inventario." wrapText="true" styleClass="quick-card-caption"/>
+                            <HBox spacing="8">
+                                <Button text="Ventas" onAction="#irAReportesVentas" HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="btn-primary"/>
+                                <Button text="Inventario" onAction="#irAReportesInventario" HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="btn-secondary"/>
+                            </HBox>
+                        </VBox>
+                    </GridPane>
+
+                    <Label fx:id="lblEstadoDashboard" text="" styleClass="status-strip" maxWidth="Infinity"/>
+                    <Label fx:id="lblUsuarioMetric" visible="false" managed="false"/>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>

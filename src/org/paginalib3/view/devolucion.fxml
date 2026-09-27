@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.paginalib3.controller.DevolucionController" styleClass="app-root">
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="12" styleClass="page-header">
+            <VBox HBox.hgrow="ALWAYS" spacing="3">
+                <Label text="Anulación y devolución de ventas" styleClass="page-title-light"/>
+                <Label text="Selecciona una venta reciente; el sistema conserva la trazabilidad y restaura el stock." styleClass="page-subtitle-light"/>
+            </VBox>
+            <Button text="← Volver" onAction="#volver" styleClass="btn-light"/>
+        </HBox>
+    </top>
+    <center>
+        <VBox spacing="12">
+            <VBox spacing="8" styleClass="content-panel" VBox.vgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT">
+                    <Label text="Ventas recientes" styleClass="section-title" HBox.hgrow="ALWAYS"/>
+                    <Button text="Actualizar lista" onAction="#cargarRecientes" styleClass="btn-secondary"/>
+                </HBox>
+                <TableView fx:id="tblVentas" VBox.vgrow="ALWAYS" onMouseClicked="#seleccionarVenta">
+                    <columns>
+                        <TableColumn fx:id="colId" text="# Venta" prefWidth="120"/>
+                        <TableColumn fx:id="colEstado" text="Estado" prefWidth="180"/>
+                        <TableColumn fx:id="colTotal" text="Total" prefWidth="160"/>
+                    </columns>
+                </TableView>
+            </VBox>
+
+            <VBox spacing="10" styleClass="form-panel">
+                <Label text="Procesar operación" styleClass="section-title"/>
+                <HBox spacing="10" alignment="BOTTOM_LEFT">
+                    <VBox prefWidth="130" spacing="5">
+                        <Label text="Venta seleccionada"/>
+                        <TextField fx:id="txtIdVenta" promptText="#"/>
+                    </VBox>
+                    <VBox prefWidth="190" spacing="5">
+                        <Label text="Operación"/>
+                        <ComboBox fx:id="cmbOperacion" maxWidth="Infinity"/>
+                    </VBox>
+                    <VBox HBox.hgrow="ALWAYS"/>
+                    <Button text="Ejecutar operación" onAction="#ejecutar" styleClass="btn-danger"/>
+                </HBox>
+                <VBox spacing="5">
+                    <Label text="Motivo obligatorio"/>
+                    <TextArea fx:id="txtMotivo" promptText="Explica el motivo de la anulación o devolución..." prefRowCount="2" wrapText="true"/>
+                </VBox>
+            </VBox>
+            <Label fx:id="lblEstado" text="" styleClass="status-strip" maxWidth="Infinity"/>
+        </VBox>
+    </center>
+</BorderPane>
